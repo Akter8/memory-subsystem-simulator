@@ -5,6 +5,8 @@
  * Contains the ADT of the TLB.
  */
 
+#include "dataTypes.h"
+
 typedef struct 
 {
 	unsigned int validInvalidBit: 1;
@@ -44,10 +46,10 @@ int TLBL1Flush();
 unsigned int TLBL1Search(unsigned int pageNum, int *error); //Second parameter for the error.
 int TLBL1Update(unsigned int pageNum, unsigned int frameNum);
 int TLBL1UpdateLru(int index);
-int TLBL1Getlru(); // Returns the index of the entry in the array.
+int TLBL1GetLru(); // Returns the index of the entry in the array.
 
 int TLBL2Flush();
 unsigned int TLBL2Search(unsigned int pageNum);
 int TLBL2Update (unsigned int pageNum, unsigned int frameNum);
 int TLBL2UpdateLru(int index);
-int TLBL2Getlru(); // Returns the index of the entry in the array.
+int TLBL2GetLru(); // Returns the index of the entry in the array.

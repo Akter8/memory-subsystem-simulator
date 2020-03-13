@@ -23,6 +23,7 @@ Group #6, Questions #5.
 
 
 #### Tasks
+- [ ] Create a Makefile.
 - [ ] Complete the README.
 - [ ] Convert README.md to README.txt
 - [ ] Make folder name 6.tar.gz before submission
@@ -30,7 +31,13 @@ Group #6, Questions #5.
 
 
 #### Description of files
-
+* dataTypes.h - The data types made and used by use.
+* tlb.h - Contains the ADT of both the TLBs.
+* cache.h - Contains the ADT of both the levels of cache.
+* pcb.h - Contains the ADT of the Process Control Block.
+* frameTable.h - Contains the ADT of the frame table and its entries.
+* pageTable.h - Contains the ADT of the page table and its entries.
+* segmentTable.h - Contains the ADT of the frame table and its entries.
 
 #### How to compile
 

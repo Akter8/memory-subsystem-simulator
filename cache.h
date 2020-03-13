@@ -1,5 +1,6 @@
 #include<stdbool.h>
 #include"dataTypes.h"
+
 typedef struct 
 {
 	/*
@@ -11,13 +12,15 @@ typedef struct
 	unsigned int validInvalidBit:1;
 	unsigned int readWriteBit:1;
 }dataBlockEntryL1;	
+
+
 typedef struct 
 {
 	dataBlockEntryL1 ways[4];
 	short unsigned int LRUSquareMatrix[4][4];
 }setL1;
 
-//instrand data l1 cache 
+//instr and data L1 cache 
 typedef struct 
 {
 	setL1 sets[32];
@@ -37,7 +40,8 @@ typedef struct
 	unsigned int dirtyBit:1;
 	unsigned int readWriteBit:1;
 	unsigned int LRUCount:3;
-}dataBlockEntryL2;	
+}dataBlockEntryL2;
+
 typedef struct 
 {
 	dataBlockEntryL2 ways[8];
@@ -50,15 +54,15 @@ typedef struct
 }L2Cache;
 
 //L1 Cache
-int searchL1Cache(physicalAddr addr, int index); // returns hit/miss,index 0 for inst 1 for data
+int searchL1Cache(physicalAddr addr, int index); // returns hit/miss, index 0 for inst 1 for data
 int updateL1Cache(physicalAddr addr, int index, bool write);
 int getLRUL1Cache(int index);
 int updateLRUL1Cache(int index, int setIndex); 
-int writeL1Cache(int index,int setIndex);
+int writeL1Cache(int index, int setIndex);
 
 
 //L2 Cache 
-int searchL2Cache(physicalAddr addr); // returns hit/miss,index 0 for inst 1 for data
+int searchL2Cache(physicalAddr addr); // returns hit/miss, index 0 for inst 1 for data
 int updateL2Cache(physicalAddr addr, bool write);
 int getLRUL2Cache();
 int updateLRUL2Cache(int setIndex); 
