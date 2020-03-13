@@ -1,4 +1,14 @@
 typedef struct 
 {
-	unsigned int addr:26;
-}physicalAddr;
+	unsigned int value:26;
+}int26;
+
+typedef struct 
+{
+	unsigned int value:16;
+}int16;
+
+typedef struct 
+{
+	unsigned int addr:22;
+}virtualAddr;
