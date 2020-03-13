@@ -1,7 +1,7 @@
 # DSTN Assignment-1
 Group #6, Questions #5.
 
-#### Authors
+### Authors
 * Akhil Tarikere, 2017A7PS1916G
 * Chiplunkar Chinmay Vidyadhar, 2017A7PS0097G
 * Prabhu Divya Umesh, 2017A7PS0001G
@@ -26,6 +26,7 @@ Group #6, Questions #5.
 - [ ] Complete the README.
 - [ ] Convert README.md to README.txt
 - [ ] Make folder name 6.tar.gz before submission
+- [ ] Modularise entire code base so that the driver function has at max 20 lines of code.
 
 
 #### Description of files
@@ -35,6 +36,14 @@ Group #6, Questions #5.
 
 
 #### Description of structure of program
+
+
+#### Things to keep in mind
+1. https://www.kernel.org/doc/html/v4.10/process/coding-style.html,
+2. https://developer.gnome.org/programming-guidelines/stable/c-coding-style.html.en,
+3. Pre-condition,
+4. Post-condition and a
+5. Loop invariant for every loop.
 
 
 #### Bugs
