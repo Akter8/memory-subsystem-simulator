@@ -1,0 +1,20 @@
+#define OUTPUT_FILE_NAME "outputFile.txt"
+
+#define PAGE_NUM_ADDR_SIZE 22
+#define FRAME_NUM_ADDR_SIZE 16
+
+
+// TLB Configurations.
+#define NUM_ENTRIES_IN_L1_TLB 12
+#define NUM_ENTRIES_IN_L2_TLB 24
+#define ERROR_PAGE_NUM_NOT_FOUND 1
+
+
+// Cache Configurations.
+#define NUM_SETS_IN_L1_CACHE 32
+#define NUM_SETS_IN_L2_CACHE 64
+#define NUM_WAYS_IN_L1_CACHE 4
+#define NUM_WAYS_IN_L2_CACHE 8
+#define MAX_VALUE_IN_8_BITS 255
+#define VALUE_OF_8_BITS_WITH_FIRST_BIT_SET 128
+#define ERROR_WRITE_FAILED -1

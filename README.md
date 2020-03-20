@@ -15,6 +15,9 @@ Group #6, Questions #5.
 * Main Memory with Memory Management: 64MB Main memory with LFU [with aging] as replacement policy. The memory management scheme used is Segmentation + Paging.
 
 
+#### Doubts
+
+
 #### Programming Tasks
 - [ ] TLB
 - [ ] Cache
