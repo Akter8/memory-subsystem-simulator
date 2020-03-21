@@ -1,4 +1,5 @@
 #include <stdbool.h>
+
 #include "dataTypes.h"
 #include "configuration.h"
 
@@ -66,15 +67,15 @@ CacheL2;
 
 // Functions
 // L1 Cache
+// bool dataCache corresponds to whether we are accessing the data or instruction cache of L1.
 void initL1Cache(); // Initialises the cache.
 void printL1Cache(int setIndex, bool dataCache); // Prints the cache in its current state.
 int getLruIndexL1Cache(int setIndex, bool dataCache); // Returns the LRU way index for that set
-void updateLruL1Cache(int setIndex, int wayIndex, bool dataCache);
-// int searchL1Cache(physicalAddr addr, bool dataCache); // returns data if hit else -1, index 0 for inst 1 for data
+void updateLruL1Cache(int setIndex, int wayIndex, bool dataCache); // Updates the LRU.
+int searchL1Cache(int setIndex, int tag, bool dataCache); // returns data if hit, else -1, index 0 for inst 1 for data
 int getFirstInvalidWayL1Cache(int setIndex, bool dataCache); // Returns the first invalid way's index, else -1.
-// int updateL1Cache(physicalAddr addr, int index, bool write);
- 
-int writeL1Cache(int setIndex, bool dataCache);
+int updateL1Cache(int setIndex, int tag, bool write, int data, bool dataCache); // Finds a way in that index of the cache to store the new data.
+int writeL1Cache(int setIndex, int tag, int data, bool dataCache); // Writes data onto that cache entry.
 
 
 // L2 Cache

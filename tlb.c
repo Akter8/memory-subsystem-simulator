@@ -12,7 +12,8 @@ TLBL1 l1TLB;
 TLBL2 l2TLB;
 
 
-
+// To test the functions.
+/*
 int
 main(int argc, char const *argv[])
 {
@@ -55,7 +56,7 @@ main(int argc, char const *argv[])
 	fclose(outputFile);
 	return 0;
 }
-
+*/
 
 // -----------------------------------------------------------------
 // L1-TLB

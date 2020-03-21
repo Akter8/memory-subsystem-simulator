@@ -14,14 +14,58 @@ CacheL2 l2Cache;
 
 
 
+// For testing the functions.
+/*
 int main(int argc, char const *argv[])
 {
 	FILE *outputFile = fopen(OUTPUT_FILE_NAME, "w");
 	fclose(outputFile);
 
-	initL2Cache();
+
+	// L1 test
+	initL1Cache();
 
 	int setIndex, wayIndex;
+	bool dataCache, write;
+
+	setIndex = 3; wayIndex = 4;
+	dataCache = true; write = true;
+
+	printL1Cache(setIndex, dataCache);
+
+	updateL1Cache(setIndex, 100, write, 100, dataCache);
+	updateL1Cache(setIndex, 101, write, 101, dataCache);
+	updateL1Cache(setIndex, 102, write, 102, dataCache);
+	updateL1Cache(setIndex, 103, write, 103, dataCache);
+	updateL1Cache(setIndex, 104, write, 104, dataCache);
+	updateL1Cache(setIndex, 105, write, 105, dataCache);
+	updateL1Cache(setIndex, 106, write, 106, dataCache);
+	updateL1Cache(setIndex, 107, write, 107, dataCache);
+
+	searchL1Cache(setIndex, 100, dataCache);
+	searchL1Cache(setIndex, 107, dataCache);
+
+	printL1Cache(setIndex, dataCache);
+
+	updateL1Cache(setIndex, 108, write, 108, dataCache);
+
+	searchL1Cache(setIndex, 102, dataCache);
+
+	printL1Cache(setIndex, dataCache);
+
+	writeL1Cache(setIndex, 108, 11, true);
+	writeL1Cache(setIndex, 103, 10, true);
+
+	printL1Cache(setIndex, dataCache);
+
+	searchL1Cache(setIndex, 110, dataCache);
+
+	printL1Cache(setIndex, dataCache);
+
+
+	// L2 test.
+
+	initL2Cache();
 	setIndex = 3; wayIndex = 4;
 
 	printL2Cache(setIndex);
@@ -38,6 +82,8 @@ int main(int argc, char const *argv[])
 	searchL2Cache(setIndex, 100);
 	searchL2Cache(setIndex, 101);
 
+	printL2Cache(setIndex);
+
 	updateL2Cache(setIndex, 108, false, 108);
 
 	searchL2Cache(setIndex, 106);
@@ -52,15 +98,20 @@ int main(int argc, char const *argv[])
 	searchL2Cache(setIndex, 110);
 
 	printL2Cache(setIndex);
+
 	
 	return 0;
 }
 
-
+*/
 
 // -----------------------------------------------------------------
 // L1-Cache
 
+/*
+ * bool dataCache argument in the functions of L1 Cache corresponds to whether we are accessing the data or instruction cache in L1 as L1 is a split cache.
+ * This argument is not present in L2 cache functions as L2 is not split.
+ */
 
 /*
  * Initialises all the sets and ways to invalid entries.
@@ -87,7 +138,10 @@ printL1Cache(int setIndex, bool dataCache)
 {
 	FILE *outputFile = fopen(OUTPUT_FILE_NAME, "a");
 	fprintf(outputFile, "-------------------------\n");
-	fprintf(outputFile, "L1-Cache Info\n");
+	if (dataCache)
+		fprintf(outputFile, "L1-Data Cache Info\n");
+	else
+		fprintf(outputFile, "L1-Instr Cache Info\n");
 
 	int index = (dataCache == true) ? 0 : 1;
 
@@ -95,6 +149,19 @@ printL1Cache(int setIndex, bool dataCache)
 	for (int j = 0; j < NUM_WAYS_IN_L1_CACHE; ++j)
 	{
 		fprintf(outputFile, "\tWay number=%d, tag=%d, validInvalidBit=%d, readWriteBit=%d\n", j, l1Cache[index].sets[setIndex].ways[j].tag,l1Cache[index].sets[setIndex].ways[j].validInvalidBit, l1Cache[index].sets[setIndex].ways[j].readWriteBit);
+	}
+
+	if (dataCache)
+		fprintf(outputFile, "L1-Data Cache: LRU Square Matrix for set=%d\n", setIndex);
+	else
+		fprintf(outputFile, "L1-Instr Cache: LRU Square Matrix for set=%d\n", setIndex);
+	for (int i = 0; i < NUM_WAYS_IN_L1_CACHE; ++i)
+	{
+		for (int j = 0; j < NUM_WAYS_IN_L1_CACHE; ++j)
+		{
+			fprintf(outputFile, "%d ", l1Cache[index].sets[setIndex].lruSquareMatrix[i][j]);
+		}
+		fprintf(outputFile, "\n");
 	}
 
 	fclose(outputFile);
@@ -137,8 +204,7 @@ getLruIndexL1Cache(int setIndex, bool dataCache)
 
 
 /*
- *
- *
+ * Updates the LRU count of the given setIndex and wayIndex in the data or instruction cache.
  */
 void 
 updateLruL1Cache(int setIndex, int wayIndex, bool dataCache)
@@ -157,6 +223,177 @@ updateLruL1Cache(int setIndex, int wayIndex, bool dataCache)
 
 
 }
+
+
+/*
+ * Searches for data if its present, else updates and searches again.
+ */
+int
+searchL1Cache(int setIndex, int tag, bool dataCache)
+{
+	int index = (dataCache == true) ? 0 : 1;
+
+	//
+	FILE *outputFile = fopen(OUTPUT_FILE_NAME, "a");
+	if (dataCache)
+		fprintf(outputFile, "\nL1-Data Cache: Seaching for index=%d and tag=%d\n", setIndex, tag);
+	else
+		fprintf(outputFile, "\nL1-Instr Cache: Seaching for index=%d and tag=%d\n", setIndex, tag);
+
+
+	for (int i = 0; i < NUM_WAYS_IN_L1_CACHE; ++i)
+	{
+		if (l1Cache[index].sets[setIndex].ways[i].validInvalidBit && l1Cache[index].sets[setIndex].ways[i].tag == tag)
+		{
+			if (dataCache)
+				fprintf(outputFile, "L1-Data Cache: Found index=%d, tag=%d in way=%d\n", setIndex, tag, i);
+			else
+				fprintf(outputFile, "L1-Instr Cache: Found index=%d, tag=%d in way=%d\n", setIndex, tag, i);
+			fclose(outputFile);
+
+			// Update the LRU count.
+			updateLruL1Cache(setIndex, i, dataCache);
+
+			// Data is 0.
+			return 0;
+		}
+	}
+
+	if (dataCache)
+		fprintf(outputFile, "L1-Data Cache: Did not find index=%d and tag=%d\n", setIndex, tag);
+	else
+		fprintf(outputFile, "L1-Instr Cache: Did not find index=%d and tag=%d\n", setIndex, tag);
+	
+	fclose(outputFile);
+
+	// If data is not found.
+	return -1;
+}
+
+
+/*
+ * Returns the first invalid entry in that set (in both data and instr cache).
+ * If no such entry is found, it returns -1.
+ */
+int
+getFirstInvalidWayL1Cache(int setIndex, bool dataCache)
+{
+	int index = (dataCache == true) ? 0 : 1;
+
+	for (int i = 0; i < NUM_WAYS_IN_L1_CACHE; ++i)
+	{
+		if (l1Cache[index].sets[setIndex].ways[i].validInvalidBit == 0)
+		{
+			return i;
+		}
+	}
+
+	return -1;
+}
+
+
+/*
+ * Finds an empty cache way in that set if possible and stores the new data.
+ * If no empty way is found for that set, then we replace the LRU way.
+ * Follows placement and only then replacement.
+ * Returns the way number it is stored in.
+ */
+int
+updateL1Cache(int setIndex, int tag, bool write, int data, bool dataCache)
+{
+	FILE *outputFile = fopen(OUTPUT_FILE_NAME, "a");
+
+	int index = (dataCache == true) ? 0 : 1;
+
+	int way = getFirstInvalidWayL1Cache(setIndex, dataCache);
+
+	if (way == -1) // Did not find an invalid entry. Replacement required.
+	{
+		way = getLruIndexL1Cache(setIndex, dataCache);
+		if (dataCache)
+			fprintf(outputFile, "L1-Data Cache: Replacement in set=%d, way=%d for tag=%d\n", setIndex, way, tag);
+		else
+			fprintf(outputFile, "L1-Instr Cache: Replacement in set=%d, way=%d for tag=%d\n", setIndex, way, tag);
+	}
+	else
+	{
+		if (dataCache)
+			fprintf(outputFile, "L1-Data Cache: Placement in set=%d, way=%d for tag=%d\n", setIndex, way, tag);
+		else
+			fprintf(outputFile, "L1-Instr Cache: Placement in set=%d, way=%d for tag=%d\n", setIndex, way, tag);
+	}
+
+	fclose(outputFile);
+
+	// Updating the data.
+	// l1Cache[index].sets[setIndex].ways[way].data = data;
+
+	// Initialising the way for this new entry.
+	l1Cache[index].sets[setIndex].ways[way].tag = tag;
+	l1Cache[index].sets[setIndex].ways[way].validInvalidBit = 1;
+	l1Cache[index].sets[setIndex].ways[way].readWriteBit = (write == false) ? 0 : 1;
+
+
+	return way;
+}
+
+
+/*
+ * Writes some data into the cache. 
+ * Returns 1 on success.
+ * Returns negative numbers on failure.
+ */
+int 
+writeL1Cache(int setIndex, int tag, int data, bool dataCache)
+{
+
+	FILE *outputFile = fopen(OUTPUT_FILE_NAME, "a");
+	if (dataCache)
+		fprintf(outputFile, "\nL1-Data Cache: Writing data onto index=%d, tag=%d\n", setIndex, tag);
+	else
+	{
+		fprintf(outputFile, "\nL1-Instr Cache: ERROR. Cannot Write into instruction cache.\n");
+		return ERROR_CANNOT_WRITE_IN_INSTR_CACHE;
+	}
+
+	int index = (dataCache == true) ? 0 : 1;
+
+	for (int i = 0; i < NUM_WAYS_IN_L1_CACHE; ++i)
+	{
+		if (l1Cache[index].sets[setIndex].ways[i].validInvalidBit && l1Cache[index].sets[setIndex].ways[i].tag == tag)
+		{
+			if (l1Cache[index].sets[setIndex].ways[i].readWriteBit == 0)
+			{
+				fprintf(outputFile, "L1-Data Cache: Write FAILED as there is no permission to write in index=%d, tag=%d.\n", setIndex, tag);
+				fclose(outputFile);
+				return ERROR_WRITE_FAILED_NO_PERMISSION;
+			}
+
+			// Writing data.
+			// l1Cache[index].sets[setIndex].ways[i].data = data;
+
+			fprintf(outputFile, "L1-Data Cache: Writing data onto index=%d, tag=%d in way=%d\n", setIndex, tag, i);
+			fclose(outputFile);
+
+			// Updating LRU.
+			updateLruL1Cache(setIndex, i, dataCache);
+
+			// Since L1 is write-through, we need to write to L2 also.
+			writeL2Cache(setIndex, tag, data);
+
+			return 1;
+		}
+	}
+
+	fprintf(outputFile, "L1-Data Cache: Write FAILED as none of the valid block's tag matched.\n");
+
+	fclose(outputFile);
+	return ERROR_WRITE_FAILED_NO_TAG_MATCH;
+
+	// Not calling updateL2Cache() because the L1 cache will only have this data if its there in L2. There is no way one can write without reading. So this last error case should never happen. 
+}
+
+
 
 
 
@@ -274,11 +511,6 @@ searchL2Cache(int index, int tag)
 	fprintf(outputFile, "L2-Cache: Will update the cache and re-search the required data.\n");
 	fclose(outputFile);
 
-	// Updating the cache.
-	updateL2Cache(index, tag, false, 0);
-
-	// Calling search() function to find it now.
-	searchL2Cache(index, tag);
 
 	// If data is not found.
 	return -1;
@@ -312,6 +544,9 @@ writeL2Cache(int index, int tag, int data)
 			// l2Cache.sets[index].ways[i].data = data;
 			fprintf(outputFile, "L2-Cache: Writing data onto index=%d, tag=%d in way=%d\n", index, tag, i);
 			fclose(outputFile);
+
+			// Updating the dirty bit.
+			l2Cache.sets[index].ways[i].dirtyBit = 1;
 
 			// Updating LRU.
 			updateLruL2Cache(index, i);
@@ -364,11 +599,11 @@ updateL2Cache(int index, int tag, bool write, int data)
 	if (way == -1) // Did not find an invalid entry. Replacement required.
 	{
 		way = getLruIndexL2Cache(index);
-		fprintf(outputFile, "L2-Cache: Replacement in set=%d, way=%d\n", index, way);
+		fprintf(outputFile, "L2-Cache: Replacement in set=%d, way=%d for tag=%d\n", index, way, tag);
 	}
 	else
 	{
-		fprintf(outputFile, "L2-Cache: Placement in set=%d, way=%d\n", index, way);
+		fprintf(outputFile, "L2-Cache: Placement in set=%d, way=%d for tag=%d\n", index, way, tag);
 	}
 
 	fclose(outputFile);

@@ -6,6 +6,7 @@
  */
 
 #include "dataTypes.h"
+
 #include "configuration.h"
 
 typedef struct 
