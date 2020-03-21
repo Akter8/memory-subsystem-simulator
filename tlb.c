@@ -114,6 +114,10 @@ TLBL1Search(unsigned int pageNum, unsigned int *error)
 			fprintf(outputFile, "pageNum=%d found in l1TLB at index=%d, frameNum=%d\n", pageNum, i, l1TLB.entries[i].frameNum);
 			fflush(outputFile);
 			fclose(outputFile);
+
+			// Update the LRU counts.
+			TLBL1UpdateLru(i);
+
 			*error = 0;
 			return l1TLB.entries[i].frameNum;
 		}
@@ -133,6 +137,7 @@ TLBL1Search(unsigned int pageNum, unsigned int *error)
  * This function returns the LRU index in L1-TLB.
  * This function does not check if the LRU is valid or not.
  * It also does not check for placement before replacement.
+ * Following the counter implementation of LRU.
  */
 int
 TLBL1GetLruIndex()
@@ -151,6 +156,7 @@ TLBL1GetLruIndex()
  * This function updates the LRU counts in L1-TLB.
  * This function does not care about the validInvalidBit.
  * Returns the number of entries which had a greater LRU count.
+ * Counter implementation of LRU.
  */
 int
 TLBL1UpdateLru(int index)
@@ -167,7 +173,7 @@ TLBL1UpdateLru(int index)
 	 	}
 	}
 
-	l1TLB.entries[index].lruCount = NUM_ENTRIES_IN_L1_TLB;
+	l1TLB.entries[index].lruCount = NUM_ENTRIES_IN_L1_TLB - 1;
 	return count;
 }
 
@@ -228,6 +234,7 @@ TLBL1Update(unsigned int pageNum, unsigned int frameNum)
 
 	fclose(outputFile);
 
+	// Initialising the new entry.
 	l1TLB.entries[index].frameNum = frameNum;
 	l1TLB.entries[index].pageNum = pageNum;
 	l1TLB.entries[index].validInvalidBit = 1;
@@ -291,20 +298,24 @@ TLBL2Search(unsigned int pageNum, unsigned int *error)
 	{
 		if (l2TLB.entries[i].validInvalidBit && pageNum == l2TLB.entries[i].pageNum)
 		{
-			fprintf(outputFile, "pageNum=%d found in l2TLB at index=%d, frameNum=%d\n", pageNum, i, l2TLB.entries[i].frameNum);
+			fprintf(outputFile, "L2-TLB: pageNum=%d found in l2TLB at index=%d, frameNum=%d\n", pageNum, i, l2TLB.entries[i].frameNum);
 			fflush(outputFile);
 			fclose(outputFile);
+
+			// Update the LRU counts.
+			TLBL2UpdateLru(i);
+
 			*error = 0;
 			return l2TLB.entries[i].frameNum;
 		}
 	}
 
-	fprintf(outputFile, "pageNum=%d not found in l2TLB\n", pageNum);
+	fprintf(outputFile, "L2-TLB: pageNum=%d not found in l2TLB\n", pageNum);
 
 	fflush(outputFile);
 	fclose(outputFile);
 
-	*error = PAGE_NUM_NOT_FOUND;
+	*error = ERROR_PAGE_NUM_NOT_FOUND;
 	return 0;
 }
 
@@ -313,6 +324,7 @@ TLBL2Search(unsigned int pageNum, unsigned int *error)
  * This function returns the LRU index in L2-TLB.
  * This function does not check if the LRU is valid or not.
  * It also does not check for placement before replacement.
+ * Counter implementation of LRU.
  */
 int
 TLBL2GetLruIndex()
@@ -332,6 +344,7 @@ TLBL2GetLruIndex()
  * This function updates the LRU counts in L2-TLB.
  * This function does not care about the validInvalidBit.
  * Returns the number of entries which had a greater LRU count.
+ * Counter implementation of LRU.
  */
 int
 TLBL2UpdateLru(int index)
@@ -348,7 +361,7 @@ TLBL2UpdateLru(int index)
 	 	}
 	}
 
-	l2TLB.entries[index].lruCount = NUM_ENTRIES_IN_L2_TLB;
+	l2TLB.entries[index].lruCount = NUM_ENTRIES_IN_L2_TLB - 1;
 	return count;
 }
 
