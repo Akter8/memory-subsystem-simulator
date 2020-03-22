@@ -63,7 +63,7 @@ Group #6, Questions #5.
 
 
 #### Bugs
-
+- [ ] PageTableBaseAddress entry in pcb.h is not required
 
 #### Assumptions
 1. Virtual Memory contains the complete program. Hard disk is big enough to hold all the programs.
