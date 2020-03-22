@@ -18,6 +18,7 @@ Group #6, Questions #5.
 #### Doubts
 * min(t1, t2) or max(t1, t2) in look aside?
 * Size of physical and virtual addresses.
+* Should the user enter number of processes as an input to our program? Or should we be able to handle  any number of processes arriving at any time?
 
 
 #### Programming Tasks
