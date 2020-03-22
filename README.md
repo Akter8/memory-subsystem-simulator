@@ -16,6 +16,8 @@ Group #6, Questions #5.
 
 
 #### Doubts
+* min(t1, t2) or max(t1, t2) in look aside?
+* Size of physical and virtual addresses.
 
 
 #### Programming Tasks
@@ -34,9 +36,12 @@ Group #6, Questions #5.
 
 
 #### Description of files
+* Inputs (folder) - Contains the input files. Every file has an equivalent (Segment_File.txt) which contains the segment table address and whether the memory access is a read or write.
 * dataTypes.h - The data types made and used by use.
 * tlb.h - Contains the ADT of both the TLBs.
+* tlb.c - Contains the implementation of the functions related to both levels of the TLB ADT.
 * cache.h - Contains the ADT of both the levels of cache.
+* cache.c - Contains the implementation of the functions related to both levels of the cache ADT.
 * pcb.h - Contains the ADT of the Process Control Block.
 * frameTable.h - Contains the ADT of the frame table and its entries.
 * pageTable.h - Contains the ADT of the page table and its entries.

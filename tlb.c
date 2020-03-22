@@ -8,6 +8,8 @@
 #include <stdio.h>
 #include "tlb.h"
 
+extern inline void fileNotNull(FILE *file, char *fileName);
+
 TLBL1 l1TLB;
 TLBL2 l2TLB;
 
@@ -69,6 +71,7 @@ TLBL1Flush()
 {
 	for (int i = 0; i < NUM_ENTRIES_IN_L1_TLB; ++i)
 	{
+		// Setting the validInvalid to 0 makes the entry invalid.
 		l1TLB.entries[i].validInvalidBit = 0;
 	}
 
@@ -83,15 +86,16 @@ void
 TLBL1Print()
 {
 	FILE *outputFile = fopen(OUTPUT_FILE_NAME, "a");
+	fileNotNull(outputFile, OUTPUT_FILE_NAME);
 
 	fprintf(outputFile, "-------------------------\n");
 	fprintf(outputFile, "L1-TLB Info\n");
 
-	for (int i = 0; i < NUM_ENTRIES_IN_L1_TLB; ++i)
+	for (int i = 0; i < NUM_ENTRIES_IN_L1_TLB; ++i) // Iterates through every entry in the TLB.
 	{
 		fprintf(outputFile, "Index=%d, validInvalidBit=%d, pageNum=%d, frameNum=%d, lruCount=%d\n", i, l1TLB.entries[i].validInvalidBit, l1TLB.entries[i].pageNum, l1TLB.entries[i].frameNum, l1TLB.entries[i].lruCount);
 	}
-	fflush(outputFile);
+
 	fclose(outputFile);
 
 	return;
@@ -106,10 +110,13 @@ unsigned int
 TLBL1Search(unsigned int pageNum, unsigned int *error)
 {
 	FILE *outputFile = fopen(OUTPUT_FILE_NAME, "a");
+	fileNotNull(outputFile, OUTPUT_FILE_NAME);
+
 	fprintf(outputFile, "\nL1-TLB: Searching for pageNum=%d\n", pageNum);
 
 	for (int i = 0; i < NUM_ENTRIES_IN_L1_TLB; ++i)
 	{
+		// The entry has to be valid and it also has to match the pageNum we are looking for.
 		if (l1TLB.entries[i].validInvalidBit && pageNum == l1TLB.entries[i].pageNum)
 		{
 			fprintf(outputFile, "pageNum=%d found in l1TLB at index=%d, frameNum=%d\n", pageNum, i, l1TLB.entries[i].frameNum);
@@ -125,8 +132,6 @@ TLBL1Search(unsigned int pageNum, unsigned int *error)
 	}
 
 	fprintf(outputFile, "pageNum=%d not found in l1TLB\n", pageNum);
-
-	fflush(outputFile);
 	fclose(outputFile);
 
 	*error = ERROR_PAGE_NUM_NOT_FOUND;
@@ -145,6 +150,7 @@ TLBL1GetLruIndex()
 {
 	for (int i = 0; i < NUM_ENTRIES_IN_L1_TLB; ++i)
 	{
+		// Counter implementation of LRU makes the LRU have a count of 0.
 		if (l1TLB.entries[i].lruCount == 0)
 		{
 			return i;
@@ -167,6 +173,7 @@ TLBL1UpdateLru(int index)
 
 	for (int i = 0; i < NUM_ENTRIES_IN_L1_TLB; ++i)
 	{
+		// Counter implementation of LRU requires all LRU counts greater than the one being accessed now to be decremented.
 	 	if (l1TLB.entries[i].lruCount > currentCount)
 	 	{
 	 		l1TLB.entries[i].lruCount--;
@@ -218,8 +225,10 @@ TLBL1Update(unsigned int pageNum, unsigned int frameNum)
 	End */
 
 	FILE *outputFile = fopen(OUTPUT_FILE_NAME, "a");
+	fileNotNull(outputFile, OUTPUT_FILE_NAME);
 
 
+	// Finding the first invalid entry in the TLB for placement.
 	int index = TLBL1GetFirstInvalidEntry();
 
 	// Finding the LRU index if no invalid entries.
@@ -228,7 +237,7 @@ TLBL1Update(unsigned int pageNum, unsigned int frameNum)
 		index = TLBL1GetLruIndex();
 		fprintf(outputFile, "L1-TLB: Replacement in index=%d\n", index);
 	}
-	else
+	else // Placement.
 	{
 		fprintf(outputFile, "L1-TLB: Placement in index=%d\n", index);
 	}
@@ -271,6 +280,7 @@ void
 TLBL2Print()
 {
 	FILE *outputFile = fopen(OUTPUT_FILE_NAME, "a");
+	fileNotNull(outputFile, OUTPUT_FILE_NAME);
 
 	fprintf(outputFile, "-------------------------\n");
 	fprintf(outputFile, "L2-TLB Info\n");
@@ -293,6 +303,7 @@ unsigned int
 TLBL2Search(unsigned int pageNum, unsigned int *error)
 {
 	FILE *outputFile = fopen(OUTPUT_FILE_NAME, "a");
+	fileNotNull(outputFile, OUTPUT_FILE_NAME);
 	fprintf(outputFile, "\nL2-TLB: Searching for pageNum=%d\n", pageNum);
 
 	for (int i = 0; i < NUM_ENTRIES_IN_L2_TLB; ++i)
@@ -355,6 +366,7 @@ TLBL2UpdateLru(int index)
 
 	for (int i = 0; i < NUM_ENTRIES_IN_L2_TLB; ++i)
 	{
+		// Decrement LRU values of those ones which have a greater count than the current one. 
 	 	if (l2TLB.entries[i].lruCount > currentCount)
 	 	{
 	 		l2TLB.entries[i].lruCount--;
@@ -407,8 +419,9 @@ TLBL2Update(unsigned int pageNum, unsigned int frameNum)
 	End */
 
 	FILE *outputFile = fopen(OUTPUT_FILE_NAME, "a");
+	fileNotNull(outputFile, OUTPUT_FILE_NAME);
 
-
+	// Finding the first invalid entry to see if placement is possible.
 	int index = TLBL2GetFirstInvalidEntry();
 
 	// Finding the LRU index if no invalid entries.
