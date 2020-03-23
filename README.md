@@ -64,6 +64,7 @@ Group #6, Questions #5.
 
 #### Bugs
 - [ ] PageTableBaseAddress entry in pcb.h is not required
+- [ ] In SegmentTable.h limit is 26 bits. It should be 32 bits. Change to be made and related code, dependent on it, to be fixed.
 
 #### Assumptions
 1. Virtual Memory contains the complete program. Hard disk is big enough to hold all the programs.
