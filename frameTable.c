@@ -1,8 +1,8 @@
-#include "dataTypes.h"
-#include "frameTable.h"
-#include "pageTable.h"
 #include<stdio.h>
-#define NUM_NON_REPLACABLE_FRAMES 10
+#include "dataTypes.h"
+#include "pageTable.h"
+#include "frameTable.h"
+
 extern FrameTable frameTable;
 
 int findEmptyFrame()
@@ -64,7 +64,7 @@ int frameAgeing()
 	}
 	return 1;
 }
-int allocateFrame(int pid,int segNo,int pageNum,int level)
+int allocateFrame(int pid, pageTable pT,int pageNum,int level)
 {
 	int frameNo = findEmptyFrame();
 
@@ -77,6 +77,7 @@ int allocateFrame(int pid,int segNo,int pageNum,int level)
 		frameTable.entries[frameNo].dirtyBit=0;
 		frameTable.entries[frameNo].emptyBit=1; 
 		frameTable.entries[frameNo].considerInLfu=1;
+		frameTable.entries[frameNo].level = level + 1;			//Confirm once if this is correct
 	}
 	else
 	{
@@ -89,7 +90,9 @@ int allocateFrame(int pid,int segNo,int pageNum,int level)
 			//func to swap page out
 		}
 
-		updatePageTablePresentBit(frameTable.entries[frameNo].pid,frameTable.entries[frameNo].segNo,frameTable.entries[frameNo].pageNum.value,0,1);
+		//
+		pageTable pT2 = getPageTableFromPid(frameTable.entries[frameNo].pid,frameTable.entries[frameNo].segNum,frameTable.entries[frameNo].level);
+		updatePageTablePresentBit(pT2,frameTable.entries[frameNo].pageNum.value,0);
 
 		//allocate the frame
 		printf("\nFrame allocated:%d(replacement)",frameNo);
@@ -100,9 +103,10 @@ int allocateFrame(int pid,int segNo,int pageNum,int level)
 		frameTable.entries[frameNo].dirtyBit=0;
 		frameTable.entries[frameNo].emptyBit=1; 
 		frameTable.entries[frameNo].considerInLfu=1;
+		frameTable.entries[frameNo].level = level + 1;		//Here too
 
 		//update page table
-		updatePageTablePresentBit(pid,segNo,pageNum,1,level);
+		updatePageTablePresentBit(pT,pageNum,1);
 
 	}
 }

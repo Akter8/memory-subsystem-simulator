@@ -13,9 +13,9 @@
 
 /// 3 level paging required since linear address size is 32 bits and frame size is 1KB(so 13 bit offset) and each page table entry need 32 bits
 
-	extern pageTable level1PageTable;
-	extern pageTable level2PageTable;
-	extern pageTable level3PageTable;
+// extern pageTable level1PageTable;
+// extern pageTable level2PageTable;
+// extern pageTable level3PageTable;
 
 // frameOfPageTable level1PageTableFrames[NUMBER_OF_PAGES_IN_LEVEL_3_PAGE_TABLE];
 // frameOfPageTable level2PageTableFrames[NUMBER_OF_PAGES_IN_LEVEL_2_PAGE_TABLE];
@@ -26,7 +26,7 @@
 // level3PageTable.frames = level3PageTableFrames;
 
 
-int initPageTable(){
+int initPageTable(pageTable level3PageTable,pageTable level2PageTable, pageTable level1PageTable){
 	int i,j;
 	for(i = 0; i < NUMBER_OF_PAGES_IN_LEVEL_1_PAGE_TABLE; i++){
 		for(j = 0; j < NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE; j++){
@@ -53,10 +53,14 @@ int initPageTable(){
 	return 0;
 }
 
-// linear address size is 32 bits out of which 13 bits will be used for offset. So we will index page table using 19 bits
+// linear address size is 32 bits out of which 10 bits will be used for offset. So we will index page table using 22 bits
 
-// This function returns frame number for a given linear address or -1 if page fault occurs. Also updates LFU count in frame table
-int searchPageTable(unsigned int linearAddr, unsigned int* pageFaultPageNumber,unsigned int *level){
+/* 
+This function returns frame number for a given linear address.
+Returns -1 and the level and frame number for which page fault occured if unsucessful. 
+Also updates LFU count in frame table
+*/
+int searchPageTable(pageTable level3PageTable,pageTable level2PageTable, pageTable level1PageTable,unsigned int linearAddr, unsigned int* pageFaultPageNumber,unsigned int *level){
 	// Last 3 bits used for indexing level 3
 
 	unsigned int level3Index = linearAddr >> 16;
@@ -76,7 +80,7 @@ int searchPageTable(unsigned int linearAddr, unsigned int* pageFaultPageNumber,u
 	}
 	else{
 		printf("Page fault in level 2 page table\n");	
-		*level=2;	//Fetch page of level 2 page table??
+		*level=2;	
 		*pageFaultPageNumber = level3PageTable.frames[0].entries[level3Index].frameNumber;
 		return -1;
 	}
@@ -108,6 +112,7 @@ int searchPageTable(unsigned int linearAddr, unsigned int* pageFaultPageNumber,u
 	}
 	else{
 		printf("Page fault in process\n");
+		*level = 0;
 		*pageFaultPageNumber = level1PageTable.frames[frameNumberOfLevel1PageTable].entries[level1Index].frameNumber;
 		return -1;
 	}
@@ -121,8 +126,8 @@ int searchPageTable(unsigned int linearAddr, unsigned int* pageFaultPageNumber,u
 /*
 Sets or resets modified bit of a page table entry
 */
-int updatePageTableModifiedBit(int pid,int segNo,unsigned int index, int value, int level){
-	if(level == 3){
+int updatePageTableModifiedBit(pageTable pT,unsigned int index, int value){
+	/* if(level == 3){
 		level3PageTable.frames[0].entries[index].modified = value;
 		return 0;
 	}
@@ -137,14 +142,19 @@ int updatePageTableModifiedBit(int pid,int segNo,unsigned int index, int value, 
 		unsigned int entryNumber = index % NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE;
 		level1PageTable.frames[pageNumber].entries[entryNumber].modified = value;
 		return 0;
-	}
+	} */
+
+	unsigned int pageNumber = index / NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE;
+	unsigned int entryNumber = index % NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE;
+	pT.frames[pageNumber].entries[entryNumber].modified = value;
+	return 0;
 }
 
 /* 
 Sets or resets present bit of a page table entry
 */
-int updatePageTablePresentBit(int index, int value, int level){
-	if(level == 3){
+int updatePageTablePresentBit(pageTable pT, unsigned int index, int value){
+	/* if(level == 3){
 		level3PageTable.frames[0].entries[index].present = value;
 		return 0;
 	}
@@ -159,12 +169,16 @@ int updatePageTablePresentBit(int index, int value, int level){
 		unsigned int entryNumber = index % NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE;
 		level1PageTable.frames[pageNumber].entries[entryNumber].present = value;
 		return 0;
-	}
+	} */
+	unsigned int pageNumber = index / NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE;
+	unsigned int entryNumber = index % NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE;
+	pT.frames[pageNumber].entries[entryNumber].present = value;
+	return 0;	
 }
 
 
 // Deletes page table and deallocates frames being used by it
-int deallocateProcessPages(){
+int deallocateProcessPages(pageTable level3PageTable, pageTable level2PageTable, pageTable level1PageTable){
 	// Mark the frames of the page table as empty in the frame table
 	int i,j;
 	for(i = 0; i < NUMBER_OF_PAGES_IN_LEVEL_1_PAGE_TABLE; i++){
@@ -197,4 +211,10 @@ int deallocateProcessPages(){
 	return 0;
 
 }
+
+
+pageTable getPageTableFromPid(unsigned int pid,unsigned int segNum,unsigned int level){
+
+}
+
 

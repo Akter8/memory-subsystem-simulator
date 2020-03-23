@@ -2,9 +2,9 @@
 // #include "dataTypes.h"
 #include "configuration.h"
 #define NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE 256
-#define NUMBER_OF_PAGES_IN_LEVEL_3_PAGE_TABLE 256
-#define NUMBER_OF_PAGES_IN_LEVEL_2_PAGE_TABLE 256
-#define NUMBER_OF_PAGES_IN_LEVEL_1_PAGE_TABLE 256
+#define NUMBER_OF_PAGES_IN_LEVEL_3_PAGE_TABLE 2048
+#define NUMBER_OF_PAGES_IN_LEVEL_2_PAGE_TABLE 8
+#define NUMBER_OF_PAGES_IN_LEVEL_1_PAGE_TABLE 1
 typedef struct
 {
 	unsigned int frameNumber : 16;	// There are 2**16 frames present
@@ -26,9 +26,10 @@ typedef struct
 	frameOfPageTable *frames;
 }pageTable;
 
-int initPageTable();
-int searchPageTable(unsigned int linearAddr, unsigned int* pageFaultPageNumber);
-int updatePageTableModifiedBit(unsigned int index, int value, int level);
-int updatePageTablePresentBit(int index, int value, int level);
-int deallocateProcessPages(); //To be used when process terminates
+int initPageTable(pageTable level3PageTable,pageTable level2PageTable, pageTable level1PageTable);
+int searchPageTable(pageTable level3PageTable,pageTable level2PageTable, pageTable level1PageTable,unsigned int linearAddr, unsigned int* pageFaultPageNumber,unsigned int *level);
+int updatePageTableModifiedBit(pageTable pT,unsigned int index, int value);
+int updatePageTablePresentBit(pageTable pT, unsigned int index, int value);
+int deallocateProcessPages(pageTable level3PageTable,pageTable level2PageTable, pageTable level1PageTable); //To be used when process terminates
+pageTable getPageTableFromPid(unsigned int pid,unsigned int segNum,unsigned int level);
 
