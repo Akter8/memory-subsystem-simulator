@@ -10,11 +10,12 @@ typdef struct
 	int26 LDTBaseAddress;
 	int26 PageTableBaseAddress;
 	int state;
-	FILE *inputFile;
+	FILE *LinearAddrInputFile;
+	FILE *SegNumAddrFile;
 }
 PCB;
 
-int getState(int index);
-int setState(int index, int state);
-int26 getPageTableBaseAddress(int index);
-int26 getLDTBaseAddress(int index);
+int getState(PCB pcbObj);
+int setState(PCB pcbObj, int state);
+int26 getPageTableBaseAddress(PCB pcbObj);
+int26 getLDTBaseAddress(PCB pcbObj);
