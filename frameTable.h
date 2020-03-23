@@ -4,7 +4,8 @@
 
 typdef struct
 {
-	int26 pageNum;
+	int22 pageNum;
+	int4 segNum;
 	int pid;
 	int16 LfuCount;
 	unsigned int dirtyBit: 1;
