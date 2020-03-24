@@ -63,7 +63,9 @@ Also updates LFU count in frame table
 int searchPageTable(pageTable level3PageTable,pageTable level2PageTable, pageTable level1PageTable,unsigned int linearAddr, unsigned int* pageFaultPageNumber,unsigned int *level){
 	// Last 3 bits used for indexing level 3
 
-	unsigned int level3Index = linearAddr >> 16;
+	unsigned int level3Index = linearAddr >> 26;
+
+	printf("linear addr:%x\tindex3:%x\n",linearAddr,level3Index);
 	
 	if (level3Index > 64)
 	{

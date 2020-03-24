@@ -7,7 +7,7 @@ FrameTable frameTable;
 
 int main()
 {
-	int addr[100],n=100,i;
+	int addr[100],n=30,i;
 	pageTable level1PageTable;
 	pageTable level2PageTable;
 	pageTable level3PageTable;
@@ -23,7 +23,7 @@ int main()
 
 	for(i=0;i<n;i++)
 	{
-		scanf("%d",&addr[i]);
+		scanf("%x",&addr[i]);
 	}
 
 	initFrameTable();
