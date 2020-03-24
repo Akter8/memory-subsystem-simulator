@@ -12,6 +12,7 @@ typedef struct
 	unsigned int present : 1;
 	unsigned int cachingDisabled : 1;
 	unsigned int readWrite : 1;
+	frameOfPageTable* frameOfNextLevel;
 }pageTableEntry;
 
 typedef struct
