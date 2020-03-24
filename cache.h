@@ -1,9 +1,10 @@
 #include <stdbool.h>
 
-#include "dataTypes.h"
 #include "configuration.h"
 
-
+// Since L1 cache is a split cache, we need to make two parts of L1.
+// Instead of having a cache of 8K split into data and instr parts,
+// we have created two instances of a cache of 4K size.
 typedef struct 
 {
 	/*
@@ -11,9 +12,21 @@ typedef struct
 		int data[32]; 
 	*/
 
+	/* 4KB with 32B block and 29b linear address size will give us
+	 * 19 bits for tag,
+	 * 5 bits for set index,
+	 * 5 bits for offset.
+	 */
+
+	// Though the linear address is 26b, we have added 3b for future updgradation.
+
+	// Two instances of the 4KB cache will give us a total size of 8KB.
+
 	unsigned int tag: 16;
 	unsigned int validInvalidBit: 1;
 	unsigned int readWriteBit: 1;
+
+	// No modified/dirty bit as this cache follows write-through.
 }
 DataBlockEntryL1;	
 
@@ -41,6 +54,14 @@ typedef struct
 		data field - 64 bytes
 		int data[64]; 
 	*/
+
+	/* 32KB with 64B block size and 29b linear address will give us
+	 * 17 bits for tag,
+	 * 6 bits for set index,
+	 * 6 bits for offset.
+	 */
+
+	// Though the linear address is 26b, we have added 3b for future updgradation.
 
 	unsigned int tag: 14;
 	unsigned int validInvalidBit: 1;
@@ -75,7 +96,7 @@ void updateLruL1Cache(int setIndex, int wayIndex, bool dataCache); // Updates th
 int searchL1Cache(int setIndex, int tag, bool dataCache); // returns data if hit, else -1, index 0 for inst 1 for data
 int getFirstInvalidWayL1Cache(int setIndex, bool dataCache); // Returns the first invalid way's index, else -1.
 int updateL1Cache(int setIndex, int tag, bool write, int data, bool dataCache); // Finds a way in that index of the cache to store the new data.
-int writeL1Cache(int setIndex, int tag, int data, bool dataCache); // Writes data onto that cache entry.
+int writeL1Cache(int setIndex, int tag, int data, int l2CacheIndex, int l2CacheTag, bool dataCache); // Writes data onto that cache entry.
 
 
 // L2 Cache

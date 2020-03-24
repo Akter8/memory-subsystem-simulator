@@ -29,6 +29,10 @@ Group #6, Questions #5.
 
 
 #### Tasks
+- [ ] Add MM in the driver function (in TLB).
+- [ ] Add MM in the driver function (in cache read and write).
+- [X] Update the interface of writeL1Cache so that it takes the index and tag of L2 also. (to write-through)
+- [ ] L2 cache should write back to MM if the new block being replaced has dirty bit set.
 - [ ] Create a Makefile.
 - [ ] Complete the README.
 - [ ] Convert README.md to README.txt

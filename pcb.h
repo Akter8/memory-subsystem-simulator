@@ -12,6 +12,7 @@ typdef struct
 	int state;
 	FILE *LinearAddrInputFile;
 	FILE *SegNumAddrFile;
+	long long int runTime;
 }
 PCB;
 

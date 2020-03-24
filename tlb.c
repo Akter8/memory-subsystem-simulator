@@ -8,10 +8,10 @@
 #include <stdio.h>
 #include "tlb.h"
 
-extern inline void fileNotNull(FILE *file, char *fileName);
+extern void fileNotNull(FILE *file, char *fileName);
 
-TLBL1 l1TLB;
-TLBL2 l2TLB;
+extern TLBL1 l1TLB;
+extern TLBL2 l2TLB;
 
 
 // To test the functions.
@@ -106,8 +106,8 @@ TLBL1Print()
 /*
  * For a given pageNum, it returns the frame number if a valid record for that pageNum exists.
  */
-unsigned int 
-TLBL1Search(unsigned int pageNum, unsigned int *error)
+int 
+TLBL1Search(unsigned int pageNum)
 {
 	FILE *outputFile = fopen(OUTPUT_FILE_NAME, "a");
 	fileNotNull(outputFile, OUTPUT_FILE_NAME);
@@ -134,8 +134,7 @@ TLBL1Search(unsigned int pageNum, unsigned int *error)
 	fprintf(outputFile, "pageNum=%d not found in l1TLB\n", pageNum);
 	fclose(outputFile);
 
-	*error = ERROR_PAGE_NUM_NOT_FOUND;
-	return 0;
+	return ERROR_PAGE_NUM_NOT_FOUND;
 }
 
 
@@ -300,7 +299,7 @@ TLBL2Print()
  * For a given pageNum, it returns the frame number if a valid record for that pageNum exists.
  */
 unsigned int 
-TLBL2Search(unsigned int pageNum, unsigned int *error)
+TLBL2Search(unsigned int pageNum)
 {
 	FILE *outputFile = fopen(OUTPUT_FILE_NAME, "a");
 	fileNotNull(outputFile, OUTPUT_FILE_NAME);
@@ -317,7 +316,6 @@ TLBL2Search(unsigned int pageNum, unsigned int *error)
 			// Update the LRU counts.
 			TLBL2UpdateLru(i);
 
-			*error = 0;
 			return l2TLB.entries[i].frameNum;
 		}
 	}
@@ -327,8 +325,7 @@ TLBL2Search(unsigned int pageNum, unsigned int *error)
 	fflush(outputFile);
 	fclose(outputFile);
 
-	*error = ERROR_PAGE_NUM_NOT_FOUND;
-	return 0;
+	return ERROR_PAGE_NUM_NOT_FOUND;
 }
 
 

@@ -8,11 +8,11 @@
 #include <stdio.h>
 #include "cache.h"
 
-extern inline void fileNotNull(FILE *file, char *fileName);
+extern void fileNotNull(FILE *file, char *fileName);
 
 // L1 Cache is split into two-- data and instruction.
-CacheL1 l1Cache[2]; 
-CacheL2 l2Cache;
+extern CacheL1 l1Cache[2]; 
+extern CacheL2 l2Cache;
 
 
 
@@ -239,7 +239,7 @@ updateLruL1Cache(int setIndex, int wayIndex, bool dataCache)
 
 
 /*
- * Searches for data if its present, else updates and searches again.
+ * Searches for data if its present returns the data, else returns -1.
  */
 int
 searchL1Cache(int setIndex, int tag, bool dataCache)
@@ -363,7 +363,7 @@ updateL1Cache(int setIndex, int tag, bool write, int data, bool dataCache)
  * Returns negative numbers on failure.
  */
 int 
-writeL1Cache(int setIndex, int tag, int data, bool dataCache)
+writeL1Cache(int setIndex, int tag, int data, int l2CacheIndex, int l2CacheTag, bool dataCache)
 {
 
 	FILE *outputFile = fopen(OUTPUT_FILE_NAME, "a");
@@ -403,7 +403,7 @@ writeL1Cache(int setIndex, int tag, int data, bool dataCache)
 			updateLruL1Cache(setIndex, i, dataCache);
 
 			// Since L1 is write-through, we need to write to L2 also.
-			writeL2Cache(setIndex, tag, data);
+			writeL2Cache(l2CacheIndex, l2CacheTag, data);
 
 			return 1;
 		}
@@ -633,6 +633,9 @@ updateL2Cache(int index, int tag, bool write, int data)
 	{
 		way = getLruIndexL2Cache(index);
 		fprintf(outputFile, "L2-Cache: Replacement in set=%d, way=%d for tag=%d\n", index, way, tag);
+
+		//---------------------------------------------
+		// Check if the new way is modified or not. If it is, then write into MM.
 	}
 	else
 	{

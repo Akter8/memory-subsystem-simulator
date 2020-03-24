@@ -1,0 +1,40 @@
+-------------------------
+L1-TLB Info
+Index=0, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=1, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=2, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=3, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=4, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=5, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=6, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=7, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=8, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=9, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=10, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=11, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+-------------------------
+L2-TLB Info
+Index=0, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=1, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=2, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=3, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=4, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=5, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=6, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=7, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=8, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=9, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=10, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=11, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=12, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=13, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=14, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=15, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=16, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=17, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=18, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=19, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=20, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=21, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=22, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0
+Index=23, validInvalidBit=0, pageNum=0, frameNum=0, lruCount=0

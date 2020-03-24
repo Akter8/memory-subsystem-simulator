@@ -47,7 +47,7 @@ TLBL2;
 // L1
 void TLBL1Flush(); // Invalidates all entries.
 void TLBL1Print(); // Prints the current state of the TLB.
-unsigned int TLBL1Search(unsigned int pageNum, unsigned int *error); // Second parameter for error.
+int TLBL1Search(unsigned int pageNum); // Second parameter for error.
 int TLBL1Update(unsigned int pageNum, unsigned int frameNum); // Returns the index where the new entry was put.
 int TLBL1UpdateLru(int index); // Mimics the entry of index being used and hence updates the LRU.
 int TLBL1GetLruIndex(); // Returns the index of the entry in the array.
@@ -57,7 +57,7 @@ int TLBL1GetFirstInvalidEntry(); // Returns the first invalid entry in the TLB.
 // L2
 void TLBL2Flush(); // Invalidates all entries.
 void TLBL2Print(); // Prints the current state of the TLB.
-unsigned int TLBL2Search(unsigned int pageNum, unsigned int *error); // Second paramenter for error.
+int TLBL2Search(unsigned int pageNum); // Second paramenter for error.
 int TLBL2Update (unsigned int pageNum, unsigned int frameNum); // Returns the index where the new entry was put.
 int TLBL2UpdateLru(int index); // Mimics the entry of index being used and hence updates the LRU.
 int TLBL2GetLruIndex(); // Returns the index of the entry in the array.

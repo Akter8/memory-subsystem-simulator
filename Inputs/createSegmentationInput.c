@@ -14,6 +14,8 @@
 #define PERCENT_OF_READS 80
 #define READ 0
 #define WRITE 1
+
+#define NUM_INPUT_FILES 5
  
 
 /*
@@ -37,13 +39,12 @@ int main(int argc, char const *argv[])
 
 	srand(time(NULL));
 
-	char *inputFileName[5] = {"APSI.txt", "LI.txt", "CC1.txt", "M88KSIM.txt", "VORTEX.txt"};
+	// All the file names.
+	char *inputFileName[NUM_INPUT_FILES] = {"APSI.txt", "LI.txt", "CC1.txt", "M88KSIM.txt", "VORTEX.txt"};
 
-	for (int i = 0; i < 5; ++i)
+	for (int i = 0; i < NUM_INPUT_FILES; ++i) // One file at a time.
 	{
-
 		char *inputFilePointer = inputFileName[i];
-
 		char outputFileName[100];
 
 		strcpy(outputFileName, "Segment_");
@@ -58,17 +59,18 @@ int main(int argc, char const *argv[])
 
 		while( fscanf(inputFile, "%c%x ", &inputChar, &inputInt) >= 1 )
 		{
+			// Finding if the memory access was a read or write.
 			readOrWrite = findReadOrWriteMemoryAccess();
 			readWrite = 'r';
 			if (readOrWrite == WRITE)
 				readWrite = 'w';
 
+			// Writing into the file.
 			if (inputChar == '7')
-	   			fprintf(outputFile, "1000 %c\n", readWrite);
+	   			fprintf(outputFile, "1000 %c\n", 'r'); // Since the inputs starting from 7 are part of the code segment which is read only, we hard code only reads to these memory accesses.
 	   		else
 	   			fprintf(outputFile, "0000 %c\n", readWrite);
 		}
-
 
 		fclose(inputFile);
 		fclose(outputFile);

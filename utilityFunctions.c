@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+/*
+ * Finds an error in the opened file if any.
+ */
 void fileNotNull(FILE *file, char *fileName)
 {
 	if (file == NULL)
