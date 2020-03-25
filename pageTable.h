@@ -12,7 +12,7 @@ typedef struct
 	unsigned int present : 1;
 	unsigned int cachingDisabled : 1;
 	unsigned int readWrite : 1;
-	frameOfPageTable* frameOfNextLevel;
+	void* frameOfNextLevel;			//void* to avoid compilation error
 }pageTableEntry;
 
 typedef struct
@@ -21,11 +21,13 @@ typedef struct
 }frameOfPageTable;
 
 
-typedef struct
+struct pageTable
 {
 	// Indexed by page number
 	frameOfPageTable *frames;
-}pageTable;
+	struct pageTable* nextLevelPageTablePointer;
+};
+typedef struct pageTable pageTable;
 
 int initPageTable(pageTable level3PageTable,pageTable level2PageTable, pageTable level1PageTable);
 int searchPageTable(pageTable level3PageTable,pageTable level2PageTable, pageTable level1PageTable,unsigned int linearAddr, unsigned int* pageFaultPageNumber,unsigned int *level);

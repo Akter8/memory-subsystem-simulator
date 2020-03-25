@@ -9,22 +9,12 @@
 #include "dataTypes.h"
 #include "pageTable.h"
 #include "frameTable.h"
+#include "pcb.h"
 #include "configuration.h"
 
 /// 3 level paging required since linear address size is 32 bits and frame size is 1KB(so 13 bit offset) and each page table entry need 32 bits
 
-// extern pageTable level1PageTable;
-// extern pageTable level2PageTable;
-// extern pageTable level3PageTable;
-
-// frameOfPageTable level1PageTableFrames[NUMBER_OF_PAGES_IN_LEVEL_3_PAGE_TABLE];
-// frameOfPageTable level2PageTableFrames[NUMBER_OF_PAGES_IN_LEVEL_2_PAGE_TABLE];
-// frameOfPageTable level3PageTableFrames[NUMBER_OF_PAGES_IN_LEVEL_1_PAGE_TABLE];
-
-// level1PageTable.frames = level1PageTableFrames;
-// level2PageTable.frames = level2PageTableFrames;
-// level3PageTable.frames = level3PageTableFrames;
-
+extern PCB pcbArr[1];		//testing with only one process right now
 
 int initPageTable(pageTable level3PageTable,pageTable level2PageTable, pageTable level1PageTable){
 	int i,j;
@@ -50,6 +40,9 @@ int initPageTable(pageTable level3PageTable,pageTable level2PageTable, pageTable
 			level3PageTable.frames[i].entries[j].cachingDisabled = 1;	
 		}
 	}
+	level3PageTable.nextLevelPageTablePointer = &level2PageTable;
+	level2PageTable.nextLevelPageTablePointer = &level1PageTable;
+	level1PageTable.nextLevelPageTablePointer = NULL;
 	return 0;
 }
 
@@ -61,7 +54,7 @@ Returns -1 and the level and frame number for which page fault occured if unsuce
 Also updates LFU count in frame table
 */
 int searchPageTable(pageTable level3PageTable,pageTable level2PageTable, pageTable level1PageTable,unsigned int linearAddr, unsigned int* pageFaultPageNumber,unsigned int *level){
-	// Last 3 bits used for indexing level 3
+	// First 6 bits from left used for indexing level 3
 
 	unsigned int level3Index = linearAddr >> 26;
 
@@ -214,9 +207,33 @@ int deallocateProcessPages(pageTable level3PageTable, pageTable level2PageTable,
 
 }
 
+pageTable* getPointertoNextLevelPageTable(pageTable* pTPointer){
+	return pTPointer->nextLevelPageTablePointer;		
+}
+
 
 pageTable getPageTableFromPid(unsigned int pid,unsigned int segNum,unsigned int level){
+	// Access the PCB of the process and use pointers to get access to req page table
 
+	//Get PCB
+	PCB pcb = pcbArr[pid-1];
+	//
+
+	pageTable* pT3Pointer = getLevel3PageTablePointer(pcb);
+	pageTable* pT2Pointer;
+	pageTable* pT1Pointer;
+	if(level == 3){
+		return *pT3Pointer;
+	}
+	else if(level == 2){
+		pT2Pointer = getPointertoNextLevelPageTable(pT3Pointer);
+		return *pT2Pointer;
+	}
+	else if(level == 1){
+		pT2Pointer = getPointertoNextLevelPageTable(pT3Pointer);
+		pT1Pointer = getPointertoNextLevelPageTable(pT2Pointer);
+		return *pT1Pointer;
+	}
 }
 
 

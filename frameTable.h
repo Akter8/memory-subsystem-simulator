@@ -24,7 +24,8 @@ typedef struct
 }
 FrameTable;
 
-int findEmptyFrame();
+int getReplacableEmptyFrame();
+int getNonReplaceableFrame();
 int getLfuFrameNum();
 short unsigned getDirtyBitFrameTable(int index);
 short unsigned setDirtyBitFrameTable(int index, int value);
@@ -35,3 +36,4 @@ int invalidateFrame(int frameNo);
 int initFrameTable();
 int frameAgeing();
 int updateLfuCount(int frameNo);
+

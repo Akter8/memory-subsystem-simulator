@@ -1,21 +1,22 @@
-#include "dataTypes.h"
+// #include "dataTypes.h"
 
 #define RUNNING 0
 #define READY 1
 #define WAIT 2
 #define TERMINATED 3
 
-typdef struct
+typedef struct
 {
-	int26 LDTBaseAddress;
-	int26 PageTableBaseAddress;
+	// int26 LDTBaseAddress;
+	// int26 PageTableBaseAddress;
+	pageTable* level3PageTablePointer;
 	int state;
-	FILE *LinearAddrInputFile;
-	FILE *SegNumAddrFile;
-}
-PCB;
+	// FILE *LinearAddrInputFile;
+	// FILE *SegNumAddrFile;
+}PCB;
 
+int initPCB(PCB pcbObj, pageTable* level3PageTablePointer);
 int getState(PCB pcbObj);
 int setState(PCB pcbObj, int state);
-int26 getPageTableBaseAddress(PCB pcbObj);
+pageTable* getLevel3PageTablePointer(PCB pcbObj);
 int26 getLDTBaseAddress(PCB pcbObj);

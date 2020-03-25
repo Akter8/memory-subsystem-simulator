@@ -2,11 +2,16 @@
 #include "dataTypes.h"
 #include "pageTable.h"
 #include "frameTable.h"
+#include "pcb.h"
 #include "configuration.h"
+
 FrameTable frameTable;
+
+PCB pcbArr[1];
 
 int main()
 {
+	printf("Starting execution of simulator\n");
 	int addr[100],n=30,i;
 	pageTable level1PageTable;
 	pageTable level2PageTable;
@@ -20,6 +25,8 @@ int main()
 	level2PageTable.frames = level2PageTableFrames;
 	level3PageTable.frames = level3PageTableFrames;
 
+	printf("Page table objects declared and frames alloted to them\n");
+
 
 	for(i=0;i<n;i++)
 	{
@@ -29,12 +36,17 @@ int main()
 	initFrameTable();
 	
 	initPageTable(level3PageTable,level2PageTable,level1PageTable);
-	allocateFrame(1,level1PageTable,0,1);
-	allocateFrame(1,level1PageTable,1,1);	//need to enter in page tables too
+
+	initPCB(pcbArr[0],&level3PageTable);
+
+	// Set up done. Start simulation
+	// allocateFrame(1,level1PageTable,0,1);
+	// allocateFrame(1,level1PageTable,1,1);	//need to enter in page tables too
 	//allocateFrame(1,1);
 
 
-	for(i=0;i<n;i++)
+	i = 0;
+	while(i < n)
 	{
 		int pageNo;
 		int level;
@@ -48,8 +60,13 @@ int main()
 			else{
 				allocateFrame(1,level3PageTable, pageNo, level);
 			}
-			
+			// We need to retry for this address
+			continue;
 		}
-
+		else{
+			printf("Search in page table was successful\n");
+			i++;		
+		}
 	}
+	return 0;
 }

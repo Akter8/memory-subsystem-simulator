@@ -5,12 +5,12 @@
 
 extern FrameTable frameTable;
 
-int findEmptyFrame()
+int getReplacableEmptyFrame()
 {
 	int i;
 	for(i=0;i<NUM_FRAMES;i++)
 	{
-		if(frameTable.entries[i].emptyBit==0)
+		if(frameTable.entries[i].emptyBit==0 && frameTable.entries[i].considerInLfu == 1)
 			return i;
 	}
 	return -1; // returns -1 if no empty frame available
@@ -55,6 +55,8 @@ short unsigned setEmptyBitFrameTable(int index, int value)
 	frameTable.entries[index].emptyBit=value;
 
 }
+
+
 int frameAgeing()
 {
 	int i;
@@ -64,9 +66,12 @@ int frameAgeing()
 	}
 	return 1;
 }
+
+
+
 int allocateFrame(int pid, pageTable pT,int pageNum,int level)
 {
-	int frameNo = findEmptyFrame();
+	int frameNo = getReplacableEmptyFrame();
 
 	if(frameNo!=-1)
 	{	//placement
@@ -112,12 +117,20 @@ int allocateFrame(int pid, pageTable pT,int pageNum,int level)
 }
 int getNonReplaceableFrame()
 {
-
+	int i;
+	for(i=0;i<NUM_FRAMES;i++)
+	{
+		if(frameTable.entries[i].emptyBit==0 && frameTable.entries[i].considerInLfu == 0)
+			return i;
+	}
+	return -1; // returns -1 if no empty frame available
 }
 int invalidateFrame(int frameNo)
 {
 	if(frameTable.entries[frameNo].dirtyBit==1)
 	{
+		printf("Frame# %d is dirty. Writing it back to disk\n",frameNo);
+
 		//write back to disk
 	}
 	frameTable.entries[frameNo].emptyBit=0;
@@ -127,12 +140,21 @@ int invalidateFrame(int frameNo)
 int initFrameTable()
 {
 	int i;
-	for(i=0;i<NUM_FRAMES-NUM_NON_REPLACABLE_FRAMES;i++)
+	for(i=0;i<NUM_FRAMES;i++)
 	{
 		frameTable.entries[i].emptyBit=0;
+		frameTable.entries[i].considerInLfu = 1;
 	}
 	//mark some frames as non-replaceable
-	for(i=NUM_FRAMES-NUM_NON_REPLACABLE_FRAMES;i<NUM_FRAMES;i++)
-		frameTable.entries[i].emptyBit=1;
+	for(i=NUM_FRAMES-NUM_NON_REPLACABLE_FRAMES;i<NUM_FRAMES;i++){
+		frameTable.entries[i].considerInLfu = 0;
+	}
+
+	//Allocate irreplacable frames for PCBs, Segment Tables and Frame Table
+
+
+
+
+	//
 
 }
