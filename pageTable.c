@@ -35,7 +35,7 @@ int initPageTable(pageTable level3PageTable,pageTable level2PageTable, pageTable
 
 	for(i = 0; i < NUMBER_OF_PAGES_IN_LEVEL_3_PAGE_TABLE; i++){
 		for(j = 0; j < NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE; j++){
-			level3PageTable.frames[i].entries[j].present = 1;				//for now, assuming its present in MM
+			level3PageTable.frames[i].entries[j].present = 0;				//for now, assuming its present in MM
 			level3PageTable.frames[i].entries[j].modified = 0;
 			level3PageTable.frames[i].entries[j].cachingDisabled = 1;	
 		}
@@ -68,7 +68,7 @@ int searchPageTable(pageTable level3PageTable,pageTable level2PageTable, pageTab
 
 	//To do: Update Lfu count of the first and only frame of page table level 3. This will require segment table implementation
 
-	unsigned int frameNumberOfLevel2PageTable;
+	unsigned int frameNumberOfLevel2PageTable,indexOfLevel2PageTable=level3Index;
 	if(level3PageTable.frames[0].entries[level3Index].present == 1){
 		frameNumberOfLevel2PageTable = level3PageTable.frames[0].entries[level3Index].frameNumber;
 		updateLfuCount(frameNumberOfLevel2PageTable);		
@@ -77,42 +77,53 @@ int searchPageTable(pageTable level3PageTable,pageTable level2PageTable, pageTab
 		printf("Page fault in level 2 page table\n");	
 		*level=2;	
 		// *pageFaultPageNumber = level3PageTable.frames[0].entries[level3Index].frameNumber;
-		*pageFaultPageNumber = (linearAddr >> 8) & 0x00000011;
+		// *pageFaultPageNumber = (linearAddr >> 8) & 0x00000011;
+		*pageFaultPageNumber = level3Index;
+
 		printf("From inside searchPageTable: level = %d, pageFaultPageNumber = %d\n",*level,*pageFaultPageNumber);
 		return -1;
 	}
 
+	printf("\nframeNumberOfLevel2PageTable=%d\n",indexOfLevel2PageTable);
+
 	// Assume we got frame number of level 2 page table
 
-	unsigned int level2Index = (linearAddr >> 8) & 0x00000011;
-	
-	unsigned int frameNumberOfLevel1PageTable;
-	if(level2PageTable.frames[frameNumberOfLevel2PageTable].entries[level2Index].present == 1){
-		frameNumberOfLevel1PageTable = level2PageTable.frames[frameNumberOfLevel2PageTable].entries[level2Index].frameNumber;
+	unsigned int level2Index = (linearAddr >> 18) & 0x000000FF;
+	printf("\nlevel2index: %d,	frameof page table index: %d\n",level2Index,indexOfLevel2PageTable);
+	unsigned int frameNumberOfLevel1PageTable,indexOfLevel1PageTable=linearAddr>>18;
+	if(level2PageTable.frames[indexOfLevel2PageTable].entries[level2Index].present == 1){
+		frameNumberOfLevel1PageTable = level2PageTable.frames[indexOfLevel2PageTable].entries[level2Index].frameNumber;
 		updateLfuCount(frameNumberOfLevel1PageTable);		
 	}
 	else{
 		printf("Page fault in level 1 page table\n");
 		*level=1;
 		// *pageFaultPageNumber = level2PageTable.frames[frameNumberOfLevel2PageTable].entries[level2Index].frameNumber;
-		*pageFaultPageNumber = linearAddr & 0x00000011;
+	//	*pageFaultPageNumber = linearAddr & 0x00000011;
+		*pageFaultPageNumber = linearAddr >> 18;
+		printf("From inside searchPageTable: level = %d, pageFaultPageNumber = %d\n",*level,*pageFaultPageNumber);
+
+
 		return -1;
 	}
 
 	// Assume we got frame number of level 1 page table
 
-	unsigned int level1Index = linearAddr & 0x00000011;
+	unsigned int level1Index = (linearAddr>>10) & 0x000000FF;
 	
 	unsigned int frameNumberOfProcess;
-	if(level1PageTable.frames[frameNumberOfLevel1PageTable].entries[level1Index].present == 1){
-		frameNumberOfProcess = level1PageTable.frames[frameNumberOfLevel1PageTable].entries[level1Index].frameNumber;
+	if(level1PageTable.frames[indexOfLevel1PageTable].entries[level1Index].present == 1){
+		frameNumberOfProcess = level1PageTable.frames[indexOfLevel1PageTable].entries[level1Index].frameNumber;
 		updateLfuCount(frameNumberOfProcess);		
 	}
 	else{
 		printf("Page fault in process\n");
 		*level = 0;
 		// *pageFaultPageNumber = level1PageTable.frames[frameNumberOfLevel1PageTable].entries[level1Index].frameNumber;
-		*pageFaultPageNumber = linearAddr >> 10;		//Major doubt: is this correct?
+		*pageFaultPageNumber = linearAddr >> 10;
+				//Major doubt: is this correct?
+		printf("From inside searchPageTable: level = %d, pageFaultPageNumber = %d\n",*level,*pageFaultPageNumber);
+
 		return -1;
 	}
 
@@ -152,7 +163,7 @@ int updatePageTableModifiedBit(pageTable pT,unsigned int index, int value){
 /* 
 Sets or resets present bit of a page table entry
 */
-int updatePageTablePresentBit(pageTable pT, unsigned int index, int value){
+int updatePageTablePresentBit(pageTable *pT, unsigned int index, int value){
 	/* if(level == 3){
 		level3PageTable.frames[0].entries[index].present = value;
 		return 0;
@@ -171,7 +182,7 @@ int updatePageTablePresentBit(pageTable pT, unsigned int index, int value){
 	} */
 	unsigned int pageNumber = index / NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE;
 	unsigned int entryNumber = index % NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE;
-	pT.frames[pageNumber].entries[entryNumber].present = value;
+	pT->frames[pageNumber].entries[entryNumber].present = value;
 	printf("Prsent bit of entry# %d in page number %d has been set to %d\n",entryNumber,pageNumber,value);
 	return 0;	
 }
@@ -217,7 +228,7 @@ pageTable* getPointertoNextLevelPageTable(pageTable* pTPointer){
 }
 
 
-pageTable getPageTableFromPid(unsigned int pid,unsigned int segNum,unsigned int level){
+pageTable* getPageTableFromPid(unsigned int pid,unsigned int segNum,unsigned int level){
 	// Access the PCB of the process and use pointers to get access to req page table
 
 	//Get PCB
@@ -228,17 +239,35 @@ pageTable getPageTableFromPid(unsigned int pid,unsigned int segNum,unsigned int 
 	pageTable* pT2Pointer;
 	pageTable* pT1Pointer;
 	if(level == 3){
-		return *pT3Pointer;
+		return pT3Pointer;
 	}
 	else if(level == 2){
 		pT2Pointer = getPointertoNextLevelPageTable(pT3Pointer);
-		return *pT2Pointer;
+		return pT2Pointer;
 	}
 	else if(level == 1){
 		pT2Pointer = getPointertoNextLevelPageTable(pT3Pointer);
 		pT1Pointer = getPointertoNextLevelPageTable(pT2Pointer);
-		return *pT1Pointer;
+		return pT1Pointer;
 	}
 }
 
+int setFrameNo(pageTable *pT, unsigned int index, int value)
+{
+	unsigned int pageNumber = index / NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE;
+	unsigned int entryNumber = index % NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE;
+	pT->frames[pageNumber].entries[entryNumber].frameNumber = value;
+}
 
+// int setframeOfNextLevel(pageTable *pT, unsigned int index, void *value)
+// {
+// 	unsigned int pageNumber = index / NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE;
+// 	unsigned int entryNumber = index % NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE;
+// 	pT->frames[pageNumber].entries[entryNumber].frameOfNextLevel = value;
+// }
+int setFrameNoOfNextLevel(pageTable *pT, unsigned int index, int value)
+{
+	unsigned int pageNumber = index / NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE;
+	unsigned int entryNumber = index % NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE;
+	pT->frames[pageNumber].entries[entryNumber].frameNumberOfNextLevel = value;
+}

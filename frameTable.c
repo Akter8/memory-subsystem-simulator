@@ -69,7 +69,7 @@ int frameAgeing()
 
 
 
-int allocateFrame(int pid, pageTable pT,int pageNum,int level)
+int allocateFrame(int pid, pageTable *pT,int pageNum,int level)
 {
 	int frameNo = getReplacableEmptyFrame();
 
@@ -97,7 +97,7 @@ int allocateFrame(int pid, pageTable pT,int pageNum,int level)
 		}
 
 		//
-		pageTable pT2 = getPageTableFromPid(frameTable.entries[frameNo].pid,frameTable.entries[frameNo].segNum,frameTable.entries[frameNo].level);
+		pageTable* pT2 = getPageTableFromPid(frameTable.entries[frameNo].pid,frameTable.entries[frameNo].segNum,frameTable.entries[frameNo].level);
 		updatePageTablePresentBit(pT2,frameTable.entries[frameNo].pageNum.value,0);
 
 		//allocate the frame
@@ -114,8 +114,12 @@ int allocateFrame(int pid, pageTable pT,int pageNum,int level)
 
 	//update page table
 	printf("Updating page table entry of page# %d\n",pageNum);
-	updatePageTablePresentBit(pT,pageNum,1);
+	printf("\nBefore updation present bit =%d\n",pT->frames[pageNum/256].entries[pageNum%256].present);
 
+	updatePageTablePresentBit(pT,pageNum,1);
+	printf("\nthe updted present bit =%d\n",pT->frames[pageNum/256].entries[pageNum%256].present);
+	setFrameNo(pT, pageNum, frameNo);
+	//setFrameNoOfNextLevel(pt,pageNum,pageNum)
 }
 int getNonReplaceableFrame()
 {

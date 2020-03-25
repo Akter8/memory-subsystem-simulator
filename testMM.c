@@ -13,7 +13,7 @@ PCB pcbArr[1];
 int main()
 {
 	printf("Starting execution of simulator\n");
-	int addr[100],n=30,i;
+	int addr[100],n=8,i;
 
 	pageTable* level1PageTableptr = (pageTable*) calloc(1, sizeof(pageTable));
 	pageTable* level2PageTableptr = (pageTable*) calloc(1, sizeof(pageTable));
@@ -60,22 +60,30 @@ int main()
 		if(searchPageTable(level3PageTable, level2PageTable, level1PageTable, addr[i],pageNo,level) == -1){
 			printf("After returing to testMM searchPageTable: level = %d, pageFaultPageNumber = %d\n",*level,*pageNo);
 			if(*level == 0){
-				allocateFrame(1,level1PageTable, *pageNo, *level);	
+				allocateFrame(1,&level1PageTable, *pageNo, *level);	
 			}
 			else if(*level == 1){
-				allocateFrame(1,level2PageTable, *pageNo, *level);	
+				allocateFrame(1,&level2PageTable, *pageNo, *level);	
+				printf("\nMain:the present bit =%d\n",level2PageTable.frames[*pageNo/256].entries[*pageNo%256].present);
+
 			}
 			else{
-				allocateFrame(1,level3PageTable, *pageNo, *level);
+				allocateFrame(1,&level3PageTable, *pageNo, *level);
+				printf("\nMain:the present bit =%d\n",level3PageTable.frames[*pageNo/256].entries[*pageNo%256].present);
+
 			}
 			// We need to retry for this address
 			printf("Retrying for same page after page fault\n");
+			printf("------------------------------------\n");
+
 			continue;
 		}
 		else{
 			printf("Search in page table was successful\n");
 			i++;		
 		}
+				printf("------------------------------------\n");
+
 	}
 
 	free(level1PageTableptr);

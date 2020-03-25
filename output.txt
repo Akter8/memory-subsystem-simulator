@@ -1,0 +1,112 @@
+Starting execution of simulator
+Page table objects declared and frames alloted to them
+linear addr:7fff809c	index3:1f
+Page fault in level 2 page table
+From inside searchPageTable: level = 2, pageFaultPageNumber = 31
+After returing to testMM searchPageTable: level = 2, pageFaultPageNumber = 31
+
+Frame allocated:0(placement)
+Updating page table entry of page# 31
+
+Before updation present bit =0
+Prsent bit of entry# 31 in page number 0 has been set to 1
+
+the updted present bit =1
+
+Main:the present bit =1
+Retrying for same page after page fault
+------------------------------------
+linear addr:7fff809c	index3:1f
+
+frameNumberOfLevel2PageTable=31
+
+level2index: 255,	frameof page table index: 31
+Page fault in level 1 page table
+From inside searchPageTable: level = 1, pageFaultPageNumber = 8191
+After returing to testMM searchPageTable: level = 1, pageFaultPageNumber = 8191
+
+Frame allocated:1(placement)
+Updating page table entry of page# 8191
+
+Before updation present bit =0
+Prsent bit of entry# 255 in page number 31 has been set to 1
+
+the updted present bit =1
+
+Main:the present bit =1
+Retrying for same page after page fault
+------------------------------------
+linear addr:7fff809c	index3:1f
+
+frameNumberOfLevel2PageTable=31
+
+level2index: 255,	frameof page table index: 31
+Page fault in process
+From inside searchPageTable: level = 0, pageFaultPageNumber = 2097120
+After returing to testMM searchPageTable: level = 0, pageFaultPageNumber = 2097120
+
+Frame allocated:2(placement)
+Updating page table entry of page# 2097120
+
+Before updation present bit =0
+Prsent bit of entry# 224 in page number 8191 has been set to 1
+
+the updted present bit =1
+Retrying for same page after page fault
+------------------------------------
+linear addr:7fff809c	index3:1f
+
+frameNumberOfLevel2PageTable=31
+
+level2index: 255,	frameof page table index: 31
+Search in page table was successful
+------------------------------------
+linear addr:7fff80a0	index3:1f
+
+frameNumberOfLevel2PageTable=31
+
+level2index: 255,	frameof page table index: 31
+Search in page table was successful
+------------------------------------
+linear addr:7fff80a0	index3:1f
+
+frameNumberOfLevel2PageTable=31
+
+level2index: 255,	frameof page table index: 31
+Search in page table was successful
+------------------------------------
+linear addr:7fff80a1	index3:1f
+
+frameNumberOfLevel2PageTable=31
+
+level2index: 255,	frameof page table index: 31
+Search in page table was successful
+------------------------------------
+linear addr:7fff80a2	index3:1f
+
+frameNumberOfLevel2PageTable=31
+
+level2index: 255,	frameof page table index: 31
+Search in page table was successful
+------------------------------------
+linear addr:7fff80a3	index3:1f
+
+frameNumberOfLevel2PageTable=31
+
+level2index: 255,	frameof page table index: 31
+Search in page table was successful
+------------------------------------
+linear addr:7fff80a4	index3:1f
+
+frameNumberOfLevel2PageTable=31
+
+level2index: 255,	frameof page table index: 31
+Search in page table was successful
+------------------------------------
+linear addr:7fff809c	index3:1f
+
+frameNumberOfLevel2PageTable=31
+
+level2index: 255,	frameof page table index: 31
+Search in page table was successful
+------------------------------------

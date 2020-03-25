@@ -31,7 +31,7 @@ short unsigned getDirtyBitFrameTable(int index);
 short unsigned setDirtyBitFrameTable(int index, int value);
 short unsigned getEmptyBitFrameTable(int index);
 short unsigned setEmptyBitFrameTable(int index, int value);
-int allocateFrame(int pid, pageTable pT,int pageNum,int level);
+int allocateFrame(int pid, pageTable *pT,int pageNum,int level);
 int invalidateFrame(int frameNo);
 int initFrameTable();
 int frameAgeing();
