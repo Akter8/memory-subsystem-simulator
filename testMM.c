@@ -1,4 +1,5 @@
-#include <stdio.h>
+#include<stdio.h>
+#include<stdlib.h>
 #include "dataTypes.h"
 #include "pageTable.h"
 #include "frameTable.h"
@@ -13,17 +14,23 @@ int main()
 {
 	printf("Starting execution of simulator\n");
 	int addr[100],n=30,i;
-	pageTable level1PageTable;
-	pageTable level2PageTable;
-	pageTable level3PageTable;
 
-	frameOfPageTable level1PageTableFrames[NUMBER_OF_PAGES_IN_LEVEL_3_PAGE_TABLE];
-	frameOfPageTable level2PageTableFrames[NUMBER_OF_PAGES_IN_LEVEL_2_PAGE_TABLE];
-	frameOfPageTable level3PageTableFrames[NUMBER_OF_PAGES_IN_LEVEL_1_PAGE_TABLE];
+	pageTable* level1PageTableptr = (pageTable*) calloc(1, sizeof(pageTable));
+	pageTable* level2PageTableptr = (pageTable*) calloc(1, sizeof(pageTable));
+	pageTable* level3PageTableptr = (pageTable*) calloc(1, sizeof(pageTable));
 
-	level1PageTable.frames = level1PageTableFrames;
-	level2PageTable.frames = level2PageTableFrames;
-	level3PageTable.frames = level3PageTableFrames;
+	pageTable level1PageTable = *level1PageTableptr;
+	pageTable level2PageTable = *level2PageTableptr;
+	pageTable level3PageTable = *level3PageTableptr;
+
+	frameOfPageTable* level1PageTableFramesptr = (frameOfPageTable*) calloc(NUMBER_OF_PAGES_IN_LEVEL_1_PAGE_TABLE, sizeof(frameOfPageTable));
+	frameOfPageTable* level2PageTableFramesptr = (frameOfPageTable*) calloc(NUMBER_OF_PAGES_IN_LEVEL_2_PAGE_TABLE, sizeof(frameOfPageTable));
+	frameOfPageTable* level3PageTableFramesptr = (frameOfPageTable*) calloc(NUMBER_OF_PAGES_IN_LEVEL_3_PAGE_TABLE, sizeof(frameOfPageTable));
+
+	level1PageTable.frames = level1PageTableFramesptr;
+	level2PageTable.frames = level2PageTableFramesptr;
+	level3PageTable.frames = level3PageTableFramesptr;
+
 
 	printf("Page table objects declared and frames alloted to them\n");
 
@@ -68,5 +75,12 @@ int main()
 			i++;		
 		}
 	}
+
+	free(level1PageTableptr);
+	free(level2PageTableptr);
+	free(level3PageTableptr);
+	free(level1PageTableFramesptr);
+	free(level2PageTableFramesptr);
+	free(level3PageTableFramesptr);
 	return 0;
 }

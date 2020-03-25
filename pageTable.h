@@ -2,9 +2,9 @@
 // #include "dataTypes.h"
 #include "configuration.h"
 #define NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE 256
-#define NUMBER_OF_PAGES_IN_LEVEL_3_PAGE_TABLE 2048
+#define NUMBER_OF_PAGES_IN_LEVEL_3_PAGE_TABLE 1
 #define NUMBER_OF_PAGES_IN_LEVEL_2_PAGE_TABLE 8
-#define NUMBER_OF_PAGES_IN_LEVEL_1_PAGE_TABLE 1
+#define NUMBER_OF_PAGES_IN_LEVEL_1_PAGE_TABLE 2048
 typedef struct
 {
 	unsigned int frameNumber : 16;	// There are 2**16 frames present
