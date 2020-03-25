@@ -35,7 +35,7 @@ int initPageTable(pageTable level3PageTable,pageTable level2PageTable, pageTable
 
 	for(i = 0; i < NUMBER_OF_PAGES_IN_LEVEL_3_PAGE_TABLE; i++){
 		for(j = 0; j < NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE; j++){
-			level3PageTable.frames[i].entries[j].present = 0;
+			level3PageTable.frames[i].entries[j].present = 1;				//for now, assuming its present in MM
 			level3PageTable.frames[i].entries[j].modified = 0;
 			level3PageTable.frames[i].entries[j].cachingDisabled = 1;	
 		}
@@ -53,7 +53,7 @@ This function returns frame number for a given linear address.
 Returns -1 and the level and frame number for which page fault occured if unsucessful. 
 Also updates LFU count in frame table
 */
-int searchPageTable(pageTable level3PageTable,pageTable level2PageTable, pageTable level1PageTable,unsigned int linearAddr, unsigned int* pageFaultPageNumber,unsigned int *level){
+int searchPageTable(pageTable level3PageTable,pageTable level2PageTable, pageTable level1PageTable,unsigned int linearAddr, unsigned int* pageFaultPageNumber,unsigned int* level){
 	// First 6 bits from left used for indexing level 3
 
 	unsigned int level3Index = linearAddr >> 26;
@@ -76,7 +76,9 @@ int searchPageTable(pageTable level3PageTable,pageTable level2PageTable, pageTab
 	else{
 		printf("Page fault in level 2 page table\n");	
 		*level=2;	
-		*pageFaultPageNumber = level3PageTable.frames[0].entries[level3Index].frameNumber;
+		// *pageFaultPageNumber = level3PageTable.frames[0].entries[level3Index].frameNumber;
+		*pageFaultPageNumber = (linearAddr >> 8) & 0x00000011;
+		printf("From inside searchPageTable: level = %d, pageFaultPageNumber = %d\n",*level,*pageFaultPageNumber);
 		return -1;
 	}
 
@@ -92,7 +94,8 @@ int searchPageTable(pageTable level3PageTable,pageTable level2PageTable, pageTab
 	else{
 		printf("Page fault in level 1 page table\n");
 		*level=1;
-		*pageFaultPageNumber = level2PageTable.frames[frameNumberOfLevel2PageTable].entries[level2Index].frameNumber;
+		// *pageFaultPageNumber = level2PageTable.frames[frameNumberOfLevel2PageTable].entries[level2Index].frameNumber;
+		*pageFaultPageNumber = linearAddr & 0x00000011;
 		return -1;
 	}
 
@@ -108,7 +111,8 @@ int searchPageTable(pageTable level3PageTable,pageTable level2PageTable, pageTab
 	else{
 		printf("Page fault in process\n");
 		*level = 0;
-		*pageFaultPageNumber = level1PageTable.frames[frameNumberOfLevel1PageTable].entries[level1Index].frameNumber;
+		// *pageFaultPageNumber = level1PageTable.frames[frameNumberOfLevel1PageTable].entries[level1Index].frameNumber;
+		*pageFaultPageNumber = linearAddr >> 10;		//Major doubt: is this correct?
 		return -1;
 	}
 
@@ -168,6 +172,7 @@ int updatePageTablePresentBit(pageTable pT, unsigned int index, int value){
 	unsigned int pageNumber = index / NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE;
 	unsigned int entryNumber = index % NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE;
 	pT.frames[pageNumber].entries[entryNumber].present = value;
+	printf("Prsent bit of entry# %d in page number %d has been set to %d\n",entryNumber,pageNumber,value);
 	return 0;	
 }
 

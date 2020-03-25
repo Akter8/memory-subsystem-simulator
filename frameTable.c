@@ -75,7 +75,7 @@ int allocateFrame(int pid, pageTable pT,int pageNum,int level)
 
 	if(frameNo!=-1)
 	{	//placement
-		printf("\nFrame allocated:%d(placement)",frameNo);
+		printf("\nFrame allocated:%d(placement)\n",frameNo);
 		frameTable.entries[frameNo].pageNum.value=pageNum;
 		frameTable.entries[frameNo].pid=pid;
 		frameTable.entries[frameNo].LfuCount.value=0;
@@ -87,6 +87,7 @@ int allocateFrame(int pid, pageTable pT,int pageNum,int level)
 	else
 	{
 		//replacement
+		printf("No free frame available in memory. Going for replacement\n");
 		frameNo = getLfuFrameNum();
 
 		//swap the page 
@@ -109,11 +110,12 @@ int allocateFrame(int pid, pageTable pT,int pageNum,int level)
 		frameTable.entries[frameNo].emptyBit=1; 
 		frameTable.entries[frameNo].considerInLfu=1;
 		frameTable.entries[frameNo].level = level + 1;		//Here too
-
-		//update page table
-		updatePageTablePresentBit(pT,pageNum,1);
-
 	}
+
+	//update page table
+	printf("Updating page table entry of page# %d\n",pageNum);
+	updatePageTablePresentBit(pT,pageNum,1);
+
 }
 int getNonReplaceableFrame()
 {

@@ -53,21 +53,23 @@ int main()
 
 
 	i = 0;
+	unsigned int* pageNo = calloc(1, sizeof(unsigned int));
+	unsigned int* level = calloc(1,sizeof(unsigned int));
 	while(i < n)
 	{
-		int pageNo;
-		int level;
-		if(searchPageTable(level3PageTable, level2PageTable, level1PageTable, addr[i],&pageNo, &level)!=-1){
-			if(level == 0){
-				allocateFrame(1,level1PageTable, pageNo, level);	
+		if(searchPageTable(level3PageTable, level2PageTable, level1PageTable, addr[i],pageNo,level) == -1){
+			printf("After returing to testMM searchPageTable: level = %d, pageFaultPageNumber = %d\n",*level,*pageNo);
+			if(*level == 0){
+				allocateFrame(1,level1PageTable, *pageNo, *level);	
 			}
-			else if(level == 1){
-				allocateFrame(1,level2PageTable, pageNo, level);	
+			else if(*level == 1){
+				allocateFrame(1,level2PageTable, *pageNo, *level);	
 			}
 			else{
-				allocateFrame(1,level3PageTable, pageNo, level);
+				allocateFrame(1,level3PageTable, *pageNo, *level);
 			}
 			// We need to retry for this address
+			printf("Retrying for same page after page fault\n");
 			continue;
 		}
 		else{
@@ -82,5 +84,7 @@ int main()
 	free(level1PageTableFramesptr);
 	free(level2PageTableFramesptr);
 	free(level3PageTableFramesptr);
+	free(pageNo);
+	free(level);
 	return 0;
 }
