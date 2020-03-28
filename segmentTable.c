@@ -9,8 +9,7 @@ pageTable* searchSegmentTable(int pid, int26 virtualAddress)
 {
 	unsigned int segNo = virtualAddress.value>>23;
 	unsigned int localGlobal = (virtualAddress.value>>22)&1;
-
-	if(localGlobal==0)
+	if(localGlobal==1)
 	{
 		//Global Descriptor table
 		if(GDT.entries[segNo].present==1)
@@ -20,8 +19,9 @@ pageTable* searchSegmentTable(int pid, int26 virtualAddress)
 	else
 	{
 		//Local Descriptor table
-		if(pcbArr[pid].LDTPointer->entries[segNo].present==1)
+		if(pcbArr[pid].LDTPointer->entries[segNo].present==1){
 			return pcbArr[pid].LDTPointer->entries[segNo].level3PageTable;	
+		}
 	}
 
 	return 0;
@@ -39,7 +39,10 @@ int deleteSegmentTable(){
 int initSegTable(segmentTable *segtable,pageTable *array[8])
 {
 	for(int i=0;i<8;i++)
+	{
+		segtable->entries[i].present=1;
 		segtable->entries[i].level3PageTable  = array[i];
+	}
 
 	return 0;
 }

@@ -13,7 +13,6 @@ typedef struct
 	unsigned int cachingDisabled : 1;
 	unsigned int readWrite : 1;
 	void* frameOfNextLevel;			//void* to avoid compilation error
-	unsigned int frameNumberOfNextLevel;
 }pageTableEntry;
 
 typedef struct
@@ -30,11 +29,11 @@ struct pageTable
 };
 typedef struct pageTable pageTable;
 
-int initPageTable(pageTable level3PageTable,pageTable level2PageTable, pageTable level1PageTable);
-int searchPageTable(pageTable level3PageTable,pageTable level2PageTable, pageTable level1PageTable,unsigned int linearAddr, unsigned int* pageFaultPageNumber,unsigned int *level);
+int initPageTable(pageTable* level3PageTable,pageTable* level2PageTable, pageTable* level1PageTable);
+//int searchPageTable(pageTable level3PageTable,pageTable level2PageTable, pageTable level1PageTable,unsigned int linearAddr, unsigned int* pageFaultPageNumber,unsigned int *level);
+int searchPageTable(pageTable* level3PageTable,pageTable **ptref,unsigned int linearAddr, unsigned int* pageFaultPageNumber,unsigned int* level);
 int updatePageTableModifiedBit(pageTable pT,unsigned int index, int value);
 int updatePageTablePresentBit(pageTable *pT, unsigned int index, int value);
 int deallocateProcessPages(pageTable level3PageTable,pageTable level2PageTable, pageTable level1PageTable); //To be used when process terminates
 pageTable* getPageTableFromPid(unsigned int pid,unsigned int segNum,unsigned int level);
 int setFrameNo(pageTable *pT, unsigned int index, int value);
-int setFrameNoOfNextLevel(pageTable *pT, unsigned int index, int value);
