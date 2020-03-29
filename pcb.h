@@ -9,7 +9,6 @@ typedef struct
 {
 	// int26 LDTBaseAddress;
 	// int26 PageTableBaseAddress;
-	// pageTable* level3PageTablePointer;
 	segmentTable* LDTPointer;
 	unsigned int segNum: 4;		
 	int state;

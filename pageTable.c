@@ -110,6 +110,7 @@ Also updates LFU count in frame table
 int searchPageTable(pageTable* level3PageTable,pageTable** ptref,unsigned int linearAddr, unsigned int* pageFaultPageNumber,unsigned int* level){
 
 
+	printf("Inside searchPageTable\n");
 	pageTable* level2PageTable = level3PageTable->nextLevelPageTablePointer;
 
 	if(level2PageTable==0)
@@ -299,7 +300,7 @@ pageTable* getPageTableFromPid(unsigned int pid,unsigned int segNum,unsigned int
 	// Access the PCB of the process and use pointers to get access to req page table
 
 	//Get PCB
-	PCB pcb = pcbArr[pid-1];
+	PCB pcb = pcbArr[pid];
 	//
 
 	pageTable* pT3Pointer = getLevel3PageTablePointer(pcb,segNum);
