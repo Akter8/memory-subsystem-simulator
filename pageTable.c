@@ -6,6 +6,7 @@
  */
 
 #include <stdio.h>
+#include<stdlib.h>
 #include "dataTypes.h"
 #include "pageTable.h"
 #include "frameTable.h"
@@ -17,6 +18,8 @@
 
 extern PCB pcbArr[1];		//testing with only one process right now
 
+
+/*
 int initPageTable(pageTable* level3PageTable,pageTable* level2PageTable, pageTable* level1PageTable){
 	int i,j;
 	for(i = 0; i < NUMBER_OF_PAGES_IN_LEVEL_1_PAGE_TABLE; i++){
@@ -46,6 +49,55 @@ int initPageTable(pageTable* level3PageTable,pageTable* level2PageTable, pageTab
 	level1PageTable->nextLevelPageTablePointer = NULL;
 	return 0;
 }
+*/
+
+
+int initPageTable(pageTable* level3PageTableptr,pageTable* level2PageTableptr, pageTable* level1PageTableptr,
+	frameOfPageTable* level3PageTableFramesptr,frameOfPageTable* level2PageTableFramesptr,
+	frameOfPageTable* level1PageTableFramesptr){
+
+	level1PageTableptr = (pageTable*) calloc(1, sizeof(pageTable));
+	level2PageTableptr = (pageTable*) calloc(1, sizeof(pageTable));
+	level3PageTableptr = (pageTable*) calloc(1, sizeof(pageTable));
+
+	level3PageTableFramesptr = (frameOfPageTable*) calloc(NUMBER_OF_PAGES_IN_LEVEL_3_PAGE_TABLE, sizeof(frameOfPageTable));
+	level2PageTableFramesptr = (frameOfPageTable*) calloc(NUMBER_OF_PAGES_IN_LEVEL_2_PAGE_TABLE, sizeof(frameOfPageTable));
+	level1PageTableFramesptr = (frameOfPageTable*) calloc(NUMBER_OF_PAGES_IN_LEVEL_1_PAGE_TABLE, sizeof(frameOfPageTable));
+
+	level3PageTableptr->frames = level3PageTableFramesptr;
+	level2PageTableptr->frames = level2PageTableFramesptr;
+	level1PageTableptr->frames = level1PageTableFramesptr;
+
+	int i,j;
+	for(i = 0; i < NUMBER_OF_PAGES_IN_LEVEL_1_PAGE_TABLE; i++){
+		for(j = 0; j < NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE; j++){
+			level1PageTableptr->frames[i].entries[j].present = 0;
+			level1PageTableptr->frames[i].entries[j].modified = 0;	
+		}
+	}
+
+	for(i = 0; i < NUMBER_OF_PAGES_IN_LEVEL_2_PAGE_TABLE; i++){
+		for(j = 0; j < NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE; j++){
+			level2PageTableptr->frames[i].entries[j].present = 0;
+			level2PageTableptr->frames[i].entries[j].modified = 0;
+			level2PageTableptr->frames[i].entries[j].cachingDisabled = 1;	
+		}
+	}
+
+	for(i = 0; i < NUMBER_OF_PAGES_IN_LEVEL_3_PAGE_TABLE; i++){
+		for(j = 0; j < NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE; j++){
+			level3PageTableptr->frames[i].entries[j].present = 0;				//for now, assuming its present in MM
+			level3PageTableptr->frames[i].entries[j].modified = 0;
+			level3PageTableptr->frames[i].entries[j].cachingDisabled = 1;	
+		}
+	}
+	level3PageTableptr->nextLevelPageTablePointer = level2PageTableptr;
+	level2PageTableptr->nextLevelPageTablePointer = level1PageTableptr;
+	level1PageTableptr->nextLevelPageTablePointer = NULL;
+	return 0;
+}
+
+
 
 // linear address size is 32 bits out of which 10 bits will be used for offset. So we will index page table using 22 bits
 
@@ -151,7 +203,7 @@ int searchPageTable(pageTable* level3PageTable,pageTable** ptref,unsigned int li
 /*
 Sets or resets modified bit of a page table entry
 */
-int updatePageTableModifiedBit(pageTable pT,unsigned int index, int value){
+int updatePageTableModifiedBit(pageTable* pageTableptr,unsigned int index, int value){
 	/* if(level == 3){
 		level3PageTable.frames[0].entries[index].modified = value;
 		return 0;
@@ -171,7 +223,7 @@ int updatePageTableModifiedBit(pageTable pT,unsigned int index, int value){
 
 	unsigned int pageNumber = index / NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE;
 	unsigned int entryNumber = index % NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE;
-	pT.frames[pageNumber].entries[entryNumber].modified = value;
+	pageTableptr->frames[pageNumber].entries[entryNumber].modified = value;
 	return 0;
 }
 
@@ -250,7 +302,7 @@ pageTable* getPageTableFromPid(unsigned int pid,unsigned int segNum,unsigned int
 	PCB pcb = pcbArr[pid-1];
 	//
 
-	pageTable* pT3Pointer = getLevel3PageTablePointer(pcb);
+	pageTable* pT3Pointer = getLevel3PageTablePointer(pcb,segNum);
 	pageTable* pT2Pointer;
 	pageTable* pT1Pointer;
 	if(level == 3){

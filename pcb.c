@@ -5,10 +5,15 @@
 // #include "frameTable.h"
 #include "pcb.h"
 
-int initPCB(PCB *pcbObj, pageTable* level3PageTablePointer,segmentTable* segtable){
-	pcbObj->level3PageTablePointer = level3PageTablePointer;
+extern PCB pcbArr[1];
+
+int initPCB(PCB *pcbObj, segmentTable* LDTptr){
+	// pcbObj->level3PageTablePointer = level3PageTablePointer;
 	pcbObj->state = READY;
-	pcbObj->LDTPointer = segtable;
+	pcbObj->LDTPointer = LDTptr;
+
+	initSegTable(LDTptr);
+
 	return 0;
 }
 
@@ -21,6 +26,15 @@ int setState(PCB *pcbObj, int state){
 	return 0;
 }
 
-pageTable* getLevel3PageTablePointer(PCB pcbObj){
-	return pcbObj.level3PageTablePointer;
+pageTable* getLevel3PageTablePointer(PCB pcbObj, int segNum){
+	return pcbObj.LDTPointer->entries[segNum].level3PageTableptr;
+}
+
+int deleteProcess(unsigned int pid){
+	PCB pcbObj = pcbArr[pid];
+	//Serially free all page tables, then all segment table entries
+
+
+	//Mark frames of the process as empty in the frame table
+	return 0;
 }

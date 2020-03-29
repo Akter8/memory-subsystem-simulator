@@ -1,10 +1,12 @@
 #include<stdio.h>
+#include<stdlib.h>
 #include "dataTypes.h"
 #include "pageTable.h"		
 #include "segmentTable.h"
 #include "pcb.h"
 extern PCB pcbArr[1];
-extern segmentTable GDT;
+extern segmentTable* GDTptr;
+
 pageTable* searchSegmentTable(int pid, int26 virtualAddress)
 {
 	unsigned int segNo = virtualAddress.value>>23;
@@ -12,15 +14,15 @@ pageTable* searchSegmentTable(int pid, int26 virtualAddress)
 	if(localGlobal==1)
 	{
 		//Global Descriptor table
-		if(GDT.entries[segNo].present==1)
-			return pcbArr[pid].LDTPointer->entries[segNo].level3PageTable;	
+		if(GDTptr->entries[segNo].present==1)
+			return pcbArr[pid].LDTPointer->entries[segNo].level3PageTableptr;	
 
 	}
 	else
 	{
 		//Local Descriptor table
 		if(pcbArr[pid].LDTPointer->entries[segNo].present==1){
-			return pcbArr[pid].LDTPointer->entries[segNo].level3PageTable;	
+			return pcbArr[pid].LDTPointer->entries[segNo].level3PageTableptr;	
 		}
 	}
 
@@ -36,13 +38,34 @@ int deleteSegmentTable(){
 
 }
 
-int initSegTable(segmentTable *segtable,pageTable *array[8])
+int initSegTable(segmentTable *segTableptr)
 {
+	// pageTable* pageTableArrayptr = calloc(8,sizeof(pageTable*));
+
+	segTableptr = calloc(1,sizeof(segmentTable));
+	segmentTableEntry* entries = calloc(8,sizeof(segmentTableEntry));
+
+
+	for(int i = 0; i < 8; i++){
+		segTableptr->entries[i] = entries[i];
+	}
+
 	for(int i=0;i<8;i++)
 	{
-		segtable->entries[i].present=1;
-		segtable->entries[i].level3PageTable  = array[i];
+		segTableptr->entries[i].present=1;
+		segTableptr->entries[i].level3PageTableptr  = NULL;
 	}
+
+	//Now initialize page table of single segment
+	pageTable *level1PageTableptr, *level2PageTableptr, *level3PageTableptr;
+	frameOfPageTable *level1PageTableFramesptr, *level2PageTableFramesptr, *level3PageTableFramesptr;
+
+	initPageTable(level3PageTableptr,level2PageTableptr,level1PageTableptr,level3PageTableFramesptr,
+		level2PageTableFramesptr,level1PageTableFramesptr);
+
+	segTableptr->entries[0].level3PageTableptr = level3PageTableptr;
+
+
 
 	return 0;
 }

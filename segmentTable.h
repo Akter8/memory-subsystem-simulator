@@ -7,7 +7,7 @@ typedef struct
 	unsigned int limit : 26;
 	unsigned int present : 1;
 	unsigned int readWrite : 1;
-	pageTable* level3PageTable;
+	pageTable* level3PageTableptr;
 
 }segmentTableEntry;
 
@@ -20,5 +20,5 @@ typedef struct
 pageTable* searchSegmentTable(int pid, int26 virtualAddress);			//Check whether to search in LDT or GDT
 int updateSegmentTablePresentBit(segmentTableEntry* segTableEntry, int index, int value);
 int deleteSegmentTable(); //To be used when process terminates
-int initSegTable(segmentTable *segtable,pageTable *array[8]);
+int initSegTable(segmentTable *segTablePtr);
 

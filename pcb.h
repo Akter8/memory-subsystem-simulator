@@ -9,7 +9,7 @@ typedef struct
 {
 	// int26 LDTBaseAddress;
 	// int26 PageTableBaseAddress;
-	pageTable* level3PageTablePointer;
+	// pageTable* level3PageTablePointer;
 	segmentTable* LDTPointer;
 	unsigned int segNum: 4;		
 	int state;
@@ -17,8 +17,9 @@ typedef struct
 	// FILE *SegNumAddrFile;
 }PCB;
 
-int initPCB(PCB* pcbObj, pageTable* level3PageTablePointer,segmentTable* segtable);
+int initPCB(PCB* pcbObj, segmentTable* segtable);
 int getState(PCB pcbObj);
 int setState(PCB* pcbObj, int state);
-pageTable* getLevel3PageTablePointer(PCB pcbObj);
+pageTable* getLevel3PageTablePointer(PCB pcbObj,int segNum);
 int26 getLDTBaseAddress(PCB pcbObj);
+int deleteProcess(unsigned int pid);
