@@ -16,7 +16,7 @@ int main()
 {
 	printf("Starting execution of simulator\n");
 	long addr[100];
-	int n=15,i;
+	int n=20,i;
 	printf("Enter input\n");
 
 	for(i=0;i<n;i++)

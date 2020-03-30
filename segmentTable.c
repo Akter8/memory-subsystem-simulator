@@ -9,8 +9,10 @@ extern segmentTable* GDTptr;
 
 pageTable* searchSegmentTable(int pid, int26 virtualAddress)
 {
-	unsigned int segNo = virtualAddress.value>>23;
-	unsigned int localGlobal = (virtualAddress.value>>22)&1;
+	unsigned int segNo = (virtualAddress.value>>22)&0x7;
+	unsigned int localGlobal = (virtualAddress.value>>25);
+
+	//printf("segment number=%d\n",segNo);
 	if(localGlobal==1)
 	{
 		//Global Descriptor table
@@ -79,6 +81,8 @@ segmentTable* initSegTable()
 
 	//segTableptr->entries[0].level3PageTableptr = level3PageTableptr;
 	segTableptr->entries[0].level3PageTableptr = initPageTable();
+	segTableptr->entries[1].level3PageTableptr = initPageTable();
+
 	return segTableptr;
 
 }
