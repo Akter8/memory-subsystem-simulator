@@ -15,12 +15,13 @@ PCB pcbArr[1];
 int main()
 {
 	printf("Starting execution of simulator\n");
-	int addr[100],n=8,i;
+	long addr[100];
+	int n=15,i;
 	printf("Enter input\n");
 
 	for(i=0;i<n;i++)
 	{
-		scanf("%x",&addr[i]);
+		scanf("%lx",&addr[i]);
 	}
 
 	printf("Initializing frame table\n");
@@ -52,10 +53,16 @@ int main()
 	unsigned int* pageNo = calloc(1, sizeof(unsigned int));
 	unsigned int* level = calloc(1,sizeof(unsigned int));
 	pageTable** ptrToPageFaultPageTable = malloc(sizeof(pageTable *));
+	pageTable* pagetable;
+	int26 address;
 	while(i < n)
 	{
+		address.value = addr[i]>>10;
+		pagetable = searchSegmentTable(0, address);
 		printf("Calling searchPageTable\n");
-		if(searchPageTable(pcbArr[0].LDTPointer->entries[0].level3PageTableptr, ptrToPageFaultPageTable, addr[i],pageNo,level) == -1){
+		//if(searchPageTable(pcbArr[0].LDTPointer->entries[0].level3PageTableptr, ptrToPageFaultPageTable, addr[i]&0xFFFFFFFF,pageNo,level) == -1){
+		if(searchPageTable(pagetable, ptrToPageFaultPageTable, addr[i]&0xFFFFFFFF,pageNo,level) == -1){
+
 			printf("After returing to testMM searchPageTable: level = %d, pageFaultPageNumber = %d\n",*level,*pageNo);
 		
 			allocateFrame(1,*ptrToPageFaultPageTable, *pageNo, *level);	
