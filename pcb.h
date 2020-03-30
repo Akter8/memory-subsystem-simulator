@@ -16,7 +16,7 @@ typedef struct
 	// FILE *SegNumAddrFile;
 }PCB;
 
-int initPCB(PCB* pcbObj, segmentTable* segtable);
+int initPCB(PCB* pcbObj);
 int getState(PCB pcbObj);
 int setState(PCB* pcbObj, int state);
 pageTable* getLevel3PageTablePointer(PCB pcbObj,int segNum);

@@ -52,9 +52,9 @@ int initPageTable(pageTable* level3PageTable,pageTable* level2PageTable, pageTab
 */
 
 
-int initPageTable(pageTable* level3PageTableptr,pageTable* level2PageTableptr, pageTable* level1PageTableptr,
-	frameOfPageTable* level3PageTableFramesptr,frameOfPageTable* level2PageTableFramesptr,
-	frameOfPageTable* level1PageTableFramesptr){
+pageTable* initPageTable(){
+	pageTable *level3PageTableptr, *level2PageTableptr, *level1PageTableptr;
+	frameOfPageTable *level3PageTableFramesptr,*level2PageTableFramesptr,*level1PageTableFramesptr;
 
 	level1PageTableptr = (pageTable*) calloc(1, sizeof(pageTable));
 	level2PageTableptr = (pageTable*) calloc(1, sizeof(pageTable));
@@ -94,7 +94,7 @@ int initPageTable(pageTable* level3PageTableptr,pageTable* level2PageTableptr, p
 	level3PageTableptr->nextLevelPageTablePointer = level2PageTableptr;
 	level2PageTableptr->nextLevelPageTablePointer = level1PageTableptr;
 	level1PageTableptr->nextLevelPageTablePointer = NULL;
-	return 0;
+	return level3PageTableptr;
 }
 
 

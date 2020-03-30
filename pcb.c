@@ -9,13 +9,14 @@
 extern PCB pcbArr[1];
 extern FrameTable frameTable;
 
-int initPCB(PCB *pcbObj, segmentTable* LDTptr){
+int initPCB(PCB *pcbObj){
 	// pcbObj->level3PageTablePointer = level3PageTablePointer;
 	pcbObj->state = READY;
-	pcbObj->LDTPointer = LDTptr;
-
 	printf("Calling initSegTable from inside initPCB\n");
-	initSegTable(LDTptr);
+
+	pcbObj->LDTPointer = initSegTable();
+
+	// initSegTable(LDTptr);
 	printf("initSegTable returned successfully\n");
 
 	return 0;
@@ -55,7 +56,8 @@ int deleteProcess(unsigned int pid){
 	free(level2PageTableptr);
 	free(level3PageTableptr);
 
-	free(LDTptr->entries);
+
+	//free(LDTptr->entries);
 
 	free(LDTptr);
 

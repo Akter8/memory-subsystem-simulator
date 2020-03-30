@@ -34,15 +34,29 @@ int updateSegmentTablePresentBit(segmentTableEntry* segTableEntry, int index, in
 		return 1;
 
 }	//value = 0 or 1
-int deleteSegmentTable(){
+int deleteSegmentTable(segmentTable* segtable){
+
+	//delete all the page tables allocate.
+	// for(i=0;i<8;i++)
+	// {
+	// 	if(segtable->entries[i].present==1)
+	// 	{
+	// 		deallocateProcessPages(segtable->entries[i].level3PageTableptr);
+	// 	}
+	// }
+
 
 }
+int initSegment()	//Function to initialise a segment in the segment table
+{
+	//initialise page tables and present bit of the correspondinf segment
 
-int initSegTable(segmentTable *segTableptr)
+}
+segmentTable* initSegTable()
 {
 	// pageTable* pageTableArrayptr = calloc(8,sizeof(pageTable*));
-
-	segTableptr = calloc(1,sizeof(segmentTable));
+	segmentTable *segTableptr;
+	segTableptr =(segmentTable *) calloc(1,sizeof(segmentTable));
 	segmentTableEntry* entries = calloc(8,sizeof(segmentTableEntry));
 
 
@@ -57,15 +71,14 @@ int initSegTable(segmentTable *segTableptr)
 	}
 
 	//Now initialize page table of single segment
-	pageTable *level1PageTableptr, *level2PageTableptr, *level3PageTableptr;
-	frameOfPageTable *level1PageTableFramesptr, *level2PageTableFramesptr, *level3PageTableFramesptr;
+	//pageTable *level1PageTableptr, *level2PageTableptr, *level3PageTableptr;
+	//frameOfPageTable *level1PageTableFramesptr, *level2PageTableFramesptr, *level3PageTableFramesptr;
 
-	initPageTable(level3PageTableptr,level2PageTableptr,level1PageTableptr,level3PageTableFramesptr,
-		level2PageTableFramesptr,level1PageTableFramesptr);
+	//initPageTable(level3PageTableptr,level2PageTableptr,level1PageTableptr,level3PageTableFramesptr,
+	//	level2PageTableFramesptr,level1PageTableFramesptr);
 
-	segTableptr->entries[0].level3PageTableptr = level3PageTableptr;
+	//segTableptr->entries[0].level3PageTableptr = level3PageTableptr;
+	segTableptr->entries[0].level3PageTableptr = initPageTable();
+	return segTableptr;
 
-
-
-	return 0;
 }

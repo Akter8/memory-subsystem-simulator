@@ -28,16 +28,16 @@ int main()
 	printf("Initialized frame table\n");
 
 	printf("Initializing GDT\n");
-	initSegTable(GDTptr);
+	GDTptr=initSegTable();
 	printf("Initilized GDT\n");
 
-	segmentTable* LDTptr;
+	//segmentTable* LDTptr;
 	// printf("Initializing LDT\n");
 	// initSegTable(LDTptr);
 	// printf("Initialized LDT\n");
 	
 	printf("Initializing PCB\n");
-	initPCB(&pcbArr[0],LDTptr);
+	initPCB(&pcbArr[0]);
 	printf("Initialized PCB\n");
 
 	// Set up done. Start simulation
@@ -51,7 +51,7 @@ int main()
 	i = 0;
 	unsigned int* pageNo = calloc(1, sizeof(unsigned int));
 	unsigned int* level = calloc(1,sizeof(unsigned int));
-	pageTable** ptrToPageFaultPageTable;
+	pageTable** ptrToPageFaultPageTable = malloc(sizeof(pageTable *));
 	while(i < n)
 	{
 		printf("Calling searchPageTable\n");

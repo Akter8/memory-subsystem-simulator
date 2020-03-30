@@ -20,5 +20,5 @@ typedef struct
 pageTable* searchSegmentTable(int pid, int26 virtualAddress);			//Check whether to search in LDT or GDT
 int updateSegmentTablePresentBit(segmentTableEntry* segTableEntry, int index, int value);
 int deleteSegmentTable(); //To be used when process terminates
-int initSegTable(segmentTable *segTablePtr);
+segmentTable* initSegTable();
 
