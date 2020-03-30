@@ -13,7 +13,7 @@ typedef struct
 	unsigned int emptyBit: 1; // Tells whether a frame has been allocated or not | set if allocated
 	unsigned int considerInLfu: 1;
 	int level : 2;			  // which level of page table would contain an entry corresponding to pageNum
-	int segNum : 4;
+	unsigned int segNum : 4;
 }
 frameTableEntry;
 
@@ -31,7 +31,7 @@ short unsigned getDirtyBitFrameTable(int index);
 short unsigned setDirtyBitFrameTable(int index, int value);
 short unsigned getEmptyBitFrameTable(int index);
 short unsigned setEmptyBitFrameTable(int index, int value);
-int allocateFrame(int pid, pageTable *pT,int pageNum,int level);
+int allocateFrame(int pid,int segno,pageTable *pT,int pageNum,int level);
 int invalidateFrame(int frameNo);
 int initFrameTable();
 int frameAgeing();

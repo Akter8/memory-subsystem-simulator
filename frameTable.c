@@ -17,9 +17,11 @@ int getReplacableEmptyFrame()
 }
 int updateLfuCount(int frameNo)
 {
+	printf("Updating count for frame# %d\n",frameNo);
 	if(frameNo>=NUM_FRAMES)
 		return -1;
 	frameTable.entries[frameNo].LfuCount.value++;
+	//printf("count = %d\n",frameTable.entries[frameNo].LfuCount.value);
 	return 1;
 }
 int getLfuFrameNum()
@@ -29,13 +31,13 @@ int getLfuFrameNum()
 
 	for(i=0;i<NUM_FRAMES;i++)
 	{
-		if(frameTable.entries[i].considerInLfu==1 && frameTable.entries[0].LfuCount.value<minCount)
+		if(frameTable.entries[i].considerInLfu==1 && frameTable.entries[i].LfuCount.value<minCount)
 		{
-			minCount = frameTable.entries[0].LfuCount.value;
+			minCount = frameTable.entries[i].LfuCount.value;
 			indexFrame = i;
 		}
 	}
-	
+	//printf("minCount=%d|||frameno=%d\n",minCount,indexFrame );
 	return indexFrame;
 }
 short unsigned getDirtyBitFrameTable(int index)
@@ -69,20 +71,23 @@ int frameAgeing()
 
 
 
-int allocateFrame(int pid, pageTable *pT,int pageNum,int level)
+int allocateFrame(int pid,int segno,pageTable *pT,int pageNum,int level)
 {
 	int frameNo = getReplacableEmptyFrame();
 
+	//printf("pid = %d,segno=%d\n",pid,segno );
+
 	if(frameNo!=-1)
 	{	//placement
-		printf("\nFrame allocated:%d(placement)\n",frameNo);
+		printf("Frame allocated:%d(placement)\n",frameNo);
 		frameTable.entries[frameNo].pageNum.value=pageNum;
 		frameTable.entries[frameNo].pid=pid;
 		frameTable.entries[frameNo].LfuCount.value=0;
 		frameTable.entries[frameNo].dirtyBit=0;
 		frameTable.entries[frameNo].emptyBit=1; 
 		frameTable.entries[frameNo].considerInLfu=1;
-		frameTable.entries[frameNo].level = level + 1;			//Confirm once if this is correct
+		frameTable.entries[frameNo].level = level + 1;
+		frameTable.entries[frameNo].segNum = segno;			//Confirm once if this is correct
 	}
 	else
 	{
@@ -97,11 +102,14 @@ int allocateFrame(int pid, pageTable *pT,int pageNum,int level)
 		}
 
 		//
+		//printf("segno:%d,pn:%d\n",frameTable.entries[frameNo].segNum,frameTable.entries[frameNo].pageNum);
 		pageTable* pT2 = getPageTableFromPid(frameTable.entries[frameNo].pid,frameTable.entries[frameNo].segNum,frameTable.entries[frameNo].level);
+		
+		//printf("pt ref\n");
 		updatePageTablePresentBit(pT2,frameTable.entries[frameNo].pageNum.value,0);
 
 		//allocate the frame
-		printf("\nFrame allocated:%d(replacement)",frameNo);
+		printf("Frame allocated:%d(replacement)",frameNo);
 
 		frameTable.entries[frameNo].pageNum.value=pageNum;
 		frameTable.entries[frameNo].pid=pid;
@@ -109,7 +117,9 @@ int allocateFrame(int pid, pageTable *pT,int pageNum,int level)
 		frameTable.entries[frameNo].dirtyBit=0;
 		frameTable.entries[frameNo].emptyBit=1; 
 		frameTable.entries[frameNo].considerInLfu=1;
-		frameTable.entries[frameNo].level = level + 1;		//Here too
+		frameTable.entries[frameNo].level = level + 1;	
+		frameTable.entries[frameNo].segNum = segno;			//Confirm once if this is correct
+	//Here too
 	}
 
 	//update page table

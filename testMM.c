@@ -65,7 +65,7 @@ int main()
 
 			printf("After returing to testMM searchPageTable: level = %d, pageFaultPageNumber = %d\n",*level,*pageNo);
 		
-			allocateFrame(1,*ptrToPageFaultPageTable, *pageNo, *level);	
+			allocateFrame(0,addr[i]>>32,*ptrToPageFaultPageTable, *pageNo, *level);	
 			// We need to retry for this address
 			printf("Retrying for same page after page fault\n");
 			printf("------------------------------------\n");
