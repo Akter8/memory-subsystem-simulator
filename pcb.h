@@ -13,7 +13,7 @@ typdef struct
 	FILE *LinearAddrInputFile;
 	FILE *SegNumAddrFile;
     int4 GDTindex;
-    long long swapStartTime;
+//    long long swapStartTime;
 }
 PCB;
 
