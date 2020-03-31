@@ -17,8 +17,6 @@ typedef struct
 	segmentTableEntry entries[8];   //GDT,LDT each contain 4 segments max each
 }segmentTable;
 
-pageTable* searchSegmentTable(int pid, int26 virtualAddress);			//Check whether to search in LDT or GDT
+pageTable* searchSegmentTable(int pid, int26 virtualAddress);			
 int updateSegmentTablePresentBit(segmentTableEntry* segTableEntry, int index, int value);
-int deleteSegmentTable(); //To be used when process terminates
 segmentTable* initSegTable();
-

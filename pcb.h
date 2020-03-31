@@ -1,4 +1,3 @@
-// #include "dataTypes.h"
 
 #define RUNNING 0
 #define READY 1
@@ -7,8 +6,6 @@
 
 typedef struct
 {
-	// int26 LDTBaseAddress;
-	// int26 PageTableBaseAddress;
 	segmentTable* LDTPointer;
 	unsigned int segNum: 4;		
 	int state;

@@ -32,10 +32,6 @@ int main()
 	GDTptr=initSegTable();
 	printf("Initilized GDT\n");
 
-	//segmentTable* LDTptr;
-	// printf("Initializing LDT\n");
-	// initSegTable(LDTptr);
-	// printf("Initialized LDT\n");
 	
 	printf("Initializing PCB\n");
 	initPCB(&pcbArr[0]);
@@ -45,9 +41,6 @@ int main()
 	// allocateFrame(1,level1PageTable,0,1);
 	// allocateFrame(1,level1PageTable,1,1);	//need to enter in page tables too
 	//allocateFrame(1,1);
-
-	printf("%d\n",pcbArr[0].LDTPointer->entries[0].present);
-
 
 	i = 0;
 	unsigned int* pageNo = calloc(1, sizeof(unsigned int));

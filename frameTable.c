@@ -5,6 +5,10 @@
 
 extern FrameTable frameTable;
 
+
+/*
+Returns a replacable frame for allocation or -1 if no frame is available
+*/
 int getReplacableEmptyFrame()
 {
 	int i;
@@ -15,6 +19,30 @@ int getReplacableEmptyFrame()
 	}
 	return -1; // returns -1 if no empty frame available
 }
+
+
+
+/*
+Returns an irreplacable frame for allocation or -1 if no frame is available
+*/
+int getNonReplaceableFrame()
+{
+	int i;
+	for(i=0;i<NUM_FRAMES;i++)
+	{
+		if(frameTable.entries[i].emptyBit==0 && frameTable.entries[i].considerInLfu == 0)
+			return i;
+	}
+	return -1; // returns -1 if no empty frame available
+}
+
+
+
+
+/*
+Updates the frame access count which is used in LFU page replacement
+in the frame table
+*/
 int updateLfuCount(int frameNo)
 {
 	printf("Updating count for frame# %d\n",frameNo);
@@ -24,6 +52,13 @@ int updateLfuCount(int frameNo)
 	//printf("count = %d\n",frameTable.entries[frameNo].LfuCount.value);
 	return 1;
 }
+
+
+
+
+/*
+Returns the LFU frame to use for replacement
+*/
 int getLfuFrameNum()
 {
 	int minCount = frameTable.entries[0].LfuCount.value, indexFrame=0;
@@ -40,18 +75,48 @@ int getLfuFrameNum()
 	//printf("minCount=%d|||frameno=%d\n",minCount,indexFrame );
 	return indexFrame;
 }
+
+
+
+
+/*
+Returns the value of the dirty bit of the given frame number
+*/
 short unsigned getDirtyBitFrameTable(int index)
 {
 	return frameTable.entries[index].dirtyBit;
 }
+
+
+
+
+/*
+Sets the value of the dirty bit of the given frame number 
+to the value given as input by user
+*/
 short unsigned setDirtyBitFrameTable(int index, int value)
 {
 	frameTable.entries[index].dirtyBit = value;	
 }
+
+
+
+
+/*
+Returns the value of the empty bit of the given frame number
+*/
 short unsigned getEmptyBitFrameTable(int index)
 {
 	return frameTable.entries[index].emptyBit;
 }
+
+
+
+
+/*
+Sets the value of the empty bit of the given frame number 
+to the value given as input by user
+*/
 short unsigned setEmptyBitFrameTable(int index, int value)
 {
 	frameTable.entries[index].emptyBit=value;
@@ -59,6 +124,11 @@ short unsigned setEmptyBitFrameTable(int index, int value)
 }
 
 
+
+
+/*
+Runs the LFU frame ageing alogrithm 
+*/
 int frameAgeing()
 {
 	int i;
@@ -71,6 +141,11 @@ int frameAgeing()
 
 
 
+
+/*
+Finds an empty frame and allocates it to a process.
+Takes segment number, page table level in which page fault occured and page index in the pafge table as input 
+*/
 int allocateFrame(int pid,int segno,pageTable *pT,int pageNum,int level)
 {
 	int frameNo = getReplacableEmptyFrame();
@@ -131,16 +206,13 @@ int allocateFrame(int pid,int segno,pageTable *pT,int pageNum,int level)
 	setFrameNo(pT, pageNum, frameNo);
 	return frameNo;
 }
-int getNonReplaceableFrame()
-{
-	int i;
-	for(i=0;i<NUM_FRAMES;i++)
-	{
-		if(frameTable.entries[i].emptyBit==0 && frameTable.entries[i].considerInLfu == 0)
-			return i;
-	}
-	return -1; // returns -1 if no empty frame available
-}
+
+
+
+
+/*
+Writes a dirty frame back to disk and sets its empty bit to zero.
+*/
 int invalidateFrame(int frameNo)
 {
 	if(frameTable.entries[frameNo].dirtyBit==1)
@@ -153,6 +225,12 @@ int invalidateFrame(int frameNo)
 	return 1;
 }
 
+
+
+
+/*
+Initializes the ADT of the frame table
+*/
 int initFrameTable()
 {
 	int i;

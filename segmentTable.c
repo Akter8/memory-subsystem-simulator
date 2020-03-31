@@ -4,18 +4,26 @@
 #include "pageTable.h"		
 #include "segmentTable.h"
 #include "pcb.h"
+
 extern PCB pcbArr[1];
 extern segmentTable* GDTptr;
 
+
+
+
+/*
+Takes pid virtual address produced by processor as input 
+and returns pointer to level 3 page table of required segment
+*/
 pageTable* searchSegmentTable(int pid, int26 virtualAddress)
 {
 	unsigned int segNo = (virtualAddress.value>>22)&0x7;
 	unsigned int localGlobal = (virtualAddress.value>>25);
 
-	//printf("segment number=%d\n",segNo);
 	if(localGlobal==1)
 	{
 		//Global Descriptor table
+		printf("The address is in a global segment\n");
 		if(GDTptr->entries[segNo].present==1)
 			return pcbArr[pid].LDTPointer->entries[segNo].level3PageTableptr;	
 
@@ -23,40 +31,37 @@ pageTable* searchSegmentTable(int pid, int26 virtualAddress)
 	else
 	{
 		//Local Descriptor table
+		printf("The address is in a local segment\n");
 		if(pcbArr[pid].LDTPointer->entries[segNo].present==1){
 			return pcbArr[pid].LDTPointer->entries[segNo].level3PageTableptr;	
 		}
 	}
 
 	return 0;
-}				
+}
+
+
+
+
+/*
+Takes segment table entry ADT and value as input and
+updates present bit of that entry to value 
+*/				
 int updateSegmentTablePresentBit(segmentTableEntry* segTableEntry, int index, int value){
 
 		segTableEntry->present = value;
 		return 1;
 
 }	//value = 0 or 1
-int deleteSegmentTable(segmentTable* segtable){
-
-	//delete all the page tables allocate.
-	// for(i=0;i<8;i++)
-	// {
-	// 	if(segtable->entries[i].present==1)
-	// 	{
-	// 		deallocateProcessPages(segtable->entries[i].level3PageTableptr);
-	// 	}
-	// }
 
 
-}
-int initSegment()	//Function to initialise a segment in the segment table
-{
-	//initialise page tables and present bit of the correspondinf segment
 
-}
+
+/*
+Initializes ADTs for segment table and calls method that initializes page table of one segment 
+*/
 segmentTable* initSegTable()
 {
-	// pageTable* pageTableArrayptr = calloc(8,sizeof(pageTable*));
 	segmentTable *segTableptr;
 	segTableptr =(segmentTable *) calloc(1,sizeof(segmentTable));
 	segmentTableEntry* entries = calloc(8,sizeof(segmentTableEntry));
@@ -72,16 +77,7 @@ segmentTable* initSegTable()
 		segTableptr->entries[i].level3PageTableptr  = NULL;
 	}
 
-	//Now initialize page table of single segment
-	//pageTable *level1PageTableptr, *level2PageTableptr, *level3PageTableptr;
-	//frameOfPageTable *level1PageTableFramesptr, *level2PageTableFramesptr, *level3PageTableFramesptr;
-
-	//initPageTable(level3PageTableptr,level2PageTableptr,level1PageTableptr,level3PageTableFramesptr,
-	//	level2PageTableFramesptr,level1PageTableFramesptr);
-
-	//segTableptr->entries[0].level3PageTableptr = level3PageTableptr;
 	segTableptr->entries[0].level3PageTableptr = initPageTable();
-	segTableptr->entries[1].level3PageTableptr = initPageTable();
 
 	return segTableptr;
 

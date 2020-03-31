@@ -9,32 +9,60 @@
 extern PCB pcbArr[1];
 extern FrameTable frameTable;
 
+
+/*
+Initializes ADT of PCB and calls method
+to initialize LDT of the process
+*/
 int initPCB(PCB *pcbObj){
-	// pcbObj->level3PageTablePointer = level3PageTablePointer;
 	pcbObj->state = READY;
-	printf("Calling initSegTable from inside initPCB\n");
 
 	pcbObj->LDTPointer = initSegTable();
-
-	// initSegTable(LDTptr);
-	printf("initSegTable returned successfully\n");
 
 	return 0;
 }
 
+
+
+
+/*
+Takes ADT of PCB as input and
+returns the process state 
+*/
 int getState(PCB pcbObj){
 	return pcbObj.state;
 }
 
+
+
+
+/*
+Takes ADT of PCB and state as input and
+sets the process state 
+*/
 int setState(PCB *pcbObj, int state){
 	pcbObj->state = state;
 	return 0;
 }
 
+
+
+
+/*
+Takes ADT of PCB and sement number as input
+and returns pointer to level 3 page table of that segment
+*/
 pageTable* getLevel3PageTablePointer(PCB pcbObj, int segNum){
 	return pcbObj.LDTPointer->entries[segNum].level3PageTableptr;
 }
 
+
+
+
+/*
+Frees dynamic memory allocated for LDT and page tables
+of a process and marks the frames occupied by the process' pages as empty
+*/
 int deleteProcess(unsigned int pid){
 	PCB pcbObj = pcbArr[pid];
 	//Serially free all page tables, then all segment table entries
@@ -57,7 +85,8 @@ int deleteProcess(unsigned int pid){
 	free(level3PageTableptr);
 
 
-	//free(LDTptr->entries);
+	// free(LDTptr->entries);
+	// Entries are not being freed currently. This is a bug that is causing a memory leak
 
 	free(LDTptr);
 

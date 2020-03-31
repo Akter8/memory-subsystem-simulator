@@ -36,4 +36,3 @@ int invalidateFrame(int frameNo);
 int initFrameTable();
 int frameAgeing();
 int updateLfuCount(int frameNo);
-
