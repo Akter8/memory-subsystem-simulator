@@ -329,6 +329,7 @@ updateL1Cache(int setIndex, int tag, bool write, int data, bool dataCache)
 	if (way == -1) // Did not find an invalid entry. Replacement required.
 	{
 		way = getLruIndexL1Cache(setIndex, dataCache);
+        //No need to check for dirty bit, for the replaced block, because write through
 		if (dataCache)
 			fprintf(outputFile, "L1-Data Cache: Replacement in set=%d, way=%d for tag=%d\n", setIndex, way, tag);
 		else
@@ -403,7 +404,7 @@ writeL1Cache(int setIndex, int tag, int data, bool dataCache)
 			updateLruL1Cache(setIndex, i, dataCache);
 
 			// Since L1 is write-through, we need to write to L2 also.
-			writeL2Cache(setIndex, tag, data);
+            writeL2Cache(setIndex, tag, data);
 
 			return 1;
 		}
@@ -617,8 +618,7 @@ getFirstInvalidWayL2Cache(int setIndex)
 /*
  * Finds an empty cache way in that set if possible and stores the new data.
  * If no empty way is found for that set, then we replace the LRU way.
- * Follows placement and only then replacement.
- * Returns the way number it is stored in.
+ * Follows placement and only then replacement.  * Returns the way number it is stored in.
  */
 int
 updateL2Cache(int index, int tag, bool write, int data)
@@ -632,6 +632,8 @@ updateL2Cache(int index, int tag, bool write, int data)
 	if (way == -1) // Did not find an invalid entry. Replacement required.
 	{
 		way = getLruIndexL2Cache(index);
+        //getLruIndexL2Cache(), if dirty, then writeback to Main Memory
+        
 		fprintf(outputFile, "L2-Cache: Replacement in set=%d, way=%d for tag=%d\n", index, way, tag);
 	}
 	else

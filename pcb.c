@@ -26,31 +26,31 @@ int getpid(pcbObj)
 }
 
 //Initializes the PCB for each process
-void initPCB(PCB pcbObj, char* LinearAddrInputFileName, char* segInputFileName)
+void initPCB(int pid, char* LinearAddrInputFileName, char* segInputFileName)
 {
     //get NonReplacable for PCB for the process
     int19 frameNum = getNonReplacableFrame();
 
 
     //Initially all processes join the Ready queue
-    pcbObj.state = READY;
-
+    setState(PCB[pid], READY);
 
     //Opening input file for the particular process
-    pcbObj.LinearAddrInputFile = fopen(LinearAddrinputFileName, "r");
+    PCB[pid].LinearAddrInputFile = fopen(LinearAddrinputFileName, "r");
     //Check if File open correctly
     fileNotNull(pcbObj.LinearAddrInputFile, LinearAddrInputFileName);
 
 
-    pcbObj.SegNumAddrFile = fopen(segInputFileName);
+    PCB[pid].SegNumAddrFile = fopen(segInputFileName);
     //Check if File open correctly
-    fileNotNull(pcbObj.segInputFile, segInputFileName);
+    fileNotNull(PCB[pid].segInputFile, segInputFileName);
 
 
     //Initialize a new Local Descriptor Segment Table for the process
-    SegmentTableInfo* segTableInfoObj = initSegmentTable();
-    pcbObj.LDTBaseAddress = segTableInfoObj->LDTBaseAddress;
-    pcbObj.segmentTableObj = segTableInfoObj->segmentTableObj;
+    SegmentTableInfo* segTableInfoObj = initLDTable();
+    PCB[pid].LDTBaseAddress = segTableInfoObj->LDTBaseAddress;
+    PCB[pid].segmentTableObj = segTableInfoObj->segmentTableObj;
+
 
     //To find GDTindex (i.e. free entry ) in the Global Descriptor Table
     for(int i = 0; i < 8; ++i)

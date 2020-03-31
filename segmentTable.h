@@ -3,19 +3,28 @@
 
 typedef struct
 {
-	unsigned int baseAddress : 16;	// There are 2**16 frames present
-	unsigned int limit : 26
+	unsigned int baseAddress : 19;	// There are 2**16 frames present
+	unsigned int limit : 32;         //Segment limit is based upon our design for each process, for now we keep it 32 bits
 	unsigned int present : 1;
 	unsigned int readWrite : 1;
+    pageTable* Level3PageTable;     // Pointer to level3PageTable
 }segmentTableEntry;
 
 typedef struct
 {
 	// Indexed by page number
-	segmentTableEntry entries[4];   //GDT,LDT each contain 4 segments max each
+	segmentTableEntry entries[8];   //GDT,LDT each contain 4 segments max each
+    int GDT;                        // 0 means segmentTable is LDT, 1 means it is GDT
 }segmentTable;
 
-int searchSegmentTable(int22 virtualAddress);
-int updatePageTablePresentBit(int index, int value);	//value = 0 or 1
-int deleteSegmentTable(); //To be used when process terminates
+typedef struct
+{
+    segmentTable segmentTableObj;
+    int26 SegTableBaseAddress;
+}segmentTableInfo;
 
+int initLDTable();
+int initGDTable();
+int searchSegmentTable(segmentTable* segTableObj, int4 segNum);
+int updatePageTablePresentBit(segmentTable* segTableObj, int index, int value);	//value = 0 or 1
+int deleteSegmentTable(segmentTable* segTableObj); //To be used when process terminates

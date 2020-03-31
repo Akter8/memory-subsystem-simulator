@@ -7,15 +7,18 @@
 
 typdef struct
 {
-	int26 LDTBaseAddress;
-	int26 PageTableBaseAddress;
+	int29 LDTBaseAddress;
+    segmentTable* LDTableObj;
 	int state;
 	FILE *LinearAddrInputFile;
 	FILE *SegNumAddrFile;
+    int4 GDTindex;
+    long long swapStartTime;
 }
 PCB;
 
+
 int getState(PCB pcbObj);
 int setState(PCB pcbObj, int state);
-int26 getPageTableBaseAddress(PCB pcbObj);
 int26 getLDTBaseAddress(PCB pcbObj);
+void initPCB(PCB pcbObj, char* LinearAddrInputFileName, char* segInputFileName);

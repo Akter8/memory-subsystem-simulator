@@ -4,6 +4,7 @@ segmentTableObj* initGDTable()
 {
     //Get a non-replacable frame
     int19 frameNum = getNonReplacableFrame();
+
     if(status == -1)
     {
         error("Cannot get Non-Replacable Frame for Segment Table");
@@ -33,8 +34,8 @@ segmentTableObj* initGDTable()
 segmentTableInfo* initLDTable(int limit)
 {
     //Get a non-replacable frame
-    int status = getNonReplacableFrame();
-    if(status == -1)
+    int frameNum = getNonReplacableFrame();
+    if(frameNum == -1)
     {
         error("Cannot get Non-Replacable Frame for Segment Table");
     }
@@ -50,7 +51,7 @@ segmentTableInfo* initLDTable(int limit)
     segmentTableInfo* segmentTableInfoObj = malloc(sizeof(segmentTableInfo)); 
 
     segmentTableInfoObj->segmentTableObj = segmentTableObj;
-    segmentTableInfoObj->SegTableBaseAddress = ;     //From retured frame, when getting a non-replacable frame
+    segmentTableInfoObj->SegTableBaseAddress = frameNum;     //From retured frame, when getting a non-replacable frame
     
 
     //Initialize all 8 segments in segmentTable
@@ -72,7 +73,7 @@ segmentTableInfo* initLDTable(int limit)
 
         segmentTableObj->entries[i].present = 1;
         segmentTableObj->entries[i].readWrite = 1;
-        segmentTableObj->entries[i].limit = limit;   //limit will be input to the initLDTable
+        segmentTableObj->entries[i].limit = limit[i];   //limit will be input to the initLDTable
 
         free(PgTableInfoObj);
         
