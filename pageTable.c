@@ -50,7 +50,8 @@ pageTable* initPageTable(){
 	for(i = 0; i < NUMBER_OF_PAGES_IN_LEVEL_1_PAGE_TABLE; i++){
 		for(j = 0; j < NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE; j++){
 			level1PageTableptr->frames[i].entries[j].present = 0;
-			level1PageTableptr->frames[i].entries[j].modified = 0;	
+			level1PageTableptr->frames[i].entries[j].modified = 0;
+			// level1PageTableptr->frames[i].entries[j].readWrite = 0;	
 		}
 	}
 
@@ -58,7 +59,8 @@ pageTable* initPageTable(){
 		for(j = 0; j < NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE; j++){
 			level2PageTableptr->frames[i].entries[j].present = 0;
 			level2PageTableptr->frames[i].entries[j].modified = 0;
-			level2PageTableptr->frames[i].entries[j].cachingDisabled = 1;	
+			level2PageTableptr->frames[i].entries[j].cachingDisabled = 1;
+			level2PageTableptr->frames[i].entries[j].readWrite = 1;	
 		}
 	}
 
@@ -66,7 +68,8 @@ pageTable* initPageTable(){
 		for(j = 0; j < NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE; j++){
 			level3PageTableptr->frames[i].entries[j].present = 0;				
 			level3PageTableptr->frames[i].entries[j].modified = 0;
-			level3PageTableptr->frames[i].entries[j].cachingDisabled = 1;	
+			level3PageTableptr->frames[i].entries[j].cachingDisabled = 1;
+			level3PageTableptr->frames[i].entries[j].readWrite = 1;	
 		}
 	}
 	level3PageTableptr->nextLevelPageTablePointer = level2PageTableptr;
@@ -84,8 +87,8 @@ This function returns physical frame number for a given linear address.
 Returns -1 and the level of paging and page number for which page fault occured if unsucessful. 
 Also updates LFU count in frame table
 */
-int searchPageTable(pageTable* level3PageTable,pageTable** ptref,unsigned int linearAddr, unsigned int* pageFaultPageNumber,
-					unsigned int* level){
+int searchPageTable(pageTable* level3PageTable,pageTable** ptref,unsigned int linearAddr, unsigned int readWrite,
+	unsigned int* pageFaultPageNumber, unsigned int* level){
 
 	// printf("Inside searchPageTable\n");
 	pageTable* level2PageTable = level3PageTable->nextLevelPageTablePointer;
@@ -101,7 +104,7 @@ int searchPageTable(pageTable* level3PageTable,pageTable** ptref,unsigned int li
 	if (level3Index > 64)
 	{
 		printf("Error: Invalid address\n"); 			//level 3 page table has only 8 entries
-		return -1;
+		return -2;
 	}
 
 	//To do: Update Lfu count of the first and only frame of page table level 3. This will require segment table implementation
@@ -145,7 +148,20 @@ int searchPageTable(pageTable* level3PageTable,pageTable** ptref,unsigned int li
 	
 	unsigned int frameNumberOfProcess;
 	if(level1PageTable->frames[indexOfLevel1PageTable].entries[level1Index].present == 1){
+		//Checking read/write permissions
+		if(level1PageTable->frames[indexOfLevel1PageTable].entries[level1Index].readWrite == 0 && readWrite == 1){
+			//Page is read only but we are trying to write
+			printf("Write permission denied. The page is a read only page.\n");
+		}
+		
+		//Set dirty bit in page table if its a write
+		if(readWrite == 1){
+			level1PageTable->frames[indexOfLevel1PageTable].entries[level1Index].modified = 1;	
+		}
+		
+		
 		frameNumberOfProcess = level1PageTable->frames[indexOfLevel1PageTable].entries[level1Index].frameNumber;
+		
 		updateLfuCount(frameNumberOfProcess);		
 	}
 	else{

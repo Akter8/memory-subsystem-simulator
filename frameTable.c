@@ -210,7 +210,7 @@ int allocateFrame(int pid,int segno,pageTable *pT,int pageNum,int level)
 
 
 
-/*
+/*setLock
 Writes a dirty frame back to disk and sets its empty bit to zero.
 */
 int invalidateFrame(int frameNo)
@@ -267,10 +267,13 @@ int readFromMemory(int frameNo)
 	updateLfuCount(frameNo);
 
 }
+
 int writeToMemory(int frameNo)
 {
 	if(frameTable.entries[frameNo].lock==1)
 		frameTable.entries[frameNo].lock = 0;
+
+	setDirtyBitFrameTable(frameNo, 1);
 
 	updateLfuCount(frameNo);
 }

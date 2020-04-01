@@ -30,12 +30,8 @@ struct pageTable
 typedef struct pageTable pageTable;
 
 
-//int searchPageTable(pageTable level3PageTable,pageTable level2PageTable, pageTable level1PageTable,unsigned int linearAddr, unsigned int* pageFaultPageNumber,unsigned int *level);
-// int initPageTable(pageTable* level3PageTableptr,pageTable* level2PageTableptr, pageTable* level1PageTableptr,
-// 	frameOfPageTable* level3PageTableFramesptr,frameOfPageTable* level2PageTableFramesptr,
-// 	frameOfPageTable* level1PageTableFramesptr);
 pageTable* initPageTable();
-int searchPageTable(pageTable* level3PageTable,pageTable **ptref,unsigned int linearAddr, unsigned int* pageFaultPageNumber,unsigned int* level);
+int searchPageTable(pageTable* level3PageTable,pageTable **ptref,unsigned int linearAddr,unsigned int readWrite, unsigned int* pageFaultPageNumber,unsigned int* level);
 int updatePageTableModifiedBit(pageTable* pageTableptr,unsigned int index, int value);
 int updatePageTablePresentBit(pageTable *pT, unsigned int index, int value);
 int deallocateProcessPages(pageTable level3PageTable,pageTable level2PageTable, pageTable level1PageTable); //To be used when process terminates

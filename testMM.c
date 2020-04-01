@@ -54,7 +54,7 @@ int main()
 		pagetable = searchSegmentTable(0, address);
 		printf("Calling searchPageTable\n");
 		//if(searchPageTable(pcbArr[0].LDTPointer->entries[0].level3PageTableptr, ptrToPageFaultPageTable, addr[i]&0xFFFFFFFF,pageNo,level) == -1){
-		if(searchPageTable(pagetable, ptrToPageFaultPageTable, addr[i]&0xFFFFFFFF,pageNo,level) == -1){
+		if(searchPageTable(pagetable, ptrToPageFaultPageTable, addr[i]&0xFFFFFFFF,0,pageNo,level) == -1){
 
 			printf("After returing to testMM searchPageTable: level = %d, pageFaultPageNumber = %d\n",*level,*pageNo);
 		
