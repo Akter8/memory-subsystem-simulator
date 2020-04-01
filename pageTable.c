@@ -90,10 +90,7 @@ int searchPageTable(pageTable* level3PageTable,pageTable** ptref,unsigned int li
 	// printf("Inside searchPageTable\n");
 	pageTable* level2PageTable = level3PageTable->nextLevelPageTablePointer;
 
-	if(level2PageTable==0)
-	{
-		printf("NULL\n");
-	}
+	
 	pageTable* level1PageTable = level2PageTable->nextLevelPageTablePointer;
 
 	// First 6 bits from left used for indexing level 3

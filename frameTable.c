@@ -14,7 +14,7 @@ int getReplacableEmptyFrame()
 	int i;
 	for(i=0;i<NUM_FRAMES;i++)
 	{
-		if(frameTable.entries[i].emptyBit==0 && frameTable.entries[i].considerInLfu == 1)
+		if(frameTable.entries[i].emptyBit==0 && frameTable.entries[i].considerInLfu == 1&& frameTable.entries[i].lock==0)
 			return i;
 	}
 	return -1; // returns -1 if no empty frame available
@@ -30,7 +30,7 @@ int getNonReplaceableFrame()
 	int i;
 	for(i=0;i<NUM_FRAMES;i++)
 	{
-		if(frameTable.entries[i].emptyBit==0 && frameTable.entries[i].considerInLfu == 0)
+		if(frameTable.entries[i].emptyBit==0 && frameTable.entries[i].considerInLfu == 0 )
 			return i;
 	}
 	return -1; // returns -1 if no empty frame available
@@ -202,7 +202,7 @@ int allocateFrame(int pid,int segno,pageTable *pT,int pageNum,int level)
 
 	updatePageTablePresentBit(pT,pageNum,1);
 	//printf("\nthe updted present bit =%d\n",pT->frames[pageNum/256].entries[pageNum%256].present);
-	
+	setLock(frameNo);
 	setFrameNo(pT, pageNum, frameNo);
 	return frameNo;
 }
@@ -238,6 +238,7 @@ int initFrameTable()
 	{
 		frameTable.entries[i].emptyBit=0;
 		frameTable.entries[i].considerInLfu = 1;
+		frameTable.entries[i].lock = 0;
 	}
 	//mark some frames as non-replaceable
 	for(i=NUM_FRAMES-NUM_NON_REPLACABLE_FRAMES;i<NUM_FRAMES;i++){
@@ -251,4 +252,25 @@ int initFrameTable()
 
 	//
 
+}
+int setLock(int frameNo)
+{
+
+	frameTable.entries[frameNo].lock=1;
+}
+
+int readFromMemory(int frameNo)
+{
+	if(frameTable.entries[frameNo].lock==1)
+		frameTable.entries[frameNo].lock = 0;
+
+	updateLfuCount(frameNo);
+
+}
+int writeToMemory(int frameNo)
+{
+	if(frameTable.entries[frameNo].lock==1)
+		frameTable.entries[frameNo].lock = 0;
+
+	updateLfuCount(frameNo);
 }

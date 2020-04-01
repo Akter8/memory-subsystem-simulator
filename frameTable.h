@@ -9,6 +9,7 @@ typedef struct
 	int26 pageNum;
 	int pid;
 	int16 LfuCount;
+	unsigned int lock: 1;
 	unsigned int dirtyBit: 1;
 	unsigned int emptyBit: 1; // Tells whether a frame has been allocated or not | set if allocated
 	unsigned int considerInLfu: 1;
@@ -36,3 +37,6 @@ int invalidateFrame(int frameNo);
 int initFrameTable();
 int frameAgeing();
 int updateLfuCount(int frameNo);
+int setLock(int frameNo);
+int readFromMemory(int frameNo);
+int writeToMemory(int frameNo);
