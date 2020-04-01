@@ -49,8 +49,12 @@ void initPCB(int pid, char* LinearAddrInputFileName, char* segInputFileName)
     fileNotNull(PCB[pid].segInputFile, segInputFileName);
 
 
+    //Here we'll find limit for each segment of the process
+    //
+
+
     //Initialize a new Local Descriptor Segment Table for the process
-    SegmentTableInfo* segTableInfoObj = initLDTable();
+    SegmentTableInfo* segTableInfoObj = initLDTable(limit);
     PCB[pid].LDTBaseAddress = segTableInfoObj->LDTBaseAddress;
     PCB[pid].segmentTableObj = segTableInfoObj->segmentTableObj;
 
@@ -58,10 +62,10 @@ void initPCB(int pid, char* LinearAddrInputFileName, char* segInputFileName)
     //To find GDTindex (i.e. free entry ) in the Global Descriptor Table
     for(int i = 0; i < 8; ++i)
     {
-        if(GDT.entries[i].present == 0)
+        if(GDT->entries[i].present == 0)
         {
             GDTindex = i;
-            createGDT(i);
+            createGDT(i, limit[i]);
             //GDT.entries[i].present = 1;
             //GDT.entries[i].
             break;
@@ -71,3 +75,4 @@ void initPCB(int pid, char* LinearAddrInputFileName, char* segInputFileName)
     
     free(SegmentTableInfo);
 }
+

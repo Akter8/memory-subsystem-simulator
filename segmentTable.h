@@ -20,7 +20,7 @@ typedef struct
 typedef struct
 {
     segmentTable segmentTableObj;
-    int26 SegTableBaseAddress;
+    int29 SegTableBaseAddress;
 }segmentTableInfo;
 
 int initLDTable();
@@ -28,3 +28,4 @@ int initGDTable();
 int searchSegmentTable(segmentTable* segTableObj, int4 segNum);
 int updatePageTablePresentBit(segmentTable* segTableObj, int index, int value);	//value = 0 or 1
 int deleteSegmentTable(segmentTable* segTableObj); //To be used when process terminates
+void createGDTsegment(int index, int limit);

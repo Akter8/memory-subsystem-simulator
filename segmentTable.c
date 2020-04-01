@@ -31,13 +31,13 @@ segmentTableObj* initGDTable()
     return segmentTableObj;
 }
 
-segmentTableInfo* initLDTable(int limit)
+segmentTableInfo* initLDTable(int limit[])
 {
     //Get a non-replacable frame
     int frameNum = getNonReplacableFrame();
     if(frameNum == -1)
     {
-        error("Cannot get Non-Replacable Frame for Segment Table");
+        fprintf(outputFile, "Cannot get Non-Replacable Frame for Segment Table");
     }
 
     //Create a segmentTableObj
@@ -67,7 +67,7 @@ segmentTableInfo* initLDTable(int limit)
 
         //Initalize segmentNum 0, becuase it is present in the process, rest are absent
         //Initalize pageTable for this segment
-        PageTableInfoObj* PgTableInfoObj = initPageTable();
+        PageTableInfo* PgTableInfoObj = initPageTable();
         segmentTableObj->entries[i].baseAddress = PgTableInfoObj->baseAddress;
         segmentTableObj->entries[i].Level3PageTable = PgTableInfoObj->pageTableObj;
 
@@ -80,6 +80,18 @@ segmentTableInfo* initLDTable(int limit)
     }
 }
 
+void createGDTsegment(int index, int limit)
+{
+    GDT->entries[index].present = 1;
 
+    //Initialize PageTable for the GDT
+    PageTableInfo* PgTableInfoObj = initPageTable();
+    GDT[i]->entries[i].baseAddress = PgTableInfoObj->baseAddress;
+    GDT[i]->entries[i].Level3PageTable = PgTableInfoObj->pageTableObj;
+
+    GDT[i]->entries[i].present = 1;
+    GDT[i]->entries[i].readWrite = 0;
+    GDT[i]->entreis[i].limit = limit;
+}
 
 

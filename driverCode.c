@@ -173,6 +173,7 @@ int main()
                         {
                             //allocateFrame()
                             //fseek() for previous instruction
+                            
                             break;
 
                             //level = 2;
@@ -366,17 +367,22 @@ int main()
                     if(status == -1)
                     {
                         fprintf(outputFile, "Driver: Error reading From Main Memory\n");
+                        continue;
+                    }
+                    else
+                    {
+                        fprintf(outputFile, "Driver: Data read from Main Memory\n");
                     }
 
 					//----------------------------
-					// updateL2Cache();
+                    updateL2Cache(l2CacheIndex, l2CacheTag, write, 0, dataCache);
                     // Update the LRU in L2 cache
 
 					time += L2_CACHE_UPDATE_TIME;
 					fprintf(outputFile, "Driver: L2 Cache update time: %d\n", L2_CACHE_UPDATE_TIME);
 
 
-					// updateL1Cache();
+                    updateL1Cache(l1CacheIndex, l1CacheTag, write, 0, dataCache);
                     // Update the LRU in L1 cache
 
 					time += L1_CACHE_UPDATE_TIME;
@@ -393,6 +399,7 @@ int main()
 					fprintf(outputFile, "Driver: Will update L1 Cache.\n");
 
 					// Update L1 cache.
+                    updateL1Cache(l1CacheIndex, l1CacheTag, write, 0, dataCache);
 					time += L1_CACHE_UPDATE_TIME;
 
 					// Update the LRU in L1 cache if required.
