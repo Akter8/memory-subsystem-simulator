@@ -30,7 +30,7 @@ struct pageTable
 typedef struct pageTable pageTable;
 
 
-pageTable* initPageTable();
+pageTable* initPageTable(int readWrite);
 int searchPageTable(pageTable* level3PageTable,pageTable **ptref,unsigned int linearAddr,unsigned int readWrite, unsigned int* pageFaultPageNumber,unsigned int* level);
 int updatePageTableModifiedBit(pageTable* pageTableptr,unsigned int index, int value);
 int updatePageTablePresentBit(pageTable *pT, unsigned int index, int value);

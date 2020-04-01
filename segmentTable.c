@@ -77,7 +77,7 @@ segmentTable* initSegTable()
 		segTableptr->entries[i].level3PageTableptr  = NULL;
 	}
 
-	segTableptr->entries[0].level3PageTableptr = initPageTable();
+	segTableptr->entries[0].level3PageTableptr = initPageTable(1); //for now initializing segment with write permissions
 
 	return segTableptr;
 

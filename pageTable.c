@@ -30,7 +30,7 @@ Initializes all 3 levels of page table by dynamically allocating memory
 for ADTs correxponding to page tables and their frames.
 Returns a pointer to level 3 page table
 */
-pageTable* initPageTable(){
+pageTable* initPageTable(int readWrite){
 	pageTable *level3PageTableptr, *level2PageTableptr, *level1PageTableptr;
 	frameOfPageTable *level3PageTableFramesptr,*level2PageTableFramesptr,*level1PageTableFramesptr;
 
@@ -51,7 +51,14 @@ pageTable* initPageTable(){
 		for(j = 0; j < NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE; j++){
 			level1PageTableptr->frames[i].entries[j].present = 0;
 			level1PageTableptr->frames[i].entries[j].modified = 0;
-			// level1PageTableptr->frames[i].entries[j].readWrite = 0;	
+			// level1PageTableptr->frames[i].entries[j].readWrite = 0;
+			if(readWrite == 0){
+				//Its a read only segment
+				level1PageTableptr->frames[i].entries[j].readWrite = 0;
+			}
+			else{
+				level1PageTableptr->frames[i].entries[j].readWrite = 1;
+			}	
 		}
 	}
 
@@ -152,11 +159,6 @@ int searchPageTable(pageTable* level3PageTable,pageTable** ptref,unsigned int li
 		if(level1PageTable->frames[indexOfLevel1PageTable].entries[level1Index].readWrite == 0 && readWrite == 1){
 			//Page is read only but we are trying to write
 			printf("Write permission denied. The page is a read only page.\n");
-		}
-		
-		//Set dirty bit in page table if its a write
-		if(readWrite == 1){
-			level1PageTable->frames[indexOfLevel1PageTable].entries[level1Index].modified = 1;	
 		}
 		
 		
