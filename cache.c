@@ -644,7 +644,7 @@ updateL2Cache(int index, int tag, bool write, int data)
 	fclose(outputFile);
 
 	// Updating the data.
-	// l2Cache.sets[index].ways[way].data = data;
+	l2Cache.sets[index].ways[way].data = data;
 
 	// Initialising the way for this new entry.
 	l2Cache.sets[index].ways[way].tag = tag;

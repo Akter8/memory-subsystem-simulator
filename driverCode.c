@@ -257,6 +257,7 @@ int main()
 				// Since L1 cache is write through, the driver function only writes to the L1 cache.
 				// And the writeL1Cache() calls writeL2Cache().
 				retValue = writeL1Cache(l1CacheIndex, l1CacheTag, j, l2CacheIndex, l2CacheTag, dataCache);
+                time += L1_CACHE_WRITE_TIME;
 				
 				if (retValue < 0)
 				{
@@ -264,29 +265,59 @@ int main()
 					// Error Codes.
 					if (retValue == ERROR_WRITE_FAILED_NO_TAG_MATCH)
                     {
-						// Do something.
+                        fprintf(outputFile, "Driver: Write to L1 Cache Failed. Tag did not match. Time cost: %d\n", L1_CACHE_WRITE_TIME);
                         retValue = searchL2Cache(l2CacheIndex, l2CacheTag);
+                        time += L2_CACHE_SEARCH_TIME;
+
                         if(retValue < 0)
-                            //Main Memory stuff
-                            status = writeInMainMemory();
+                        {
+                            fprintf(outputFile, "Driver: Search in L2 failed! Time cost: %d\n", L2_CACHE_SEARCH_TIME);
+                            // Write to Main Memory
+                            status = writeInMainMemory(physicalAddr);
+                            time += MAIN_MEMORY_WRITE_TIME;
+                            fprintf(outputFile, "Driver: Write in Main Memory successfull! %d\n",MAIN_MEMORY_WRITE_TIME);
+
+
                             if(status == ERROR_WRITE_FAILED_NO_PERMISSION) 
                             {
                                 fprintf(outputFile, "Driver: Error! write permission not for this memory address\n");
                                 continue;
                             }
                                 
-                            updateL2Cache(data);
-                            //Update CAche Time and print in outputFile
+                            updateL2Cache(l2CacheIndex, l2CacheTag, write, 0, dataCache);
+                            time += L2_CACHE_UPDATE_TIME;
+                            fprintf(outputFile, "Driver: Updated L2 Cache. Time cost: %d\n", L2_CACHE_WRITE_TIME);
+
+                            updateL1Cache(l1CacheIndex, l1CacheTag, write, 0, dataCache);
+                            time += L1_CACHE_UPDATE_TIME;
+                            fprintf(outputFile, "Driver: Updated L1 Cache. Time cost: %d\n", L1_CACHE_WRITE_TIME);
+
+                            writeL1Cache(l1CacheIndex, l1CacheTag, 0, dataCache);
+                            time += L1_CACHE_WRITE_TIME;
+                            fprintf(outputFile, "Driver: Write to L1 Cache successfully completed.\n");
+                        }
+                        else
+                        {
+                            fprintf(outputFile, "Driver: Search in L2 successfull! Search Time: %d\n", L2_CACHE_SEARCH_TIME);
+                            updateL1Cache(l1CacheIndex, l1CacheTag, write, 0, dataCache);
+                            time += L1_CACHE_UPDATE_TIME;
+                            fprintf(outputFile, "Driver: Updated L1 Cache. Time cost: %d\n", L1_CACHE_WRITE_TIME);
+
+                            writeL1Cache(l1CacheIndex, l1CacheTag, 0, dataCache);
+                            time += L1_CACHE_WRITE_TIME;
+                            fprintf(outputFile, "Driver: Write to L1 Cache successfully completed.\n");
+                        }
                     }
 
-                    updateL1Cache();
-
 					else if (retValue == ERROR_WRITE_FAILED_NO_PERMISSION)
+                    {
                         fprintf(outputFile, "Driver: Error! write permission not for this memory address\n")
+                    }
 
 					else if (retValue == ERROR_CANNOT_WRITE_IN_INSTR_CACHE)
+                    {
                         fprintf(outputFile, "Driver: Error! write permission not for this memory address\n")
-
+                    }
 					//-------------------------------
 				}
 				else
@@ -331,6 +362,11 @@ int main()
 
 
 					// search in the MM and update caches.
+                    int status = readFromMainMem(physicalAddr);
+                    if(status == -1)
+                    {
+                        fprintf(outputFile, "Driver: Error reading From Main Memory\n");
+                    }
 
 					//----------------------------
 					// updateL2Cache();
@@ -370,8 +406,6 @@ int main()
 			// Updating the time taken by the previous memory access.
 			currentTime += time;
 			pcb[i].runTime += time;
-
-            current_time += time;
             ++current_time;
 
     } 
