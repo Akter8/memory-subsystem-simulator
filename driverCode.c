@@ -263,27 +263,29 @@ int main()
 					//-------------------------------
 					// Error Codes.
 					if (retValue == ERROR_WRITE_FAILED_NO_TAG_MATCH)
+                    {
 						// Do something.
-                        //retValue = searchL2Cache(l2CAcheIndex, l2CacheTag)
-                        //if(retValue < 0)
+                        retValue = searchL2Cache(l2CacheIndex, l2CacheTag);
+                        if(retValue < 0)
                             //Main Memory stuff
-                            //status = writeInMainMemory();
-                            //if(error)
-                                //fprintf(outputFile, "Driver: Error! write permission not for this memory address\n");
-                                //continue;
+                            status = writeInMainMemory();
+                            if(status == ERROR_WRITE_FAILED_NO_PERMISSION) 
+                            {
+                                fprintf(outputFile, "Driver: Error! write permission not for this memory address\n");
+                                continue;
+                            }
                                 
-                            //updateL2Cache(data);
+                            updateL2Cache(data);
                             //Update CAche Time and print in outputFile
+                    }
 
-                        //updateL1Cache();
+                    updateL1Cache();
 
 					else if (retValue == ERROR_WRITE_FAILED_NO_PERMISSION)
-						// Do someting.
-                        //fprintf("Driver: Error! write permission not for this memory address\n")
+                        fprintf(outputFile, "Driver: Error! write permission not for this memory address\n")
 
 					else if (retValue == ERROR_CANNOT_WRITE_IN_INSTR_CACHE)
-						// Do something.
-                        //fprintf("Driver: Error! write permission not for this memory address\n")
+                        fprintf(outputFile, "Driver: Error! write permission not for this memory address\n")
 
 					//-------------------------------
 				}
@@ -297,15 +299,82 @@ int main()
             else
             {
                 //if instruction is read
-                 
-            }
-            
+                // Since L1 cache is look aside, we essentially search L1 and L2 cache simultaneously.
+				// But this cannot be shown in the simulation, hence we consider the time taken to do the search to be MIN() of the two of them.
+				// For look-through we would have added the time they take to search.
+				retValue1 = searchL1Cache(l1CacheIndex, l1CacheTag, dataCache);
 
+				retValue2 = searchL2Cache(l2CacheIndex, l2CacheTag);
+
+				if (retValue1 >= 0 && retValue2 >= 0)
+				{
+					// Return the data to the processor.
+					//return retValue;
+
+					previousActionTime = min(L1_CACHE_SEARCH_TIME, L2_CACHE_SEARCH_TIME);
+					time += previousActionTime;
+
+					fprintf(outputFile, "Driver: Found the required data in L1 cache.\n");
+					fprintf(outputFile, "Search time taken: %d.\n", previousActionTime);
+				}
+				else if (retValue1 < 0 && retValue2 < 0)
+				{
+					// Not there in both the levels of cache.
+
+					previousActionTime = max(L1_CACHE_SEARCH_TIME, L2_CACHE_SEARCH_TIME);
+					time += previousActionTime;
+
+					fprintf(outputFile, "Driver: Did NOT find the required data in both L1 and L2 cache\n");
+					fprintf(outputFile, "Search time taken: %d.\n", previousActionTime);
+					fprintf(outputFile, "Driver: Will update L1 and L2 caches.\n");
+
+
+
+					// search in the MM and update caches.
+
+					//----------------------------
+					// updateL2Cache();
+                    // Update the LRU in L2 cache
+
+					time += L2_CACHE_UPDATE_TIME;
+					fprintf(outputFile, "Driver: L2 Cache update time: %d\n", L2_CACHE_UPDATE_TIME);
+
+
+					// updateL1Cache();
+                    // Update the LRU in L1 cache
+
+					time += L1_CACHE_UPDATE_TIME;
+					fprintf(outputFile, "Driver: L1 Cache update time: %d\n", L1_CACHE_UPDATE_TIME);
+				}
+				else if (retValue1 < 0 && retValue2 >= 0)
+				{
+					// Present in L2 cache, but not in L1.
+
+					previousActionTime = max(L1_CACHE_SEARCH_TIME, L2_CACHE_SEARCH_TIME);
+					time += previousActionTime;
+					fprintf(outputFile, "Driver: Did NOT find the required data in L1 cache, but found it in L2 cache.\n");
+					fprintf(outputFile, "Search time taken: %d.\n", previousActionTime);
+					fprintf(outputFile, "Driver: Will update L1 Cache.\n");
+
+					// Update L1 cache.
+					time += L1_CACHE_UPDATE_TIME;
+
+					// Update the LRU in L1 cache if required.
+					// ----------------------------
+
+					fprintf(outputFile, "Driver: L1 Cache update time: %d\n", L1_CACHE_UPDATE_TIME);
+
+			    }
+			} // End of that memory access.
+
+			// Updating the time taken by the previous memory access.
+			currentTime += time;
+			pcb[i].runTime += time;
 
             current_time += time;
             ++current_time;
 
-    }
+    } 
     
     TLBL1flush();
     TLBL2flush();

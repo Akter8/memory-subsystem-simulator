@@ -13,7 +13,8 @@ typdef struct
 	FILE *LinearAddrInputFile;
 	FILE *SegNumAddrFile;
     int4 GDTindex;
-//    long long swapStartTime;
+    long long swapStartTime;    //Time at which swapping starts when page fault occurs
+    long long runTime;          //Amount of time the process has spent executing in CPU
 }
 PCB;
 

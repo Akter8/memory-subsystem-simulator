@@ -35,6 +35,9 @@ void initPCB(int pid, char* LinearAddrInputFileName, char* segInputFileName)
     //Initially all processes join the Ready queue
     setState(PCB[pid], READY);
 
+
+    PCB[pid].swapStartTime = -1;        //denotes not gone for swapping
+
     //Opening input file for the particular process
     PCB[pid].LinearAddrInputFile = fopen(LinearAddrinputFileName, "r");
     //Check if File open correctly
