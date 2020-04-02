@@ -7,7 +7,7 @@
 #include "pcb.h"
 #include "utility.h"
 
-extern PCB pcbArr[1];
+extern PCB pcbArr[30];
 extern FrameTable frameTable;
 extern segmentTableInfo GDTptr;
 

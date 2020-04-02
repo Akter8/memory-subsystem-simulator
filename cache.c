@@ -247,7 +247,7 @@ searchL1Cache(int setIndex, int tag, bool dataCache)
 {
 	int index = (dataCache == true) ? 0 : 1;
 
-	FILE *outputFile = fopen(OUTPUT_FILE_NAME, "a");
+	extern FILE *outputFile;// = fopen(OUTPUT_FILE_NAME, "a");
 	fileNotNull(outputFile, OUTPUT_FILE_NAME);
 
 	// Finding if its data cache or instr cache.
@@ -266,7 +266,7 @@ searchL1Cache(int setIndex, int tag, bool dataCache)
 				fprintf(outputFile, "L1-Data Cache: Found index=%d, tag=%d in way=%d\n", setIndex, tag, i);
 			else
 				fprintf(outputFile, "L1-Instr Cache: Found index=%d, tag=%d in way=%d\n", setIndex, tag, i);
-			fclose(outputFile);
+			//fclose(outputFile);
 
 			// Update the LRU count.
 			updateLruL1Cache(setIndex, i, dataCache);
@@ -281,7 +281,7 @@ searchL1Cache(int setIndex, int tag, bool dataCache)
 	else
 		fprintf(outputFile, "L1-Instr Cache: Did not find index=%d and tag=%d\n", setIndex, tag);
 	
-	fclose(outputFile);
+	//fclose(outputFile);
 
 	// If data is not found.
 	return -1;
@@ -319,7 +319,7 @@ getFirstInvalidWayL1Cache(int setIndex, bool dataCache)
 int
 updateL1Cache(int setIndex, int tag, bool write, int data, bool dataCache)
 {
-	FILE *outputFile = fopen(OUTPUT_FILE_NAME, "a");
+	extern FILE *outputFile; //= fopen(OUTPUT_FILE_NAME, "a");
 	fileNotNull(outputFile, OUTPUT_FILE_NAME);
 
 	// Finding if its data cache or instr cache.
@@ -343,7 +343,7 @@ updateL1Cache(int setIndex, int tag, bool write, int data, bool dataCache)
 			fprintf(outputFile, "L1-Instr Cache: Placement in set=%d, way=%d for tag=%d\n", setIndex, way, tag);
 	}
 
-	fclose(outputFile);
+	//fclose(outputFile);
 
 	// Updating the data.
 	// l1Cache[index].sets[setIndex].ways[way].data = data;
@@ -367,7 +367,7 @@ int
 writeL1Cache(int setIndex, int tag, int data, bool dataCache)
 {
 
-	FILE *outputFile = fopen(OUTPUT_FILE_NAME, "a");
+	extern FILE *outputFile;// = fopen(OUTPUT_FILE_NAME, "a");
 	fileNotNull(outputFile, OUTPUT_FILE_NAME);
 
 	// Finding if its data cache or instr cache.
@@ -390,7 +390,7 @@ writeL1Cache(int setIndex, int tag, int data, bool dataCache)
 			if (l1Cache[index].sets[setIndex].ways[i].readWriteBit == 0)
 			{
 				fprintf(outputFile, "L1-Data Cache: Write FAILED as there is no permission to write in index=%d, tag=%d.\n", setIndex, tag);
-				fclose(outputFile);
+				//fclose(outputFile);
 				return ERROR_WRITE_FAILED_NO_PERMISSION;
 			}
 
@@ -398,7 +398,7 @@ writeL1Cache(int setIndex, int tag, int data, bool dataCache)
 			// l1Cache[index].sets[setIndex].ways[i].data = data;
 
 			fprintf(outputFile, "L1-Data Cache: Writing data onto index=%d, tag=%d in way=%d\n", setIndex, tag, i);
-			fclose(outputFile);
+			//fclose(outputFile);
 
 			// Updating LRU.
 			updateLruL1Cache(setIndex, i, dataCache);
@@ -412,7 +412,7 @@ writeL1Cache(int setIndex, int tag, int data, bool dataCache)
 
 	fprintf(outputFile, "L1-Data Cache: Write FAILED as none of the valid block's tag matched.\n");
 
-	fclose(outputFile);
+	//fclose(outputFile);
 	return ERROR_WRITE_FAILED_NO_TAG_MATCH;
 
 	// Not calling updateL2Cache() because the L1 cache will only have this data if its there in L2. There is no way one can write without reading. So this last error case should never happen. 
@@ -450,7 +450,7 @@ initL2Cache()
 void
 printL2Cache(int setIndex)
 {
-	FILE *outputFile = fopen(OUTPUT_FILE_NAME, "a");
+	extern FILE *outputFile; // = fopen(OUTPUT_FILE_NAME, "a");
 	fileNotNull(outputFile, OUTPUT_FILE_NAME);
 	fprintf(outputFile, "-------------------------\n");
 	fprintf(outputFile, "L2-Cache Info\n");
@@ -462,7 +462,7 @@ printL2Cache(int setIndex)
 	}
 
 
-	fclose(outputFile);
+	//fclose(outputFile);
 
 	return;
 }
@@ -515,7 +515,7 @@ updateLruL2Cache(int setIndex, int wayIndex)
 int
 searchL2Cache(int index, int tag)
 {
-	FILE *outputFile = fopen(OUTPUT_FILE_NAME, "a");
+	extern FILE *outputFile; // = fopen(OUTPUT_FILE_NAME, "a");
 	fileNotNull(outputFile, OUTPUT_FILE_NAME);
 
 	fprintf(outputFile, "\nL2-Cache: Seaching for index=%d and tag=%d\n", index, tag);
@@ -526,7 +526,7 @@ searchL2Cache(int index, int tag)
 		if (l2Cache.sets[index].ways[i].validInvalidBit && l2Cache.sets[index].ways[i].tag == tag)
 		{
 			fprintf(outputFile, "L2-Cache: Found index=%d, tag=%d in way=%d\n", index, tag, i);
-			fclose(outputFile);
+			//fclose(outputFile);
 
 			// Update the LRU count.
 			updateLruL2Cache(index, i);
@@ -538,7 +538,7 @@ searchL2Cache(int index, int tag)
 
 	fprintf(outputFile, "L2-Cache: Did not find index=%d and tag=%d\n", index, tag);
 	fprintf(outputFile, "L2-Cache: Will update the cache and re-search the required data.\n");
-	fclose(outputFile);
+	//fclose(outputFile);
 
 
 	// If data is not found.
@@ -555,7 +555,7 @@ searchL2Cache(int index, int tag)
 int
 writeL2Cache(int index, int tag, int data)
 {
-	FILE *outputFile = fopen(OUTPUT_FILE_NAME, "a");
+	extern FILE *outputFile; //= fopen(OUTPUT_FILE_NAME, "a");
 	fileNotNull(outputFile, OUTPUT_FILE_NAME);
 	fprintf(outputFile, "\nL2-Cache: Writing data onto index=%d, tag=%d\n", index, tag);
 
@@ -568,14 +568,14 @@ writeL2Cache(int index, int tag, int data)
 			if (l2Cache.sets[index].ways[i].readWriteBit == 0)
 			{
 				fprintf(outputFile, "L2-Cache: Write FAILED as there is no permission to write in index=%d, tag=%d.\n", index, tag);
-				fclose(outputFile);
+				//fclose(outputFile);
 				return ERROR_WRITE_FAILED_NO_PERMISSION;
 			}
 
 			// Writing data.
 			// l2Cache.sets[index].ways[i].data = data;
 			fprintf(outputFile, "L2-Cache: Writing data onto index=%d, tag=%d in way=%d\n", index, tag, i);
-			fclose(outputFile);
+			//fclose(outputFile);
 
 			// Updating the dirty bit.
 			l2Cache.sets[index].ways[i].dirtyBit = 1;
@@ -589,7 +589,7 @@ writeL2Cache(int index, int tag, int data)
 
 	fprintf(outputFile, "L2-Cache: Write FAILED as none of the valid block's tag matched.\n");
 
-	fclose(outputFile);
+	//fclose(outputFile);
 	return ERROR_WRITE_FAILED_NO_TAG_MATCH;
 
 	// Not calling updateL2Cache() because the L1 cache will only have this data if its there in L2. There is no way one can write without reading. So this last error case should never happen. 
@@ -624,7 +624,7 @@ getFirstInvalidWayL2Cache(int setIndex)
 int
 updateL2Cache(int index, int tag, bool write, int data)
 {
-	FILE *outputFile = fopen(OUTPUT_FILE_NAME, "a");
+	extern FILE *outputFile;// = fopen(OUTPUT_FILE_NAME, "a");
 	fileNotNull(outputFile, OUTPUT_FILE_NAME);
 
 	// Find the first valid way in the set.
@@ -640,7 +640,7 @@ updateL2Cache(int index, int tag, bool write, int data)
 		fprintf(outputFile, "L2-Cache: Placement in set=%d, way=%d for tag=%d\n", index, way, tag);
 	}
 
-	fclose(outputFile);
+	//fclose(outputFile);
 
 	// Updating the data.
 	// l2Cache.sets[index].ways[way].data = data;
