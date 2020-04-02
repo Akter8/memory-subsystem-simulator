@@ -285,7 +285,6 @@ int main()
                             time += MAIN_MEMORY_WRITE_TIME;
                             fprintf(outputFile, "Driver: Write in Main Memory successfull! %d\n",MAIN_MEMORY_WRITE_TIME);
 
-
                             if(status == ERROR_WRITE_FAILED_NO_PERMISSION) 
                             {
                                 fprintf(outputFile, "Driver: Error! write permission not for this memory address\n");
