@@ -3,7 +3,7 @@
 
 typedef struct
 {
-	unsigned int baseAddress : 19;	// There are 2**16 frames present
+	//unsigned int baseAddress : 19;	// There are 2**16 frames present
 	unsigned int limit : 32;         //Segment limit is based upon our design for each process, for now we keep it 32 bits
 	unsigned int present : 1;
 	unsigned int readWrite : 1;
@@ -19,18 +19,18 @@ typedef struct
 
 typedef struct
 {
-    segmentTable segmentTableObj;
-    //int29 SegTableBaseAddress;
+    segmentTable *segmentTableObj;
+   	unsigned int SegTableBaseAddress;
 }segmentTableInfo;
 
-// segmentTableInfo* initLDTable();
-// segmentTableInfo* initGDTable();
+segmentTableInfo* initLDTable();
+segmentTableInfo* initGDTable();
 // pageTable* searchSegmentTable(int pid, int4 segNum);			
 // int deleteSegmentTable(segmentTable* segTableObj); //To be used when process terminates
-// void createGDTsegment(int index, int limit);
+ void createGDTsegment(int index, int limit);
 // //int updatePageTablePresentBit(segmentTable* segTableObj, int index, int value);	//value = 0 or 1
 
 
 pageTable* searchSegmentTable(int pid, int4 segNum);			
 int updateSegmentTablePresentBit(segmentTableEntry* segTableEntry, int index, int value);
-segmentTable* initSegTable();
+//segmentTable* initSegTable();

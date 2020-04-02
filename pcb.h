@@ -6,7 +6,7 @@
 typedef struct
 {
 	//int29 LDTBaseAddress;
-    segmentTable* LDTPointer;
+    segmentTableInfo* LDTPointer;
     int pid;	
 	int state;
 	FILE *LinearAddrInputFile;
@@ -18,9 +18,9 @@ typedef struct
 PCB;
 
 
-//void initPCB(PCB pcbObj, char* LinearAddrInputFileName, char* segInputFileName);
+void initPCB(int pid, char* LinearAddrInputFileName, char* segInputFileName);
 
-int initPCB(PCB* pcbObj,char *LinearAddrInputFileName,char *SegAddrInputFileName);
+//int initPCB(PCB* pcbObj,char *LinearAddrInputFileName,char *SegAddrInputFileName);
 int getState(PCB pcbObj);
 int setState(PCB* pcbObj, int state);
 pageTable* getLevel3PageTablePointer(PCB pcbObj,int segNum);

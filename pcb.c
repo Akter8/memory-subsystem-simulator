@@ -5,24 +5,25 @@
 #include "segmentTable.h"
 #include "frameTable.h"
 #include "pcb.h"
+#include "utility.h"
 
 extern PCB pcbArr[1];
 extern FrameTable frameTable;
-
+extern segmentTableInfo GDTptr;
 
 /*
 Initializes ADT of PCB and calls method
 to initialize LDT of the process
 */
-int initPCB(PCB *pcbObj,char *LinearAddrInputFileName,char *SegAddrInputFileName){
-    pcbObj->state = READY;
-    pcbObj->LinearAddrInputFile = fopen(LinearAddrInputFileName,"r");
-    pcbObj->SegNumAddrFile = fopen(SegAddrInputFileName,"r");
+// int initPCB(PCB *pcbObj,char *LinearAddrInputFileName,char *SegAddrInputFileName){
+//     pcbObj->state = READY;
+//     pcbObj->LinearAddrInputFile = fopen(LinearAddrInputFileName,"r");
+//     pcbObj->SegNumAddrFile = fopen(SegAddrInputFileName,"r");
 
-    pcbObj->LDTPointer = initSegTable();
+//     pcbObj->LDTPointer = initSegTable();
 
-    return 0;
-}
+//     return 0;
+// }
 
 
 
@@ -61,48 +62,48 @@ int getpid(PCB pcbObj)
     return pcbObj.pid;
 }
 
-/*
+
 //Initializes the PCB for each process
 void initPCB(int pid, char* LinearAddrInputFileName, char* segInputFileName)
 {
     //get NonReplacable for PCB for the process
-    int19 frameNum = getNonReplacableFrame();
+    int frameNum = getNonReplaceableFrame();
 
 
     //Initially all processes join the Ready queue
-    setState(PCB[pid], READY);
+    setState(&pcbArr[pid], READY);
 
 
-    PCB[pid].swapStartTime = -1;        //denotes not gone for swapping
+    //PCB[pid].swapStartTime = -1;        //denotes not gone for swapping
 
     //Opening input file for the particular process
-    PCB[pid].LinearAddrInputFile = fopen(LinearAddrinputFileName, "r");
+    pcbArr[pid].LinearAddrInputFile = fopen(LinearAddrInputFileName,"r");
     //Check if File open correctly
-    fileNotNull(pcbObj.LinearAddrInputFile, LinearAddrInputFileName);
+  //  fileNotNull(pcbArr[pid].LinearAddrInputFile, LinearAddrInputFileName);
 
 
-    PCB[pid].SegNumAddrFile = fopen(segInputFileName);
+    pcbArr[pid].SegNumAddrFile = fopen(segInputFileName,"r");
     //Check if File open correctly
-    fileNotNull(PCB[pid].segInputFile, segInputFileName);
+    //fileNotNull(pcbArr[pid].segInputFile, segInputFileName);
 
 
     //Here we'll find limit for each segment of the process
     //
-
+    int limit[8] = {0xffff,-1,-1,-1,-1,-1,-1,-1};
 
     //Initialize a new Local Descriptor Segment Table for the process
-    SegmentTableInfo* segTableInfoObj = initLDTable(limit);
-    PCB[pid].LDTBaseAddress = segTableInfoObj->LDTBaseAddress;
-    PCB[pid].segmentTableObj = segTableInfoObj->segmentTableObj;
+   // SegmentTableInfo* segTableInfoObj = initLDTable(limit);
+  //  PCB[pid].LDTBaseAddress = segTableInfoObj->LDTBaseAddress;
+    pcbArr[pid].LDTPointer = initLDTable(limit);
 
 
     //To find GDTindex (i.e. free entry ) in the Global Descriptor Table
     for(int i = 0; i < 8; ++i)
     {
-        if(GDT->entries[i].present == 0)
+        if(GDTptr.segmentTableObj->entries[i].present == 0)
         {
-            GDTindex = i;
-            createGDT(i, limit[i]);
+            pcbArr[i].GDTindex.value = i;
+            createGDTsegment(i, limit[i]);
             //GDT.entries[i].present = 1;
             //GDT.entries[i].
             break;
@@ -110,19 +111,19 @@ void initPCB(int pid, char* LinearAddrInputFileName, char* segInputFileName)
     }
 
     
-    free(SegmentTableInfo);
+    //free(SegmentTableInfo);
 }
 
 
-*/
+
 pageTable* getLevel3PageTablePointer(PCB pcbObj, int segNum){
-    return pcbObj.LDTPointer->entries[segNum].level3PageTableptr;
+    return pcbObj.LDTPointer->segmentTableObj->entries[segNum].level3PageTableptr;
 }
 
 int deleteProcess(unsigned int pid){
     PCB pcbObj = pcbArr[pid];
     //Serially free all page tables, then all segment table entries
-    segmentTable* LDTptr = pcbObj.LDTPointer;
+    segmentTable* LDTptr =  pcbObj.LDTPointer->segmentTableObj;
 
     pageTable* level3PageTableptr = LDTptr->entries[0].level3PageTableptr;
     pageTable* level2PageTableptr = level3PageTableptr->nextLevelPageTablePointer;

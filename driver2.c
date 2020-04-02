@@ -40,7 +40,7 @@ int4 readSegNum(FILE *fp, char *write)
 FILE *outputFile;
 
 PCB pcbArr[30];
-segmentTable* GDTptr;
+segmentTableInfo* GDTptr;
 
 //TLB objects of L1 and L2
 TLBL1 tlbL1Obj;
@@ -88,7 +88,7 @@ int main()
 
 
     //Global descriptor Table initialize
-    GDTptr=initSegTable();
+    GDTptr=initGDTable();
 
     printf("Initialised");
 
@@ -97,7 +97,7 @@ int main()
     for(int i = 0; i < n; ++i)
     {
         //Initializes PCB
-        initPCB(&pcbArr[i], LinearAddrInputFileName[i], SegAddrInputFileName[i]);
+        initPCB(i, LinearAddrInputFileName[i], SegAddrInputFileName[i]);
         //initPCB(&pcbArr[i]);
 
     }

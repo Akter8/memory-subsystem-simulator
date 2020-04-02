@@ -4,26 +4,28 @@
 #include "pageTable.h"      
 #include "segmentTable.h"
 #include "pcb.h"
+#include "frameTable.h"
 
 extern PCB pcbArr[1];
-extern segmentTable* GDTptr;
+extern segmentTableInfo* GDTptr;
+extern FILE *outputFile;
 
-
-/*segmentTableInfo* initGDTable()
+segmentTableInfo* initGDTable()
 {
     //Get a non-replacable frame
-    int19 frameNum = getNonReplacableFrame();
+    unsigned int frameNum = getNonReplaceableFrame();
 
-    if(status == -1)
+    if(frameNum == -1)
     {
-        error("Cannot get Non-Replacable Frame for Segment Table");
+        printf("Cannot get Non-Replacable Frame for Segment Table\n");
+        return NULL;
     }
 
     //Create a segmentTableObj
     segmentTable* segmentTableObj = malloc(sizeof(segmentTable));
 
     //Specify whether segmentTable GDT/LDT  //datamember to be added in the segmentTable struct
-    segmentTableObj->GDTptr = 1;
+    segmentTableObj->GDT = 1;
 
     //segmentTableInfo contains pointer to the segmentTableObj and BaseAddress of the segmentTable
     //this struct would be returned by the current function, to update PCB data members
@@ -37,32 +39,35 @@ extern segmentTable* GDTptr;
     {
         segmentTableObj->entries[i].present = 0;
     }
-    return segmentTableObj;
+    return segmentTableInfoObj;
 }
 
 segmentTableInfo* initLDTable(int limit[])
 {
     //Get a non-replacable frame
-    int frameNum = getNonReplacableFrame();
+    int frameNum = getNonReplaceableFrame();
     if(frameNum == -1)
     {
         fprintf(outputFile, "Cannot get Non-Replacable Frame for Segment Table");
     }
 
     //Create a segmentTableObj
-    segmentTable* segmentTableObj = malloc(sizeof(segmentTable));
+    segmentTable *segTableptr;
+    segTableptr =(segmentTable *) calloc(1,sizeof(segmentTable));
+    segmentTableEntry* entries = calloc(8,sizeof(segmentTableEntry));
+
 
     //Specify whether segmentTable GDT/LDT  //datamember to be added in the segmentTable struct
-    segmentTableObj->GDTptr = 0;
+    segTableptr->GDT = 0;
 
-    //segmentTableInfo contains pointer to the segmentTableObj and BaseAddress of the segmentTable
+    //segmentTableInfo contains pointer to the segment Table and BaseAddress of the segmentTable
     //this struct would be returned by the current function, to update PCB data members
     segmentTableInfo* segmentTableInfoObj = malloc(sizeof(segmentTableInfo)); 
 
-    segmentTableInfoObj->segmentTableObj = segmentTableObj;
-    segmentTableInfoObj->SegTableBaseAddress = frameNum;     //From retured frame, when getting a non-replacable frame
+    segmentTableInfoObj->segmentTableObj = segTableptr;
+    segmentTableInfoObj->SegTableBaseAddress= frameNum;     //From retured frame, when getting a non-replacable frame
     
-
+    int readWrite = 0;
     //Initialize all 8 segments in segmentTable
     for(int i = 0; i < 8; ++i)
     {
@@ -70,41 +75,38 @@ segmentTableInfo* initLDTable(int limit[])
 
         if(limit[i] == -1)
         {
-            segmentTableObj->entries[i].present = 0;
+            segTableptr->entries[i].present = 0;
             continue;
         }
 
         //Initalize segmentNum 0, becuase it is present in the process, rest are absent
         //Initalize pageTable for this segment
-        PageTableInfo* PgTableInfoObj = initPageTable(1);       //All LDT segments can be written into
-        segmentTableObj->entries[i].baseAddress = PgTableInfoObj->baseAddress;
-        segmentTableObj->entries[i].Level3PageTable = PgTableInfoObj->pageTableObj;
+              //All LDT segments can be written into
+        //segTableptr->entries[i].baseAddress = PgTableInfoObj->baseAddress;
+        
+        segTableptr->entries[i].level3PageTableptr = initPageTable(readWrite);
+        segTableptr->entries[i].present = 1;
+        segTableptr->entries[i].readWrite = 1;
+        segTableptr->entries[i].limit = limit[i];   //limit will be input to the initLDTable
 
-        segmentTableObj->entries[i].present = 1;
-        segmentTableObj->entries[i].readWrite = 1;
-        segmentTableObj->entries[i].limit = limit[i];   //limit will be input to the initLDTable
-
-        free(PgTableInfoObj);
         
     }
+    return segmentTableInfoObj;
 }
-
 void createGDTsegment(int index, int limit)
 {
-    GDTptr->entries[index].present = 1;
+    GDTptr->segmentTableObj->entries[index].present = 1;
 
     //Initialize PageTable for the GDT
-    PageTableInfo* PgTableInfoObj = initPageTable(0);           //All GDT segments are read-only
-    GDTptr[i]->entries[i].baseAddress = PgTableInfoObj->baseAddress;
-    GDTptr[i]->entries[i].Level3PageTable = PgTableInfoObj->pageTableObj;
+    pageTable* PgTableObj = initPageTable(0);           //All GDT segments are read-only
+    // GDTptr->segmentTableObj.entries[index].baseAddress = PgTableObj->baseAddress;
+    GDTptr->segmentTableObj->entries[index].level3PageTableptr = PgTableObj;
 
-    GDTptr[i]->entries[i].present = 1;
-    GDTptr[i]->entries[i].readWrite = 0;
-    GDTptr[i]->entreis[i].limit = limit;
+    GDTptr->segmentTableObj->entries[index].present = 1;
+    GDTptr->segmentTableObj->entries[index].readWrite = 0;
+    GDTptr->segmentTableObj->entries[index].limit = limit;
 }   
 
-
-*/
 
 
 /*
@@ -120,16 +122,16 @@ pageTable* searchSegmentTable(int pid, int4 segNum)
     {
         //Global Descriptor table
         printf("The address is in a global segment\n");
-        if(GDTptr->entries[segNo].present==1)
-            return pcbArr[pid].LDTPointer->entries[segNo].level3PageTableptr;   
+        if(GDTptr->segmentTableObj->entries[pid].present==1)
+            return pcbArr[pid].LDTPointer->segmentTableObj->entries[segNo].level3PageTableptr;   
 
     }
     else
     {
         //Local Descriptor table
         printf("The address is in a local segment\n");
-        if(pcbArr[pid].LDTPointer->entries[segNo].present==1){
-            return pcbArr[pid].LDTPointer->entries[segNo].level3PageTableptr;   
+        if(pcbArr[pid].LDTPointer->segmentTableObj->entries[segNo].present==1){
+            return pcbArr[pid].LDTPointer->segmentTableObj->entries[segNo].level3PageTableptr;   
         }
     }
 
