@@ -67,7 +67,7 @@ segmentTableInfo* initLDTable(int limit[])
 
         //Initalize segmentNum 0, becuase it is present in the process, rest are absent
         //Initalize pageTable for this segment
-        PageTableInfo* PgTableInfoObj = initPageTable();
+        PageTableInfo* PgTableInfoObj = initPageTable(1);       //All LDT segments can be written into
         segmentTableObj->entries[i].baseAddress = PgTableInfoObj->baseAddress;
         segmentTableObj->entries[i].Level3PageTable = PgTableInfoObj->pageTableObj;
 
@@ -86,7 +86,7 @@ void createGDTsegment(int index, int limit)
     GDT->entries[index].present = 1;
 
     //Initialize PageTable for the GDT
-    PageTableInfo* PgTableInfoObj = initPageTable();
+    PageTableInfo* PgTableInfoObj = initPageTable(0);           //All GDT segments are read-only
     GDT[i]->entries[i].baseAddress = PgTableInfoObj->baseAddress;
     GDT[i]->entries[i].Level3PageTable = PgTableInfoObj->pageTableObj;
 
