@@ -44,7 +44,7 @@ void initPCB(int pid, char* LinearAddrInputFileName, char* segInputFileName)
     fileNotNull(pcbObj.LinearAddrInputFile, LinearAddrInputFileName);
 
 
-    PCB[pid].SegNumAddrFile = fopen(segInputFileName);
+    PCB[pid].SegNumInputFile = fopen(segInputFileName);
     //Check if File open correctly
     fileNotNull(PCB[pid].segInputFile, segInputFileName);
 
@@ -66,13 +66,10 @@ void initPCB(int pid, char* LinearAddrInputFileName, char* segInputFileName)
         {
             GDTindex = i;
             createGDT(i, limit[i]);
-            //GDT.entries[i].present = 1;
-            //GDT.entries[i].
             break;
         }
     }
 
-    
     free(SegmentTableInfo);
 }
 

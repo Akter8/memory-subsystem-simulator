@@ -82,6 +82,7 @@ segmentTableInfo* initLDTable(int limit[])
 
 void createGDTsegment(int index, int limit)
 {
+    
     GDT->entries[index].present = 1;
 
     //Initialize PageTable for the GDT

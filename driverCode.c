@@ -72,7 +72,6 @@ int main()
     //Opening outputFile
     FILE *outputFile = fopen(OUTPUT_FILE_NAME, "a");
 
-
     for(int i = 0; i < n; ++i)
     {
         if(numProcessAlive == 0)
@@ -134,6 +133,7 @@ int main()
 
             // Based on the MSB of the segNum, decide which cache to hit (data or instr).
             bool dataCache = (segNum == 0) ? true : false;
+            bool data = dataCache;      //Used to denote that the memoryReference is data reference/instruction reference
 
 
             // Search this pageNum in both levels of TLB.
@@ -166,6 +166,10 @@ int main()
                         if(frameNum == -2)
                         {
                             //Invalid Address
+                            fprintf(outputFile, "Error: Invalid Address\n");
+                            currentTime += time;
+                            pcb[i].runTime += time;
+                            ++current_time;
                             continue;
                         }
 
@@ -174,6 +178,9 @@ int main()
                             //allocateFrame()
                             //fseek() for previous instruction
                             
+                            currentTime += time;
+                            pcb[i].runTime += time;
+                            ++current_time;
                             break;
 
                             //level = 2;
@@ -282,6 +289,9 @@ int main()
                             if(status == ERROR_WRITE_FAILED_NO_PERMISSION) 
                             {
                                 fprintf(outputFile, "Driver: Error! write permission not for this memory address\n");
+                                currentTime += time;
+                                pcb[i].runTime += time;
+                                ++current_time;
                                 continue;
                             }
                                 
@@ -325,6 +335,9 @@ int main()
 				{
 					time += L1_CACHE_WRITE_TIME;
 					fprintf(outputFile, "Driver: Write to L1 Cache successfully completed.\n");
+                    currentTime += time;
+                    pcb[i].runTime += time;
+                    ++current_time;
 					continue;
 				}
 			}            
@@ -367,11 +380,14 @@ int main()
                     if(status == -1)
                     {
                         fprintf(outputFile, "Driver: Error reading From Main Memory\n");
+                        currentTime += time;
+                        pcb[i].runTime += time;
+                        ++current_time;
                         continue;
                     }
                     else
                     {
-                        fprintf(outputFile, "Driver: Data read from Main Memory\n");
+                        fprintf(outputFile, "Driver: Data read from Main Memory. Main Memory Read Time: %d\n", MAIN_MEMORY_READ_TIME);
                     }
 
 					//----------------------------
@@ -394,7 +410,7 @@ int main()
 
 					previousActionTime = max(L1_CACHE_SEARCH_TIME, L2_CACHE_SEARCH_TIME);
 					time += previousActionTime;
-					fprintf(outputFile, "Driver: Did NOT find the required data in L1 cache, but found it in L2 cache.\n");
+					fprintf(outputFile, "Driver: Did Not find the required data in L1 cache, but found it in L2 cache.\n");
 					fprintf(outputFile, "Search time taken: %d.\n", previousActionTime);
 					fprintf(outputFile, "Driver: Will update L1 Cache.\n");
 
@@ -423,6 +439,10 @@ int main()
     LFUAging();
     fprintf(outputFile, "\n\n\nSIMULATION COMPLETED. ALL PROCESSES FINISHED EXECUTION.\n\n\n");
     for(int i = 0; i < n; ++i)
-        fclose(inputFile[i]);
+    {
+        fclose(LinearAddrInputFile[i]);
+        fclose(segNumInputFile[i]); 
+    }
+    fclose(OUTPUT_FILE_NAME);
 }
 
