@@ -11,3 +11,4 @@
 
 int fileOpenError(char* fileName);
 unsigned int readAddr(FILE* inputFile);
+void fileNotNull(FILE *file, char *fileName);

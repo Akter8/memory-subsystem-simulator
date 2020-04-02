@@ -1,14 +1,13 @@
-#include "dataTypes.h"
-
 #define RUNNING 0
 #define READY 1
 #define WAIT 2
 #define TERMINATED 3
 
-typdef struct
+typedef struct
 {
-	int29 LDTBaseAddress;
-    segmentTable* LDTableObj;
+	//int29 LDTBaseAddress;
+    segmentTable* LDTPointer;
+    int pid;	
 	int state;
 	FILE *LinearAddrInputFile;
 	FILE *SegNumAddrFile;
@@ -19,7 +18,11 @@ typdef struct
 PCB;
 
 
+//void initPCB(PCB pcbObj, char* LinearAddrInputFileName, char* segInputFileName);
+
+int initPCB(PCB* pcbObj,char *LinearAddrInputFileName,char *SegAddrInputFileName);
 int getState(PCB pcbObj);
-int setState(PCB pcbObj, int state);
+int setState(PCB* pcbObj, int state);
+pageTable* getLevel3PageTablePointer(PCB pcbObj,int segNum);
 int26 getLDTBaseAddress(PCB pcbObj);
-void initPCB(PCB pcbObj, char* LinearAddrInputFileName, char* segInputFileName);
+int deleteProcess(unsigned int pid);

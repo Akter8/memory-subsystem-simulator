@@ -12,6 +12,12 @@ int16;
 
 typedef struct 
 {
+	unsigned int value:4;
+}
+int4;
+
+typedef struct 
+{
 	unsigned int addr:22;
 }
 virtualAddr;
