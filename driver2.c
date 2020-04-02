@@ -91,7 +91,7 @@ int main()
     //Global descriptor Table initialize
     GDTptr=initGDTable();
 
-    printf("Initialised");
+    printf("GDT Initialised");
 
     //Initializing PCBs of all Processes
     //Initialize segment Table for each Process
@@ -99,6 +99,9 @@ int main()
     {
         //Initializes PCB
         initPCB(i, LinearAddrInputFileName[i], SegAddrInputFileName[i]);
+        printf("\n");
+        printf("Checking if GDT segment descriptor is present: %d",GDTptr->segmentTableObj->entries[i].present);
+        printf("\n");
         //initPCB(&pcbArr[i]);
 
     }
@@ -208,6 +211,7 @@ while(numProcessAlive)
                         allocateFrame(i,segNum.value,*ptrToPageFaultPageTable, *pageFaultPageNumber, *level);
 
                         fseek(pcbArr[i].LinearAddrInputFile,-9*sizeof(char),SEEK_CUR);
+                        fseek(pcbArr[i].SegNumAddrFile,-4*sizeof(char),SEEK_CUR);
                         break;
                      }
                     

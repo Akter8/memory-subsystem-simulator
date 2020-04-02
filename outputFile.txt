@@ -1,0 +1,26 @@
+
+
+
+Driver: Process-0 running in the processor.
+Driver: Memory access for 7fff8000 requested by process-0
+
+L1-TLB: Searching for pageNum=2097120
+pageNum=2097120 not found in l1TLB
+Driver: Searched through L1 TLB. Time cost: 0 Frame#-1
+Driver: Did not find required data in L1 TLB. Searched through L2 TLB. Time cost: 0
+
+L2-TLB: Searching for pageNum=2097120
+L2-TLB: pageNum=2097120 not found in l2TLB
+
+
+
+Driver: Process-1 running in the processor.
+Driver: Memory access for 7fff8000 requested by process-1
+
+L1-TLB: Searching for pageNum=2097120
+pageNum=2097120 not found in l1TLB
+Driver: Searched through L1 TLB. Time cost: 0 Frame#-1
+Driver: Did not find required data in L1 TLB. Searched through L2 TLB. Time cost: 0
+
+L2-TLB: Searching for pageNum=2097120
+L2-TLB: pageNum=2097120 not found in l2TLB

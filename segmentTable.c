@@ -122,8 +122,10 @@ pageTable* searchSegmentTable(int pid, int4 segNum)
     {
         //Global Descriptor table
         printf("The address is in a global segment\n");
-        if(GDTptr->segmentTableObj->entries[pid].present==1)
+        if(GDTptr->segmentTableObj->entries[pid].present==1){
+            printf("The segment descriptor is present in GDT\n");
             return pcbArr[pid].LDTPointer->segmentTableObj->entries[segNo].level3PageTableptr;   
+        }
 
     }
     else

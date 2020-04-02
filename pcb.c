@@ -9,7 +9,7 @@
 
 extern PCB pcbArr[30];
 extern FrameTable frameTable;
-extern segmentTableInfo GDTptr;
+extern segmentTableInfo* GDTptr;
 
 /*
 Initializes ADT of PCB and calls method
@@ -100,7 +100,7 @@ void initPCB(int pid, char* LinearAddrInputFileName, char* segInputFileName)
     //To find GDTindex (i.e. free entry ) in the Global Descriptor Table
     for(int i = 0; i < 8; ++i)
     {
-        if(GDTptr.segmentTableObj->entries[i].present == 0)
+        if(GDTptr->segmentTableObj->entries[i].present == 0)
         {
             pcbArr[i].GDTindex.value = i;
             createGDTsegment(i, limit[i]);
