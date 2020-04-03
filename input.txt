@@ -1,0 +1,11 @@
+4
+linear_inp1.txt
+seg_inp1.txt
+linear_inp1.txt
+seg_inp1.txt
+linear_inp2.txt
+seg_inp2.txt
+linear_inp3.txt
+seg_inp3.txt
+linear_inp4.txt
+seg_inp4.txt
