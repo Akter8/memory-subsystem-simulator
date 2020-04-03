@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <string.h>
+#include <stdlib.h>
 
 
 // What percent of memory accesses are reads.
@@ -67,7 +68,7 @@ createSegmentFiles(char inputFileName[][100], int n)
 
 			if (inputChar == '7')
 				// Printing in hex.
-	   			fprintf(outputFile, "8 %c\n", readWrite);
+	   			fprintf(outputFile, "8 %c\n", 'r');
 	   		else
 	   			fprintf(outputFile, "0 %c\n", readWrite);
 		}

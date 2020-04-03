@@ -178,11 +178,11 @@ int deleteProcess(unsigned int pid){
     // Entries are not being freed currently. This is a bug that is causing a memory leak
 
     free(LDTptr);
-
+    free(pcbObj.LDTPointer);
     //Mark frames of the process as empty in the frame table
     for(int i = 0; i < NUM_FRAMES; i++){
         if(frameTable.entries[i].emptyBit == 1 && frameTable.entries[i].pid == pid){
-            frameTable.entries[i].emptyBit = 0;
+            invalidateFrame(i);
         }
     }
     return 0;

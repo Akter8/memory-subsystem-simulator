@@ -165,6 +165,7 @@ int main()
                 if(inputAddr==-1)
                 {
                     setState(&pcbArr[i],TERMINATED );
+                    deleteProcess(i);
                     fprintf(outputFile, "Process %d is terminated\n\n", i);
                     --numProcessAlive;
                     break;
