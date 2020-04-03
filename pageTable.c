@@ -338,7 +338,7 @@ int findFirst2Pages(char *linearAddrInp,char *segNumInp,int *pageCode,int *pageD
 		
 	}
 
-	printf("\n\npage1:%x \npage2:%x\n",*pageCode,*pageData);
+	//printf("\n\npage1:%x \npage2:%x\n",*pageCode,*pageData);
 	fclose(fpLinearAddr);
 	fclose(fpSegNum);
 	return 0;
@@ -368,7 +368,7 @@ int prepaging(int pid,char *LinearAddrInputFile,char *SegNumAddrFile)
 
 	pageTable *pt3RefCode = searchSegmentTable(pid,segNumCode);
 	pageTable *pt3RefData = searchSegmentTable(pid,segNumData);
-
+	fprintf(outputFile, "Prepaging\n");
 	//Level 2 page table frame for Code 
 	allocateFrame(pid,0x8,pt3RefCode,pt2NumCode,2);	
 

@@ -121,6 +121,7 @@ int main()
     }
     fflush(outputFile);
 
+    int firstExecution[30] = {0};
     
 
     int numProcessAlive = n;
@@ -135,7 +136,13 @@ int main()
                 ++current_time;
                 continue;
             }
-        
+            if(firstExecution[i]==0)
+            {
+                prepaging(i, LinearAddrInputFileName[i], SegAddrInputFileName[i]);
+                firstExecution[i] = 1;
+            }
+
+
             setState(&pcbArr[i], RUNNING);
             ++current_time;
             fprintf(outputFile, "\n\n\nDriver: Process-%d running in the processor.\n", i);
