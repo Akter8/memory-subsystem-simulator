@@ -2,16 +2,19 @@
 CC = gcc
 flags = -c
 executableName = test
-driver = driver2
+driver = mainDriver
 outputFile = outputFile.txt
 
 # Makes
-all: $(driver).o tlb.o cache.o pcb.o pageTable.o segmentTable.o frameTable.o utilityFunctions.o createSegmentationInput.o
-	$(CC) $(driver).o tlb.o cache.o pcb.o pageTable.o segmentTable.o frameTable.o utilityFunctions.o createSegmentationInput.o -o $(executableName)
+all: $(driver).o kernel.o tlb.o cache.o pcb.o pageTable.o segmentTable.o frameTable.o utilityFunctions.o createSegmentationInput.o
+	$(CC) $(driver).o kernel.o tlb.o cache.o pcb.o pageTable.o segmentTable.o frameTable.o utilityFunctions.o createSegmentationInput.o -o $(executableName)
 
 
 $(driver).o: $(driver).c
 	$(CC) $(flags) $(driver).c
+
+kernel.o: kernel.c
+	$(CC) $(flags) kernel.c
 
 tlb.o: tlb.c
 	$(CC) $(flags) tlb.c

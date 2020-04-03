@@ -58,7 +58,7 @@ FrameTable frameTable;
 
 long long current_time = 0;
 
-int main()
+void driver()
 {
     int n;      //Number of processes  
     FILE* input = fopen("input.txt", "r");
@@ -510,6 +510,6 @@ int main()
 
     fclose(outputFile);
 
-    return 0;
+    return;
     
 }
