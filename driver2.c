@@ -58,7 +58,9 @@ long long current_time = 0;
 int main()
 {
     int n;      //Number of processes  
-    scanf("%d", &n);
+    FILE* input = fopen("standard_input.txt", "r");
+
+    fscanf(input, "%d", &n);
 
     int error;
 
@@ -66,12 +68,14 @@ int main()
     char LinearAddrInputFileName[n][100];
     for(int i = 0; i < n; ++i)
     {
-        scanf("%s", LinearAddrInputFileName[i]); 
+        fscanf(input, "%s", LinearAddrInputFileName[i]); 
     }
     for(int i = 0; i < n; ++i)
     {
-        scanf("%s", SegAddrInputFileName[i]);
+        fscanf(input, "%s", SegAddrInputFileName[i]);
     }
+
+    fclose(input);
    
     
     //Flushing the TLBs initially
@@ -145,6 +149,7 @@ while(numProcessAlive)
             if(inputAddr==-1)
             {
                 setState(&pcbArr[i],TERMINATED );
+                fprintf(outputFile, "Process %d is terminated\n\n", i);
                 --numProcessAlive;
                 break;
             }
@@ -198,6 +203,10 @@ while(numProcessAlive)
                     if(frameNum == -2)
                     {
                         //Invalid Address
+                        fprintf(outputFile, "Driver: InvalidAddress\n");
+                        current_time += time;
+                        pcbArr[i].runTime += time;
+                        ++current_time;
                         continue;
                     }
 
@@ -212,6 +221,10 @@ while(numProcessAlive)
 
                         fseek(pcbArr[i].LinearAddrInputFile,-9*sizeof(char),SEEK_CUR);
                         fseek(pcbArr[i].SegNumAddrFile,-4*sizeof(char),SEEK_CUR);
+
+                        current_time += time;
+                        pcbArr[i].runTime += time;
+                        ++current_time;
                         break;
                      }
                     
@@ -294,6 +307,10 @@ while(numProcessAlive)
                             if(status == ERROR_WRITE_FAILED_NO_PERMISSION) 
                             {
                                 fprintf(outputFile, "Driver: Error! write permission not for this memory address\n");
+
+                                current_time += time;
+                                pcbArr[i].runTime += time;
+                                ++current_time;
                                 continue;
                             }
                                 
@@ -337,6 +354,10 @@ while(numProcessAlive)
 				{
 					time += L1_CACHE_WRITE_TIME;
 					fprintf(outputFile, "Driver: Write to L1 Cache successfully completed.\n");
+
+                    current_time += time;
+                    pcbArr[i].runTime += time;
+                    ++current_time;
 					continue;
 				}
 			}            
@@ -388,17 +409,22 @@ while(numProcessAlive)
 
 					//----------------------------
                     updateL2Cache(l2CacheIndex, l2CacheTag, write, 0);
-                    // Update the LRU in L2 cache
-
 					time += L2_CACHE_UPDATE_TIME;
-					fprintf(outputFile, "Driver: L2 Cache update time: %d\n", L2_CACHE_UPDATE_TIME);
+					fprintf(outputFile, "Driver: L2 Cache update time, updating after data obtained from Main Memory: %d\n", L2_CACHE_UPDATE_TIME);
+
+                    searchL2Cache(l2CacheIndex, l2CacheTag);
+                    time += L2_CACHE_SEARCH_TIME;
+					fprintf(outputFile, "Driver: L2 Cache search time, searching after data obtained from Main Memory: %d\n", L2_CACHE_SEARCH_TIME);
 
 
                     updateL1Cache(l1CacheIndex, l1CacheTag, write, 0, dataCache);
-                    // Update the LRU in L1 cache
-
 					time += L1_CACHE_UPDATE_TIME;
-					fprintf(outputFile, "Driver: L1 Cache update time: %d\n", L1_CACHE_UPDATE_TIME);
+					fprintf(outputFile, "Driver: L1 Cache update time, updating after L2 updated and searched: %d\n", L1_CACHE_UPDATE_TIME);
+
+                    searchL1Cache(l1CacheIndex, l1CacheTag, dataCache);
+                    time += L1_CACHE_SEARCH_TIME;
+					fprintf(outputFile, "Driver: L1 Cache search time, searching after L2 updated and searched: %d\n", L1_CACHE_SEARCH_TIME);
+
 				}
 				else if (retValue1 < 0 && retValue2 >= 0)
 				{
@@ -413,11 +439,11 @@ while(numProcessAlive)
 					// Update L1 cache.
                     updateL1Cache(l1CacheIndex, l1CacheTag, write, 0, dataCache);
 					time += L1_CACHE_UPDATE_TIME;
-
-					// Update the LRU in L1 cache if required.
-					// ----------------------------
-
 					fprintf(outputFile, "Driver: L1 Cache update time: %d\n", L1_CACHE_UPDATE_TIME);
+
+                    searchL1Cache(l1CacheIndex, l1CacheTag, dataCache);
+                    time += L1_CACHE_SEARCH_TIME;
+					fprintf(outputFile, "Driver: L1 Cache search time: %d\n", L1_CACHE_SEARCH_TIME);
 
 			    }
 			} // End of that memory access.
@@ -434,11 +460,16 @@ while(numProcessAlive)
     TLBL2Flush();
 
     frameAgeing();
-    fprintf(outputFile, "\n\n\nSIMULATION COMPLETED. ALL PROCESSES FINISHED EXECUTION.\n\n\n");
     // for(int i = 0; i < n; ++i)
     //     fclose(inputFile[i]);
 }
 
+fprintf(outputFile, "\n\n\nSIMULATION COMPLETED. ALL PROCESSES FINISHED EXECUTION.\n\n\n");
+for(int i = 0; i < n; ++i)
+{
+    fclose(pcbArr[i].SegNumAddrFile);
+    fclose(pcbArr[i].LinearAddrInputFile);
+}
 
 fclose(outputFile);
     
