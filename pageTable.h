@@ -37,3 +37,5 @@ int updatePageTablePresentBit(pageTable *pT, unsigned int index, int value);
 int deallocateProcessPages(pageTable level3PageTable,pageTable level2PageTable, pageTable level1PageTable); //To be used when process terminates
 pageTable* getPageTableFromPid(unsigned int pid,unsigned int segNum,unsigned int level);
 int setFrameNo(pageTable *pT, unsigned int index, int value);
+int findFirst2Pages(char *linearAddrInp,char *segNumInp,int *pageCode,int *pageData);
+int prepaging(int pid,char *LinearAddrInputFile,char *SegNumAddrFile);

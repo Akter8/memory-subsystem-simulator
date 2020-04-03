@@ -162,7 +162,7 @@ int main()
                     --numProcessAlive;
                     break;
                 }
-                fprintf(outputFile, "%x %d %c\n",inputAddr,segNum.value,write);
+                //fprintf(outputFile, "%x %d %c\n",inputAddr,segNum.value,write);
 
                 //First we find the correct mapping of Logical Address to Physical Address
 

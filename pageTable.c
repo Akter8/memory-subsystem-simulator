@@ -307,3 +307,89 @@ int deallocateProcessPages(pageTable level3PageTable, pageTable level2PageTable,
 
 }
 */
+int findFirst2Pages(char *linearAddrInp,char *segNumInp,int *pageCode,int *pageData)
+{
+	int pageCodefound=0,pageDatafound=0;
+
+	FILE *fpLinearAddr = fopen(linearAddrInp,"r");
+	FILE *fpSegNum = fopen(segNumInp,"r");
+
+	if(fpLinearAddr==NULL||fpSegNum==NULL)
+		return -1;
+
+	int addr,segNum;
+	char readWrite;
+
+	while(fscanf(fpLinearAddr,"%x",&addr)!=0 && (pageCodefound==0 || pageDatafound==0))
+	{
+		fscanf(fpSegNum,"%x %c",&segNum,&readWrite);
+
+		//printf("pageno:%x segNum:%d\n",addr>>10,segNum);
+
+		if(segNum==0x8&&pageCodefound==0){
+			*pageCode = addr>>10;
+			pageCodefound = 1;
+		}
+		else if(segNum==0x0&&pageDatafound==0){
+			*pageData = addr>>10;
+			pageDatafound = 1;
+		}
+
+		
+	}
+
+	printf("\n\npage1:%x \npage2:%x\n",*pageCode,*pageData);
+	fclose(fpLinearAddr);
+	fclose(fpSegNum);
+	return 0;
+
+}
+
+int prepaging(int pid,char *LinearAddrInputFile,char *SegNumAddrFile)
+{
+
+	int pageNumCode,pageNumData;
+
+	//find first data page and code page
+	if(findFirst2Pages(LinearAddrInputFile,SegNumAddrFile,&pageNumCode,&pageNumData)==-1)
+		return -1;
+
+
+	//get page table frame corresponding to the first code and data pages
+
+	int pt1NumCode = pageNumCode>>8,
+		pt2NumCode = pageNumCode>>16,
+		pt1NumData = pageNumData>>8,
+		pt2NumData = pageNumData>>16;
+	int4 segNumCode,segNumData;
+
+	segNumCode.value = 8;
+	segNumData.value = 0;
+
+	pageTable *pt3RefCode = searchSegmentTable(pid,segNumCode);
+	pageTable *pt3RefData = searchSegmentTable(pid,segNumData);
+
+	//Level 2 page table frame for Code 
+	allocateFrame(pid,0x8,pt3RefCode,pt2NumCode,2);	
+
+	//Level 1 page table frame for Code 
+	pageTable *pt2RefCode = getPointertoNextLevelPageTable(pt3RefCode);
+	allocateFrame(pid,0x8,pt2RefCode,pt1NumCode,1);	
+
+
+	//Level 2 page table frame for Data
+	allocateFrame(pid,0x0,pt3RefData,pt2NumData,2);	
+
+	pageTable *pt2RefData = getPointertoNextLevelPageTable(pt3RefData);
+	//Level 1 page table frame for Data 
+	allocateFrame(pid,0x0,pt2RefData,pt1NumData,1);	
+
+
+	//allocate frame for first code page
+	allocateFrame(pid,0x8,getPointertoNextLevelPageTable(pt2RefCode),pageNumCode ,0);	
+
+	//allocate frame for first data page
+	allocateFrame(pid,0x0,getPointertoNextLevelPageTable(pt2RefData),pageNumData ,0);	
+
+
+}
