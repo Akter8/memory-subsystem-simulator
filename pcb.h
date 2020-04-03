@@ -26,3 +26,5 @@ int setState(PCB* pcbObj, int state);
 pageTable* getLevel3PageTablePointer(PCB pcbObj,int segNum);
 int26 getLDTBaseAddress(PCB pcbObj);
 int deleteProcess(unsigned int pid);
+
+void findSegmentLimits(int* gdtSeg_limit, int* ldtSeg_limit, FILE* LinearAddrInputFile, FILE* SegNumAddrInputFile);

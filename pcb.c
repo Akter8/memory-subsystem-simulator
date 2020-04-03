@@ -62,6 +62,29 @@ int getpid(PCB pcbObj)
     return pcbObj.pid;
 }
 
+void findSegmentLimits(int* gdtSeg_limit, int* ldtSeg_limit, FILE* LinearAddrInputFile, FILE* SegNumAddrFile)
+{
+    int addr;
+    while(fscanf(LinearAddrInputFile, "%x", &addr) != EOF)
+    {
+        int segNum; char write;
+        fscanf(SegNumAddrFile, "%d %c", &segNum, &write);
+        if(segNum == 8)
+        {
+            if(addr > *gdtSeg_limit)
+            {
+                *gdtSeg_limit = addr;
+            }
+        }
+        else if(segNum == 0)
+        {
+            if(addr > *ldtSeg_limit)
+            {
+                *ldtSeg_limit = addr;
+            }
+        }
+    }
+}
 
 //Initializes the PCB for each process
 void initPCB(int pid, char* LinearAddrInputFileName, char* segInputFileName)
@@ -89,21 +112,30 @@ void initPCB(int pid, char* LinearAddrInputFileName, char* segInputFileName)
 
     //Here we'll find limit for each segment of the process
     //
-    int limit[8] = {0xffff,-1,-1,-1,-1,-1,-1,-1};
+
+    int gdtSegLimit = 0; int ldtSegLimit = 0;
+    findSegmentLimits(&gdtSegLimit, &ldtSegLimit, pcbArr[pid].LinearAddrInputFile, pcbArr[pid].SegNumAddrFile);
+    gdtSegLimit = (4*gdtSegLimit < 0xFFFFFFFF) ? 4*gdtSegLimit : 0xFFFFFFFF;
+    ldtSegLimit = (4*ldtSegLimit < 0xFFFFFFFF) ? 4*ldtSegLimit : 0xFFFFFFFF;
+
+    fclose(pcbArr[pid].LinearAddrInputFile);
+    fclose(pcbArr[pid].SegNumAddrFile);
+
+    pcbArr[pid].LinearAddrInputFile = fopen(LinearAddrInputFileName,"r");
+    pcbArr[pid].SegNumAddrFile = fopen(segInputFileName,"r");
 
     //Initialize a new Local Descriptor Segment Table for the process
    // SegmentTableInfo* segTableInfoObj = initLDTable(limit);
   //  PCB[pid].LDTBaseAddress = segTableInfoObj->LDTBaseAddress;
-    pcbArr[pid].LDTPointer = initLDTable(limit);
-
+    pcbArr[pid].LDTPointer = initLDTable(ldtSegLimit);
 
     //To find GDTindex (i.e. free entry ) in the Global Descriptor Table
     for(int i = 0; i < 8; ++i)
     {
         if(GDTptr->segmentTableObj->entries[i].present == 0)
         {
-            pcbArr[i].GDTindex.value = i;
-            createGDTsegment(i, limit[i]);
+            pcbArr[pid].GDTindex.value = i;
+            createGDTsegment(i, gdtSegLimit);
             //GDT.entries[i].present = 1;
             //GDT.entries[i].
             break;
@@ -155,3 +187,4 @@ int deleteProcess(unsigned int pid){
     }
     return 0;
 }
+

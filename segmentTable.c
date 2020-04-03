@@ -33,7 +33,7 @@ segmentTableInfo* initGDTable()
 
     segmentTableInfoObj->segmentTableObj = segmentTableObj;
     segmentTableInfoObj->SegTableBaseAddress = frameNum;     //From retured frame, when getting a non-replacable frame
-    
+   
     //Initialize all 8 segments in segmentTable
     for(int i = 0; i < 8; ++i)
     {
@@ -42,7 +42,7 @@ segmentTableInfo* initGDTable()
     return segmentTableInfoObj;
 }
 
-segmentTableInfo* initLDTable(int limit[])
+segmentTableInfo* initLDTable(int limit)
 {
     //Get a non-replacable frame
     int frameNum = getNonReplaceableFrame();
@@ -73,7 +73,7 @@ segmentTableInfo* initLDTable(int limit[])
     {
         //Initalize each entry of segment Table
 
-        if(limit[i] == -1)
+        if(i != 0)
         {
             segTableptr->entries[i].present = 0;
             continue;
@@ -87,7 +87,7 @@ segmentTableInfo* initLDTable(int limit[])
         segTableptr->entries[i].level3PageTableptr = initPageTable(readWrite);
         segTableptr->entries[i].present = 1;
         segTableptr->entries[i].readWrite = 1;
-        segTableptr->entries[i].limit = limit[i];   //limit will be input to the initLDTable
+        segTableptr->entries[i].limit = limit;   //limit will be input to the initLDTable
 
         
     }
@@ -95,6 +95,7 @@ segmentTableInfo* initLDTable(int limit[])
 }
 void createGDTsegment(int index, int limit)
 {
+    
     GDTptr->segmentTableObj->entries[index].present = 1;
 
     //Initialize PageTable for the GDT
