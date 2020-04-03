@@ -23,7 +23,7 @@ typedef struct
    	unsigned int SegTableBaseAddress;
 }segmentTableInfo;
 
-segmentTableInfo* initLDTable();
+segmentTableInfo* initLDTable(int limit);
 segmentTableInfo* initGDTable();
 // pageTable* searchSegmentTable(int pid, int4 segNum);			
 // int deleteSegmentTable(segmentTable* segTableObj); //To be used when process terminates
