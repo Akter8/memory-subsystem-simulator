@@ -6,8 +6,8 @@ driver = driver2
 outputFile = outputFile.txt
 
 # Makes
-all: $(driver).o tlb.o cache.o pcb.o pageTable.o segmentTable.o frameTable.o utilityFunctions.o
-	$(CC) $(driver).o tlb.o cache.o pcb.o pageTable.o segmentTable.o frameTable.o utilityFunctions.o -o $(executableName)
+all: $(driver).o tlb.o cache.o pcb.o pageTable.o segmentTable.o frameTable.o utilityFunctions.o createSegmentationInput.o
+	$(CC) $(driver).o tlb.o cache.o pcb.o pageTable.o segmentTable.o frameTable.o utilityFunctions.o createSegmentationInput.o -o $(executableName)
 
 
 $(driver).o: $(driver).c
@@ -34,6 +34,9 @@ frameTable.o: frameTable.c
 utilityFunctions.o: utilityFunctions.c
 	$(CC) $(flags) utilityFunctions.c
 
+createSegmentationInput.o: createSegmentationInput.c
+	$(CC) $(flags) createSegmentationInput.c
+
 # To clean the compilation.
 clean:
-	rm -f *.o $(outputFile) $(executableName)
+	rm -f *.o $(outputFile) $(executableName) Segment_*.txt

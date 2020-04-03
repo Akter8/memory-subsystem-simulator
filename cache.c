@@ -12,8 +12,8 @@
 //extern inline void fileNotNull(FILE *file, char *fileName);
 
 // L1 Cache is split into two-- data and instruction.
-CacheL1 l1Cache[2]; 
-CacheL2 l2Cache;
+extern CacheL1 l1Cache[2]; 
+extern CacheL2 l2Cache;
 
 extern FILE *outputFile;
 

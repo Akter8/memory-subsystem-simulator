@@ -11,8 +11,8 @@
 #include "utility.h"
 //extern inline void fileNotNull(FILE *file, char *fileName);
 
-TLBL1 l1TLB;
-TLBL2 l2TLB;
+extern TLBL1 l1TLB;
+extern TLBL2 l2TLB;
 
 extern FILE *outputFile;
 
