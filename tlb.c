@@ -132,7 +132,7 @@ TLBL1Search(unsigned int pageNum, unsigned int *error)
 		}
 	}
 
-	printf("not found TLB1 ---\n");
+	fprintf(outputFile, "not found TLB1 ---\n");
 	fprintf(outputFile, "pageNum=%d not found in l1TLB\n", pageNum);
 	//fclose(outputFile);
 

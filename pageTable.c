@@ -6,7 +6,7 @@
  */
 
 #include <stdio.h>
-#include<stdlib.h>
+#include <stdlib.h>
 #include "dataTypes.h"
 #include "pageTable.h"
 #include "frameTable.h"
@@ -20,7 +20,7 @@ each page table entry need 32 bits
 */
 
 extern PCB pcbArr[1];		//testing with only one process right now
-
+extern FILE *outputFile;
 
 
 
@@ -97,7 +97,7 @@ Also updates LFU count in frame table
 int searchPageTable(pageTable* level3PageTable,pageTable** ptref,unsigned int linearAddr, unsigned int readWrite,
 	unsigned int* pageFaultPageNumber, unsigned int* level){
 
-	// printf("Inside searchPageTable\n");
+	// fprintf(outputFile, "Inside searchPageTable\n");
 	pageTable* level2PageTable = level3PageTable->nextLevelPageTablePointer;
 
 	
@@ -107,10 +107,10 @@ int searchPageTable(pageTable* level3PageTable,pageTable** ptref,unsigned int li
 
 	unsigned int level3Index = linearAddr >> 26;
 
-	printf("linear addr:%x\tindex3:%x\n",linearAddr,level3Index);
+	fprintf(outputFile, "linear addr:%x\tindex3:%x\n",linearAddr,level3Index);
 	if (level3Index > 64)
 	{
-		printf("Error: Invalid address\n"); 			//level 3 page table has only 8 entries
+		fprintf(outputFile, "Error: Invalid address\n"); 			//level 3 page table has only 8 entries
 		return -2;
 	}
 
@@ -123,7 +123,7 @@ int searchPageTable(pageTable* level3PageTable,pageTable** ptref,unsigned int li
 		updateLfuCount(frameNumberOfLevel2PageTable);		
 	}
 	else{
-		printf("Page fault in level 2 page table\n");	
+		fprintf(outputFile, "Page fault in level 2 page table\n");	
 		*level=2;	
 		*pageFaultPageNumber = level3Index;
 		*ptref = level3PageTable;
@@ -133,7 +133,7 @@ int searchPageTable(pageTable* level3PageTable,pageTable** ptref,unsigned int li
 	// We have got frame number of level 2 page table
 
 	unsigned int level2Index = (linearAddr >> 18) & 0x000000FF;
-	printf("\nlevel2index: %d,	frameof page table index: %d\n",level2Index,indexOfLevel2PageTable);
+	fprintf(outputFile, "\nlevel2index: %d,	frameof page table index: %d\n",level2Index,indexOfLevel2PageTable);
 	unsigned int frameNumberOfLevel1PageTable,indexOfLevel1PageTable=linearAddr>>18;
 	
 	if(level2PageTable->frames[indexOfLevel2PageTable].entries[level2Index].present == 1){
@@ -141,7 +141,7 @@ int searchPageTable(pageTable* level3PageTable,pageTable** ptref,unsigned int li
 		updateLfuCount(frameNumberOfLevel1PageTable);		
 	}
 	else{
-		printf("Page fault in level 1 page table\n");
+		fprintf(outputFile, "Page fault in level 1 page table\n");
 		*level=1;
 		*pageFaultPageNumber = linearAddr >> 18;
 		*ptref = level2PageTable;
@@ -158,7 +158,7 @@ int searchPageTable(pageTable* level3PageTable,pageTable** ptref,unsigned int li
 		//Checking read/write permissions
 		if(level1PageTable->frames[indexOfLevel1PageTable].entries[level1Index].readWrite == 0 && readWrite == 1){
 			//Page is read only but we are trying to write
-			printf("Write permission denied. The page is a read only page.\n");
+			fprintf(outputFile, "Write permission denied. The page is a read only page.\n");
 		}
 		
 		
@@ -167,7 +167,7 @@ int searchPageTable(pageTable* level3PageTable,pageTable** ptref,unsigned int li
 		updateLfuCount(frameNumberOfProcess);		
 	}
 	else{
-		printf("Page fault in process\n");
+		fprintf(outputFile, "Page fault in process\n");
 		*level = 0;
 		*pageFaultPageNumber = linearAddr >> 10;
 		*ptref = level1PageTable;
@@ -192,7 +192,7 @@ int updatePageTableModifiedBit(pageTable* pageTableptr,unsigned int index, int v
 	unsigned int pageNumber = index / NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE;
 	unsigned int entryNumber = index % NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE;
 	pageTableptr->frames[pageNumber].entries[entryNumber].modified = value;
-	printf("Modified bit of entry# %d in page number %d has been set to %d\n",entryNumber,pageNumber,value);
+	fprintf(outputFile, "Modified bit of entry# %d in page number %d has been set to %d\n",entryNumber,pageNumber,value);
 	return 0;
 }
 
@@ -207,7 +207,7 @@ int updatePageTablePresentBit(pageTable *pT, unsigned int index, int value){
 	unsigned int pageNumber = index / NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE;
 	unsigned int entryNumber = index % NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE;
 	pT->frames[pageNumber].entries[entryNumber].present = value;
-	printf("Present bit of entry# %d in page number %d has been set to %d\n",entryNumber,pageNumber,value);
+	fprintf(outputFile, "Present bit of entry# %d in page number %d has been set to %d\n",entryNumber,pageNumber,value);
 	return 0;	
 }
 

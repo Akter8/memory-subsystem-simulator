@@ -4,6 +4,7 @@
 #include "frameTable.h"
 
 extern FrameTable frameTable;
+extern FILE *outputFile;
 
 
 /*
@@ -45,11 +46,11 @@ in the frame table
 */
 int updateLfuCount(int frameNo)
 {
-	printf("Updating count for frame# %d\n",frameNo);
+	fprintf(outputFile, "Updating count for frame# %d\n",frameNo);
 	if(frameNo>=NUM_FRAMES)
 		return -1;
 	frameTable.entries[frameNo].LfuCount.value++;
-	//printf("count = %d\n",frameTable.entries[frameNo].LfuCount.value);
+	//fprintf(outputFile, "count = %d\n",frameTable.entries[frameNo].LfuCount.value);
 	return 1;
 }
 
@@ -72,7 +73,7 @@ int getLfuFrameNum()
 			indexFrame = i;
 		}
 	}
-	//printf("minCount=%d|||frameno=%d\n",minCount,indexFrame );
+	//fprintf(outputFile, "minCount=%d|||frameno=%d\n",minCount,indexFrame );
 	return indexFrame;
 }
 
@@ -150,11 +151,11 @@ int allocateFrame(int pid,int segno,pageTable *pT,int pageNum,int level)
 {
 	int frameNo = getReplacableEmptyFrame();
 
-	//printf("pid = %d,segno=%d\n",pid,segno );
+	//fprintf(outputFile, "pid = %d,segno=%d\n",pid,segno );
 
 	if(frameNo!=-1)
 	{	//placement
-		printf("Frame allocated:%d(placement)\n",frameNo);
+		fprintf(outputFile, "Frame allocated:%d(placement)\n",frameNo);
 		frameTable.entries[frameNo].pageNum.value=pageNum;
 		frameTable.entries[frameNo].pid=pid;
 		frameTable.entries[frameNo].LfuCount.value=0;
@@ -167,7 +168,7 @@ int allocateFrame(int pid,int segno,pageTable *pT,int pageNum,int level)
 	else
 	{
 		//replacement
-		printf("No free frame available in memory. Going for replacement\n");
+		fprintf(outputFile, "No free frame available in memory. Going for replacement\n");
 		frameNo = getLfuFrameNum();
 
 		//swap the page 
@@ -177,14 +178,14 @@ int allocateFrame(int pid,int segno,pageTable *pT,int pageNum,int level)
 		}
 
 		//
-		//printf("segno:%d,pn:%d\n",frameTable.entries[frameNo].segNum,frameTable.entries[frameNo].pageNum);
+		//fprintf(outputFile, "segno:%d,pn:%d\n",frameTable.entries[frameNo].segNum,frameTable.entries[frameNo].pageNum);
 		pageTable* pT2 = getPageTableFromPid(frameTable.entries[frameNo].pid,frameTable.entries[frameNo].segNum,frameTable.entries[frameNo].level);
 		
-		//printf("pt ref\n");
+		//fprintf(outputFile, "pt ref\n");
 		updatePageTablePresentBit(pT2,frameTable.entries[frameNo].pageNum.value,0);
 
 		//allocate the frame
-		printf("Frame allocated:%d(replacement)",frameNo);
+		fprintf(outputFile, "Frame allocated:%d(replacement)",frameNo);
 
 		frameTable.entries[frameNo].pageNum.value=pageNum;
 		frameTable.entries[frameNo].pid=pid;
@@ -198,10 +199,10 @@ int allocateFrame(int pid,int segno,pageTable *pT,int pageNum,int level)
 	}
 
 	//update page table
-	printf("Updating page table entry of page# %d\n",pageNum);
+	fprintf(outputFile, "Updating page table entry of page# %d\n",pageNum);
 
 	updatePageTablePresentBit(pT,pageNum,1);
-	//printf("\nthe updted present bit =%d\n",pT->frames[pageNum/256].entries[pageNum%256].present);
+	//fprintf(outputFile, "\nthe updted present bit =%d\n",pT->frames[pageNum/256].entries[pageNum%256].present);
 	setLock(frameNo);
 	setFrameNo(pT, pageNum, frameNo);
 	return frameNo;
@@ -217,7 +218,7 @@ int invalidateFrame(int frameNo)
 {
 	if(frameTable.entries[frameNo].dirtyBit==1)
 	{
-		printf("Frame# %d is dirty. Writing it back to disk\n",frameNo);
+		fprintf(outputFile, "Frame# %d is dirty. Writing it back to disk\n",frameNo);
 
 		//write back to disk
 	}

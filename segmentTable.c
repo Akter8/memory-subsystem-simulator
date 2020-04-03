@@ -17,7 +17,7 @@ segmentTableInfo* initGDTable()
 
     if(frameNum == -1)
     {
-        printf("Cannot get Non-Replacable Frame for Segment Table\n");
+        fprintf(outputFile, "Cannot get Non-Replacable Frame for Segment Table\n");
         return NULL;
     }
 
@@ -121,9 +121,9 @@ pageTable* searchSegmentTable(int pid, int4 segNum)
     if(localGlobal==1)
     {
         //Global Descriptor table
-        printf("The address is in a global segment\n");
+        fprintf(outputFile, "The address is in a global segment\n");
         if(GDTptr->segmentTableObj->entries[pid].present==1){
-            printf("The segment descriptor is present in GDT\n");
+            fprintf(outputFile, "The segment descriptor is present in GDT\n");
             return pcbArr[pid].LDTPointer->segmentTableObj->entries[segNo].level3PageTableptr;   
         }
 
@@ -131,7 +131,7 @@ pageTable* searchSegmentTable(int pid, int4 segNum)
     else
     {
         //Local Descriptor table
-        printf("The address is in a local segment\n");
+        fprintf(outputFile, "The address is in a local segment\n");
         if(pcbArr[pid].LDTPointer->segmentTableObj->entries[segNo].present==1){
             return pcbArr[pid].LDTPointer->segmentTableObj->entries[segNo].level3PageTableptr;   
         }
