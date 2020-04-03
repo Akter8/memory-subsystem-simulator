@@ -60,13 +60,15 @@ int main(int argc, char const *argv[])
 		{
 			readOrWrite = findReadOrWriteMemoryAccess();
 			readWrite = 'r';
+
 			if (readOrWrite == WRITE)
 				readWrite = 'w';
 
 			if (inputChar == '7')
-	   			fprintf(outputFile, "1000 %c\n", readWrite);
+				// Printing in hex.
+	   			fprintf(outputFile, "8 %c\n", readWrite);
 	   		else
-	   			fprintf(outputFile, "0000 %c\n", readWrite);
+	   			fprintf(outputFile, "0 %c\n", readWrite);
 		}
 
 
