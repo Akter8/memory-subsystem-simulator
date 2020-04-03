@@ -14,6 +14,8 @@
 TLBL1 l1TLB;
 TLBL2 l2TLB;
 
+extern FILE *outputFile;
+
 
 // To test the functions.
 /*
@@ -86,9 +88,6 @@ TLBL1Flush()
 void
 TLBL1Print()
 {
-	FILE *outputFile = fopen(OUTPUT_FILE_NAME, "a");
-	fileNotNull(outputFile, OUTPUT_FILE_NAME);
-
 	fprintf(outputFile, "-------------------------\n");
 	fprintf(outputFile, "L1-TLB Info\n");
 
@@ -96,8 +95,6 @@ TLBL1Print()
 	{
 		fprintf(outputFile, "Index=%d, validInvalidBit=%d, pageNum=%d, frameNum=%d, lruCount=%d\n", i, l1TLB.entries[i].validInvalidBit, l1TLB.entries[i].pageNum, l1TLB.entries[i].frameNum, l1TLB.entries[i].lruCount);
 	}
-
-	fclose(outputFile);
 
 	return;
 }
@@ -110,8 +107,6 @@ TLBL1Print()
 unsigned int 
 TLBL1Search(unsigned int pageNum, unsigned int *error)
 {
-	extern FILE *outputFile; //= fopen(OUTPUT_FILE_NAME, "a");
-	//fileNotNull(outputFile, OUTPUT_FILE_NAME);
 
 	fprintf(outputFile, "\nL1-TLB: Searching for pageNum=%d\n", pageNum);
 
@@ -134,7 +129,6 @@ TLBL1Search(unsigned int pageNum, unsigned int *error)
 
 	fprintf(outputFile, "not found TLB1 ---\n");
 	fprintf(outputFile, "pageNum=%d not found in l1TLB\n", pageNum);
-	//fclose(outputFile);
 
 	*error = ERROR_PAGE_NUM_NOT_FOUND;
 	return -1;
@@ -226,9 +220,6 @@ TLBL1Update(unsigned int pageNum, unsigned int frameNum)
 	Else
 	End */
 
-	FILE *outputFile = fopen(OUTPUT_FILE_NAME, "a");
-	fileNotNull(outputFile, OUTPUT_FILE_NAME);
-
 
 	// Finding the first invalid entry in the TLB for placement.
 	int index = TLBL1GetFirstInvalidEntry();
@@ -243,8 +234,6 @@ TLBL1Update(unsigned int pageNum, unsigned int frameNum)
 	{
 		fprintf(outputFile, "L1-TLB: Placement in index=%d\n", index);
 	}
-
-	fclose(outputFile);
 
 	// Initialising the new entry.
 	l1TLB.entries[index].frameNum = frameNum;
@@ -281,9 +270,6 @@ TLBL2Flush()
 void
 TLBL2Print()
 {
-	FILE *outputFile = fopen(OUTPUT_FILE_NAME, "a");
-	fileNotNull(outputFile, OUTPUT_FILE_NAME);
-
 	fprintf(outputFile, "-------------------------\n");
 	fprintf(outputFile, "L2-TLB Info\n");
 
@@ -291,8 +277,6 @@ TLBL2Print()
 	{
 		fprintf(outputFile, "Index=%d, validInvalidBit=%d, pageNum=%d, frameNum=%d, lruCount=%d\n", i, l2TLB.entries[i].validInvalidBit, l2TLB.entries[i].pageNum, l2TLB.entries[i].frameNum, l2TLB.entries[i].lruCount);
 	}
-	fflush(outputFile);
-	fclose(outputFile);
 
 	return;
 }
@@ -304,8 +288,6 @@ TLBL2Print()
 unsigned int 
 TLBL2Search(unsigned int pageNum, unsigned int *error)
 {
-	extern FILE *outputFile;// = fopen(OUTPUT_FILE_NAME, "a");
-	//fileNotNull(outputFile, OUTPUT_FILE_NAME);
 	fprintf(outputFile, "\nL2-TLB: Searching for pageNum=%d\n", pageNum);
 
 	for (int i = 0; i < NUM_ENTRIES_IN_L2_TLB; ++i)
@@ -325,9 +307,6 @@ TLBL2Search(unsigned int pageNum, unsigned int *error)
 	}
 
 	fprintf(outputFile, "L2-TLB: pageNum=%d not found in l2TLB\n", pageNum);
-
-	fflush(outputFile);
-	//fclose(outputFile);
 
 	*error = ERROR_PAGE_NUM_NOT_FOUND;
 	return -1;
@@ -420,9 +399,6 @@ TLBL2Update(unsigned int pageNum, unsigned int frameNum)
 	Else
 	End */
 
-	FILE *outputFile = fopen(OUTPUT_FILE_NAME, "a");
-	fileNotNull(outputFile, OUTPUT_FILE_NAME);
-
 	// Finding the first invalid entry to see if placement is possible.
 	int index = TLBL2GetFirstInvalidEntry();
 
@@ -436,8 +412,6 @@ TLBL2Update(unsigned int pageNum, unsigned int frameNum)
 	{
 		fprintf(outputFile, "L2-TLB: Placement in index=%d\n", index);
 	}
-
-	fclose(outputFile);
 
 	l2TLB.entries[index].frameNum = frameNum;
 	l2TLB.entries[index].pageNum = pageNum;
