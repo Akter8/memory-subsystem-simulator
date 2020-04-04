@@ -1,0 +1,26 @@
+Statistics of all the processes.
+
+Time taken by each process: 
+Process-0: 479459
+Process-1: 1859364
+Process-2: 727309
+Process-3: 350609
+Process-4: 113321
+Total time taken by all processes combined: 3530062
+
+Number of context switches in every process.
+Process-0: 311
+Process-1: 1222
+Process-2: 497
+Process-3: 255
+Process-4: 87
+Total number of context switches for all the processes combined: 2372
+
+Number of page faults in every process.
+Process-0: 56
+Process-1: 168
+Process-2: 66
+Process-3: 160
+Process-4: 33
+Total number of context switches for all the processes combined: 483
+
