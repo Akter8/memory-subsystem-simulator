@@ -1,7 +1,7 @@
 // #include "dataTypes.h"
 
 #define NUM_FRAMES 65536
-#define NUM_NON_REPLACABLE_FRAMES 10
+#define NUM_NON_REPLACABLE_FRAMES 513
 
 
 typedef struct
