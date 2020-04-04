@@ -16,20 +16,14 @@ Group #6, Questions #5.
 
 
 #### Doubts
-* min(t1, t2) or max(t1, t2) in look aside?
-* Size of physical and virtual addresses.
-* Should the user enter number of processes as an input to our program? Or should we be able to handle  any number of processes arriving at any time?
 
-
-#### Programming Tasks
-- [ ] TLB
-- [ ] Cache
-- [ ] MM: Segmentation
-- [ ] MM: Paging
 
 
 #### Tasks
-- [ ] Create a Makefile.
+- [X] Create a Makefile.
+- [ ] Add write back in L2 cache if the LRU's modify bit has been set.
+- [ ] Add comments: Splitting of physical addr into cache numbers.
+- [ ] Remove hardcode value of read/write bit of 0 after we read the input files.
 - [ ] Complete the README.
 - [ ] Convert README.md to README.txt
 - [ ] Make folder name 6.tar.gz before submission
