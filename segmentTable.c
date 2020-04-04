@@ -6,13 +6,20 @@
 #include "pcb.h"
 #include "frameTable.h"
 
-extern PCB pcbArr[1];
+extern PCB pcbArr[30];
 extern segmentTableInfo* GDTptr;
 extern FILE *outputFile;
 
+
+/*
+Initializes the global descriptor table
+
+Input: (No input)
+Output: A pointer to the GDT 
+*/
 segmentTableInfo* initGDTable()
 {
-    //Get a non-replacable frame
+    //Get a non-replacable frame to store GDT in
     unsigned int frameNum = getNonReplaceableFrame();
 
     if(frameNum == -1)
@@ -42,6 +49,39 @@ segmentTableInfo* initGDTable()
     return segmentTableInfoObj;
 }
 
+
+
+/*
+Initializes a segment in the global descriptor table
+
+Input: pid, size of segment
+Output: (No output)
+*/
+void createGDTsegment(int index, int limit)
+{
+    
+    GDTptr->segmentTableObj->entries[index].present = 1;
+
+    //Initialize PageTable for the GDT
+    pageTable* PgTableObj = initPageTable(0);           //All GDT segments are read-only
+    // GDTptr->segmentTableObj.entries[index].baseAddress = PgTableObj->baseAddress;
+    GDTptr->segmentTableObj->entries[index].level3PageTableptr = PgTableObj;
+
+    GDTptr->segmentTableObj->entries[index].present = 1;
+    GDTptr->segmentTableObj->entries[index].readWrite = 0;
+    GDTptr->segmentTableObj->entries[index].limit = limit;
+}   
+
+
+
+
+/*
+Initializes the local descriptor table
+
+Input: (No input)
+Output: A pointer to the LDT 
+
+*/
 segmentTableInfo* initLDTable(int limit)
 {
     //Get a non-replacable frame
@@ -81,7 +121,7 @@ segmentTableInfo* initLDTable(int limit)
 
         //Initalize segmentNum 0, becuase it is present in the process, rest are absent
         //Initalize pageTable for this segment
-              //All LDT segments can be written into
+        //All LDT segments can be written into
         //segTableptr->entries[i].baseAddress = PgTableInfoObj->baseAddress;
         
         segTableptr->entries[i].level3PageTableptr = initPageTable(readWrite);
@@ -93,26 +133,17 @@ segmentTableInfo* initLDTable(int limit)
     }
     return segmentTableInfoObj;
 }
-void createGDTsegment(int index, int limit)
-{
-    
-    GDTptr->segmentTableObj->entries[index].present = 1;
 
-    //Initialize PageTable for the GDT
-    pageTable* PgTableObj = initPageTable(0);           //All GDT segments are read-only
-    // GDTptr->segmentTableObj.entries[index].baseAddress = PgTableObj->baseAddress;
-    GDTptr->segmentTableObj->entries[index].level3PageTableptr = PgTableObj;
-
-    GDTptr->segmentTableObj->entries[index].present = 1;
-    GDTptr->segmentTableObj->entries[index].readWrite = 0;
-    GDTptr->segmentTableObj->entries[index].limit = limit;
-}   
 
 
 
 /*
 Takes pid virtual address produced by processor as input 
 and returns pointer to level 3 page table of required segment
+
+Input: pid, segment number
+Output: pointer to level 3 page table of the segment on success
+        0 on failure
 */
 pageTable* searchSegmentTable(int pid, int4 segNum)
 {
@@ -147,7 +178,10 @@ pageTable* searchSegmentTable(int pid, int4 segNum)
 
 /*
 Takes segment table entry ADT and value as input and
-updates present bit of that entry to value 
+updates present bit of that entry to value
+
+Input: segment table entry, index of entry, new value of present bit
+Output: 1 on success 
 */              
 int updateSegmentTablePresentBit(segmentTableEntry* segTableEntry, int index, int value){
 
@@ -158,30 +192,3 @@ int updateSegmentTablePresentBit(segmentTableEntry* segTableEntry, int index, in
 
 
 
-
-/*
-Initializes ADTs for segment table and calls method that initializes page table of one segment 
-*/
-segmentTable* initSegTable()
-{
-    segmentTable *segTableptr;
-    segTableptr =(segmentTable *) calloc(1,sizeof(segmentTable));
-    segmentTableEntry* entries = calloc(8,sizeof(segmentTableEntry));
-
-
-    for(int i = 0; i < 8; i++){
-        segTableptr->entries[i] = entries[i];
-    }
-
-    for(int i=0;i<8;i++)
-    {
-        segTableptr->entries[i].present=1;
-        segTableptr->entries[i].level3PageTableptr  = NULL;
-    }
-
-    int readWrite = 1;
-    segTableptr->entries[0].level3PageTableptr = initPageTable(readWrite);
-
-    return segTableptr;
-
-}

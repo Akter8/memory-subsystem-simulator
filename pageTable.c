@@ -19,7 +19,7 @@
 each page table entry need 32 bits
 */
 
-extern PCB pcbArr[1];		//testing with only one process right now
+extern PCB pcbArr[30];		
 extern FILE *outputFile;
 
 
@@ -28,7 +28,9 @@ extern FILE *outputFile;
 /*
 Initializes all 3 levels of page table by dynamically allocating memory
 for ADTs correxponding to page tables and their frames.
-Returns a pointer to level 3 page table
+
+Input: Read/Write permissions of pages pointed to by level 1 page table
+Output: Pointer to level 3 page table
 */
 pageTable* initPageTable(int readWrite){
 	pageTable *level3PageTableptr, *level2PageTableptr, *level1PageTableptr;
@@ -91,8 +93,16 @@ pageTable* initPageTable(int readWrite){
 
 /* 
 This function returns physical frame number for a given linear address.
-Returns -1 and the level of paging and page number for which page fault occured if unsucessful. 
 Also updates LFU count in frame table
+
+Input: pointer to level 3 page table, linear address, whether access is read or write, 
+	   double pointer to store pointer to store pointer to page table in which page fault occured, 
+	   pointer to store page number which caused page fault, 
+	   pointer to store level of page in whcih page fault occured
+
+Output: 0 if search successful, 
+		-1 if page fault,
+		-2 if invalid linear address  
 */
 int searchPageTable(pageTable* level3PageTable,pageTable** ptref,unsigned int linearAddr, unsigned int readWrite,
 	unsigned int* pageFaultPageNumber, unsigned int* level){
@@ -113,8 +123,6 @@ int searchPageTable(pageTable* level3PageTable,pageTable** ptref,unsigned int li
 		fprintf(outputFile, "Error: Invalid address\n"); 			//level 3 page table has only 8 entries
 		return -2;
 	}
-
-	//To do: Update Lfu count of the first and only frame of page table level 3. This will require segment table implementation
 
 	unsigned int frameNumberOfLevel2PageTable,indexOfLevel2PageTable=level3Index;
 
@@ -187,6 +195,9 @@ int searchPageTable(pageTable* level3PageTable,pageTable** ptref,unsigned int li
 
 /*
 Sets or resets modified bit of a page table entry
+
+Input: Pointer to page table, index of entry to modify, new value of modified bit
+Output: 0 on success
 */
 int updatePageTableModifiedBit(pageTable* pageTableptr,unsigned int index, int value){
 	unsigned int pageNumber = index / NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE;
@@ -202,6 +213,9 @@ int updatePageTableModifiedBit(pageTable* pageTableptr,unsigned int index, int v
 
 /* 
 Sets or resets present bit of a page table entry
+
+Input: Pointer to page table, index of entry to modify, new value of present bit
+Output: 0 on success
 */
 int updatePageTablePresentBit(pageTable *pT, unsigned int index, int value){
 	unsigned int pageNumber = index / NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE;
@@ -215,8 +229,8 @@ int updatePageTablePresentBit(pageTable *pT, unsigned int index, int value){
 
 
 /*
-Takes a pointer to a pageTable and
-returns a pointer to the ADT of the next level pageTable
+Input: Pointer to page table
+Output: Pointer to next level page table
 */
 pageTable* getPointertoNextLevelPageTable(pageTable* pTPointer){
 	return pTPointer->nextLevelPageTablePointer;		
@@ -228,6 +242,9 @@ pageTable* getPointertoNextLevelPageTable(pageTable* pTPointer){
 /*
 Takes pid, segment number in LDT and level of page table required as input
 and returns a pointer to the required page table 
+
+Input: pid, segment number, level of page table to return
+Output: pointer to page table of specified level
 */
 pageTable* getPageTableFromPid(unsigned int pid,unsigned int segNum,unsigned int level){
 	// Access the PCB of the process and use pointers to get access to req page table
@@ -259,6 +276,9 @@ pageTable* getPageTableFromPid(unsigned int pid,unsigned int segNum,unsigned int
 /*
 Sets the frameNumber field of the entry in the pageTable pointed 
 to by pT with specified index to value
+
+Input: pointer to page table, index of entry to modify, frame number assigned to the page
+Output: 0 on success
 */
 int setFrameNo(pageTable *pT, unsigned int index, int value)
 {
@@ -272,40 +292,12 @@ int setFrameNo(pageTable *pT, unsigned int index, int value)
 
 
 /*
-// Deletes page table and deallocates frames being used by it
-int deallocateProcessPages(pageTable level3PageTable, pageTable level2PageTable, pageTable level1PageTable){
-	// Mark the frames of the page table as empty in the frame table
-	int i,j;
-	for(i = 0; i < NUMBER_OF_PAGES_IN_LEVEL_1_PAGE_TABLE; i++){
-		for(j = 0; j < NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE; j++){
-			if(level1PageTable.frames[i].entries[j].present == 1){
-				int frameToDelete = level1PageTable.frames[i].entries[j].frameNumber;
-				setEmptyBitFrameTable(frameToDelete, 0);
-			}	
-		}
-	}
+Finds the page number of first code page and first data page of a process
 
-	for(i = 0; i < NUMBER_OF_PAGES_IN_LEVEL_2_PAGE_TABLE; i++){
-		for(j = 0; j < NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE; j++){
-			if(level2PageTable.frames[i].entries[j].present == 1){
-				int frameToDelete = level2PageTable.frames[i].entries[j].frameNumber;
-				setEmptyBitFrameTable(frameToDelete, 0);
-			}	
-		}
-	}
-
-	for(i = 0; i < NUMBER_OF_PAGES_IN_LEVEL_3_PAGE_TABLE; i++){
-		for(j = 0; j < NUMBER_OF_ENTRIES_PER_PAGE_IN_PAGE_TABLE; j++){
-			if(level3PageTable.frames[i].entries[j].present == 1){
-				int frameToDelete = level3PageTable.frames[i].entries[j].frameNumber;
-				setEmptyBitFrameTable(frameToDelete, 0);
-			}
-		}
-	}
-
-	return 0;
-
-}
+Input: Name of linear address input file, name of segment number input file, 
+	   pointer to store page number of first code page,
+	   pointer to store page number of first data page
+Output: 0 on success
 */
 int findFirst2Pages(char *linearAddrInp,char *segNumInp,int *pageCode,int *pageData)
 {
@@ -324,8 +316,6 @@ int findFirst2Pages(char *linearAddrInp,char *segNumInp,int *pageCode,int *pageD
 	{
 		fscanf(fpSegNum,"%x %c",&segNum,&readWrite);
 
-		//printf("pageno:%x segNum:%d\n",addr>>10,segNum);
-
 		if(segNum==0x8&&pageCodefound==0){
 			*pageCode = addr>>10;
 			pageCodefound = 1;
@@ -338,13 +328,21 @@ int findFirst2Pages(char *linearAddrInp,char *segNumInp,int *pageCode,int *pageD
 		
 	}
 
-	//printf("\n\npage1:%x \npage2:%x\n",*pageCode,*pageData);
 	fclose(fpLinearAddr);
 	fclose(fpSegNum);
 	return 0;
 
 }
 
+
+
+
+/*
+Allocates frames in memory for first code page and first data page of a process
+
+Input: pid, name of linear address input file, name of segment number input file
+Output: 0 on success
+*/
 int prepaging(int pid,char *LinearAddrInputFile,char *SegNumAddrFile)
 {
 
@@ -391,5 +389,5 @@ int prepaging(int pid,char *LinearAddrInputFile,char *SegNumAddrFile)
 	//allocate frame for first data page
 	allocateFrame(pid,0x0,getPointertoNextLevelPageTable(pt2RefData),pageNumData ,0);	
 
-
+	return 0;
 }
