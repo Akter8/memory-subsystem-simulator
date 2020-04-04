@@ -83,6 +83,10 @@ driver()
 
     int error;
 
+    //Opening outputFile
+    outputFile = fopen(OUTPUT_FILE_NAME, "w");
+    fflush(outputFile);
+
     // Taking in input for linear address and segment numbers.
     char SegAddrInputFileName[n][100];
     char LinearAddrInputFileName[n][100];
@@ -90,6 +94,7 @@ driver()
     {
         fscanf(input, "%s", LinearAddrInputFileName[i]); 
     }
+    fprintf(outputFile, "Driver: Linear adrress input file names received\n");
 
     // Create the segment number input files for the corresponding linear address files.
     createSegmentFiles(LinearAddrInputFileName, n);
@@ -100,6 +105,7 @@ driver()
         strcpy(SegAddrInputFileName[i], "Segment_");
         strcat(SegAddrInputFileName[i], LinearAddrInputFileName[i]);
     }
+    fprintf(outputFile, "Driver: Segment number input file names received\n");
 
     fclose(input);
    
@@ -107,22 +113,24 @@ driver()
     //Flushing the TLBs initially
     TLBL1Flush();
     TLBL2Flush();
+    fprintf(outputFile, "Driver: TLBs flushed\n");
 
 
     //Initializing Cache
     initL1Cache();
+    fprintf(outputFile, "Driver: L1 cache initialized\n");
     initL2Cache();
+    fprintf(outputFile, "Driver: L2 cache initialized\n");
 
 
     //Initialize Frame Table
     initFrameTable();
+    fprintf(outputFile, "Driver: Frame table initialized\n");
 
 
     //Global descriptor Table initialize
     GDTptr = initGDTable();
-
-    //Opening outputFile
-    outputFile = fopen(OUTPUT_FILE_NAME, "w");
+    fprintf(outputFile, "Driver: GDT initialized\n");
 
 
     //Initializing PCBs of all Processes
@@ -131,12 +139,8 @@ driver()
     {
         //Initializes PCB
         initPCB(i, LinearAddrInputFileName[i], SegAddrInputFileName[i]);
-        fprintf(outputFile, "\n");
-        fprintf(outputFile, "Checking if GDT segment descriptor is present: %d",GDTptr->segmentTableObj->entries[i].present);
-        fprintf(outputFile, "\n");
-        //initPCB(&pcbArr[i]);
-
     }
+    fprintf(outputFile, "Driver: PCBs initialized\n");    
     fflush(outputFile);
 
     int firstExecution[30] = {0};
@@ -232,15 +236,7 @@ driver()
                         // Get the data from MM.
                         unsigned int* pageFaultPageNumber=calloc(1, sizeof(unsigned int));
                         unsigned int* level=calloc(1, sizeof(unsigned int));
-                        // if(dataCache)        //if memory reference is data
-                        // {   
-                        //     frameNum = searchPageTable(PCB[i].segTableObj->entries[segNum], ptrToPageFaultTable, 
-                        //                                 inputAddr, readWrite, pageFaultPageNumber, level);
-                        // }
-                        // else{               //if memory reference is code
-                        //     frameNum = searchPageTable(GDT[PCB[i].GDTindex]->pageTableObj, ptrToPageFaultTable, 
-                        //                             inputAddr, readWrite, pageFaultPageNumber, level);    
-                        // }
+                        
                         pageTable* pagetable;
                         pageTable** ptrToPageFaultPageTable = malloc(sizeof(pageTable *));
 
@@ -262,7 +258,7 @@ driver()
                         if(frameNum == -1)
                         {
 
-                            fprintf(outputFile, "After returing to driver searchPageTable: level = %d, pageFaultPageNumber = %d\n", *level, *pageFaultPageNumber);
+                            fprintf(outputFile, "Driver: Page fault has occured: level = %d, pageFaultPageNumber = %d\n", *level, *pageFaultPageNumber);
                             fflush(outputFile);
             
                             allocateFrame(i,segNum.value,*ptrToPageFaultPageTable, *pageFaultPageNumber, *level);
@@ -452,7 +448,7 @@ driver()
                         time += previousActionTime;
 
                         fprintf(outputFile, "Driver: Found the required data in L1 cache.\n");
-                        fprintf(outputFile, "Search time taken: %d.\n", previousActionTime);
+                        fprintf(outputFile, "Driver: Search time taken: %d.\n", previousActionTime);
                         fflush(outputFile);
                     }
                     else if (retValue1 < 0 && retValue2 < 0)
@@ -463,7 +459,7 @@ driver()
                         time += previousActionTime;
 
                         fprintf(outputFile, "Driver: Did NOT find the required data in both L1 and L2 cache\n");
-                        fprintf(outputFile, "Search time taken: %d.\n", previousActionTime);
+                        fprintf(outputFile, "Driver: Search time taken: %d.\n", previousActionTime);
                         fprintf(outputFile, "Driver: Will update L1 and L2 caches.\n");
                         fflush(outputFile);
 
@@ -515,7 +511,7 @@ driver()
                         int previousActionTime = L2_CACHE_SEARCH_TIME;
                         time += previousActionTime;
                         fprintf(outputFile, "Driver: Did NOT find the required data in L1 cache, but found it in L2 cache.\n");
-                        fprintf(outputFile, "Search time taken: %d.\n", previousActionTime);
+                        fprintf(outputFile, "Driver: Search time taken: %d.\n", previousActionTime);
                         fprintf(outputFile, "Driver: Will update L1 Cache.\n");
                         fflush(outputFile);
 
