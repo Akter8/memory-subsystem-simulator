@@ -593,7 +593,13 @@ updateL2Cache(int index, int tag, bool write, int data)
 	if (way == -1) // Did not find an invalid entry. Replacement required.
 	{
 		way = getLruIndexL2Cache(index);
-		fprintf(outputFile, "L2-Cache: Replacement in set=%d, way=%d for tag=%d\n", index, way, tag);
+       if(l2Cache.sets[index].ways[way].dirtyBit == 1)
+       {
+           int frameNumReplacedBlock = tag << 2 | index >> 4;
+           writeToMemory(frameNumReplacedBlock);
+       }
+
+        fprintf(outputFile, "L2-Cache: Replacement in set=%d, way=%d for tag=%d\n", index, way, tag);
 	}
 	else
 	{
