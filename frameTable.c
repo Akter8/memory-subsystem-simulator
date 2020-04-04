@@ -218,7 +218,7 @@ int invalidateFrame(int frameNo)
 {
 	if(frameTable.entries[frameNo].dirtyBit==1)
 	{
-		fprintf(outputFile, "Frame Table: Frame# %d is dirty. Writing it back to disk\n",frameNo);
+		//fprintf(outputFile, "Frame Table: Frame# %d is dirty. Writing it back to disk\n",frameNo);
 
 		//write back to disk
 	}
