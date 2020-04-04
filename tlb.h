@@ -44,21 +44,53 @@ TLBL2;
 
 
 // Functions
+
+
 // L1
-void TLBL1Flush(); // Invalidates all entries.
-void TLBL1Print(); // Prints the current state of the TLB.
-unsigned int TLBL1Search(unsigned int pageNum, unsigned int *error); // Second parameter for error.
-int TLBL1Update(unsigned int pageNum, unsigned int frameNum); // Returns the index where the new entry was put.
-int TLBL1UpdateLru(int index); // Mimics the entry of index being used and hence updates the LRU.
-int TLBL1GetLruIndex(); // Returns the index of the entry in the array.
-int TLBL1GetFirstInvalidEntry(); // Returns the first invalid entry in the TLB.
+
+// Invalidates all entries.
+void TLBL1Flush(); 
+
+// Prints the current state of the entire TLB table.
+void TLBL1Print(); 
+
+// Searches for particular page number's in TLB. If hit the physical address is returned else returns -1, second paramenter - error = ERROR_PAGE_NUM_NOT_FOUND. Also updates the corresponding lru
+unsigned int TLBL1Search(unsigned int pageNum, unsigned int *error); 
+
+// Replaces a block in tlb with the new block - with new pageNum and frameNum mapping. Returns the index where the new entry was put.
+int TLBL1Update(unsigned int pageNum, unsigned int frameNum); 
+
+// Mimics the entry of index being used and hence updates the LRU corresponding to the index.
+int TLBL1UpdateLru(int index); 
+
+// Returns the index of the lru entry in the TLB.
+int TLBL1GetLruIndex(); 
+
+// Returns the first invalid entry in the TLB.
+int TLBL1GetFirstInvalidEntry(); 
+
+
 
 
 // L2
-void TLBL2Flush(); // Invalidates all entries.
-void TLBL2Print(); // Prints the current state of the TLB.
-unsigned int TLBL2Search(unsigned int pageNum, unsigned int *error); // Second paramenter for error.
-int TLBL2Update (unsigned int pageNum, unsigned int frameNum); // Returns the index where the new entry was put.
-int TLBL2UpdateLru(int index); // Mimics the entry of index being used and hence updates the LRU.
-int TLBL2GetLruIndex(); // Returns the index of the entry in the array.
-int TLBL2GetFirstInvalidEntry(); // Returns the first invalid entry in the TLB.
+
+// Invalidates all entries.
+void TLBL2Flush(); 
+
+// Prints the current state of the entire TLB table.
+void TLBL2Print();
+
+// Searches for particular page number's in TLB. If hit the physical address is returned else returns -1, second paramenter - error = ERROR_PAGE_NUM_NOT_FOUND. Also updates the corresponding lru
+unsigned int TLBL2Search(unsigned int pageNum, unsigned int *error); 
+
+// Replaces a block in tlb with the new block - with new pageNum and frameNum mapping. Returns the index where the new entry was put.
+int TLBL2Update (unsigned int pageNum, unsigned int frameNum); 
+
+// Mimics the entry of index being used and hence updates the LRU corresponding to the index.
+int TLBL2UpdateLru(int index); 
+
+// Returns the index of the lru entry in the TLB.
+int TLBL2GetLruIndex(); 
+
+// Returns the first invalid entry in the TLB.
+int TLBL2GetFirstInvalidEntry(); 
