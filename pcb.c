@@ -11,22 +11,6 @@ extern PCB pcbArr[30];
 extern FrameTable frameTable;
 extern segmentTableInfo* GDTptr;
 
-/*
-Initializes ADT of PCB and calls method
-to initialize LDT of the process
-*/
-// int initPCB(PCB *pcbObj,char *LinearAddrInputFileName,char *SegAddrInputFileName){
-//     pcbObj->state = READY;
-//     pcbObj->LinearAddrInputFile = fopen(LinearAddrInputFileName,"r");
-//     pcbObj->SegNumAddrFile = fopen(SegAddrInputFileName,"r");
-
-//     pcbObj->LDTPointer = initSegTable();
-
-//     return 0;
-// }
-
-
-
 
 /*
 Takes ADT of PCB as input and
@@ -49,12 +33,6 @@ int setState(PCB *pcbObj, int state){
 }
 
 
-
-//returns the BaseAddress of Local Descriptor Table for the particular process
-// int29 getLDTBaseAddress(PCB pcbObj)
-// {
-//     return pcbObj.LDTBaseAddress;
-// }
 
 //Returns pid of the process
 int getpid(PCB pcbObj)
@@ -86,32 +64,36 @@ void findSegmentLimits(int* gdtSeg_limit, int* ldtSeg_limit, FILE* LinearAddrInp
     }
 }
 
-//Initializes the PCB for each process
+/*
+Initializes ADT of PCB and calls method
+to initialize LDT of the process
+*/
 void initPCB(int pid, char* LinearAddrInputFileName, char* segInputFileName)
 {
     //get NonReplacable for PCB for the process
     int frameNum = getNonReplaceableFrame();
 
+    //assign the pid
     pcbArr[pid].pid = pid;
+   
     //Initially all processes join the Ready queue
     setState(&pcbArr[pid], READY);
 
 
-    //PCB[pid].swapStartTime = -1;        //denotes not gone for swapping
 
     //Opening input file for the particular process
     pcbArr[pid].LinearAddrInputFile = fopen(LinearAddrInputFileName,"r");
     //Check if File open correctly
-  //  fileNotNull(pcbArr[pid].LinearAddrInputFile, LinearAddrInputFileName);
+    fileNotNull(pcbArr[pid].LinearAddrInputFile, LinearAddrInputFileName);
 
 
     pcbArr[pid].SegNumAddrFile = fopen(segInputFileName,"r");
     //Check if File open correctly
-    //fileNotNull(pcbArr[pid].segInputFile, segInputFileName);
+    fileNotNull(pcbArr[pid].SegNumAddrFile  , segInputFileName);
 
 
     //Here we'll find limit for each segment of the process
-    //
+    
 
     int gdtSegLimit = 0; int ldtSegLimit = 0;
     findSegmentLimits(&gdtSegLimit, &ldtSegLimit, pcbArr[pid].LinearAddrInputFile, pcbArr[pid].SegNumAddrFile);
@@ -125,8 +107,6 @@ void initPCB(int pid, char* LinearAddrInputFileName, char* segInputFileName)
     pcbArr[pid].SegNumAddrFile = fopen(segInputFileName,"r");
 
     //Initialize a new Local Descriptor Segment Table for the process
-   // SegmentTableInfo* segTableInfoObj = initLDTable(limit);
-  //  PCB[pid].LDTBaseAddress = segTableInfoObj->LDTBaseAddress;
     pcbArr[pid].LDTPointer = initLDTable(ldtSegLimit);
 
     //To find GDTindex (i.e. free entry ) in the Global Descriptor Table
@@ -136,26 +116,28 @@ void initPCB(int pid, char* LinearAddrInputFileName, char* segInputFileName)
         {
             pcbArr[pid].GDTindex.value = i;
             createGDTsegment(i, gdtSegLimit);
-            //GDT.entries[i].present = 1;
-            //GDT.entries[i].
             break;
         }
     }
 
     
-    //free(SegmentTableInfo);
 }
 
 
-
+/*
+Returns reference to level 3 page table given pid and segment number
+*/
 pageTable* getLevel3PageTablePointer(PCB pcbObj, int segNum){
     int4 segN; segN.value = segNum;
     return searchSegmentTable(pcbObj.pid,segN);
-    //return pcbObj.LDTPointer->segmentTableObj->entries[segNum].level3PageTableptr;
 }
 
+
+//Deallocates Process pages and page table 
 int deleteProcess(unsigned int pid){
     PCB pcbObj = pcbArr[pid];
+
+
     //Serially free all page tables, then all segment table entries
     segmentTable* LDTptr =  pcbObj.LDTPointer->segmentTableObj;
 
@@ -175,13 +157,10 @@ int deleteProcess(unsigned int pid){
     free(level2PageTableptr);
     free(level3PageTableptr);
 
-
-    // free(LDTptr->entries);
-    // Entries are not being freed currently. This is a bug that is causing a memory leak
-
     free(LDTptr);
     free(pcbObj.LDTPointer);
-    //Mark frames of the process as empty in the frame table
+
+    //Invalidate frames of given process
     for(int i = 0; i < NUM_FRAMES; i++){
         if(frameTable.entries[i].emptyBit == 1 && frameTable.entries[i].pid == pid){
             invalidateFrame(i);
