@@ -158,6 +158,7 @@ driver()
                 continue;
             }
 
+            // Checking if this is the first execution of the process to do the prepagin of 2 pages for every process.
             if(firstExecution[i] == 0)
             {
                 // Prepages two pages for every process.
@@ -535,13 +536,21 @@ driver()
                 ++current_time;
 
             } // End of that process' quota of memory accesses.
-        }
-        TLBL1Flush();
-        TLBL2Flush();
 
-        frameAgeing();
+            // setState(&pcbArr[i], READY);
+            pcbArr[i].numContextSwitches++;
+
+            TLBL1Flush();
+            TLBL2Flush();
+
+            frameAgeing();
+        }
+        
     
     } // End of all the processes.
+
+    printf("abcd\n");
+    fflush(stdout);
 
     fprintf(outputFile, "\n\n\nDriver: SIMULATION COMPLETED. ALL PROCESSES FINISHED EXECUTION.\n\n\n");
 
@@ -553,6 +562,46 @@ driver()
     }
 
     fclose(outputFile);
+
+
+    // Prints the statistics onto the statistics file.
+    FILE *statisticsFile = fopen(STATISTICS_FILE_NAME, "w");
+    fprintf(statisticsFile, "Statistics of all the processes.\n\n");
+
+    // To print the total time taken by processes.
+    fprintf(statisticsFile, "Time taken by each process: \n");
+    long long int totalTime = 0;
+    for (int i = 0; i < n; ++i)
+    {
+        fprintf(statisticsFile, "Process-%d: %lld\n", i, pcbArr[i].runTime);  
+        totalTime += pcbArr[i].runTime;  
+    }
+    fprintf(statisticsFile, "Total time taken by all processes combined: %lld\n\n", totalTime);
+
+    // To print the total number of context switches.
+    fprintf(statisticsFile, "Number of context switches in every process.\n");
+    int totalContextSwitches = 0;
+    for (int i = 0; i < n; ++i)
+    {
+        fprintf(statisticsFile, "Process-%d: %d\n", i, pcbArr[i].numContextSwitches);  
+        totalContextSwitches += pcbArr[i].numContextSwitches;  
+    }
+    fprintf(statisticsFile, "Total number of context switches for all the processes combined: %d\n\n", totalContextSwitches);
+
+
+    // To print the total number of page faults in every process.
+    fprintf(statisticsFile, "Number of page faults in every process.\n");
+    int totalPageFaults = 0;
+    for (int i = 0; i < n; ++i)
+    {
+        fprintf(statisticsFile, "Process-%d: %d\n", i, pcbArr[i].numPageFaults);
+        totalPageFaults += pcbArr[i].numPageFaults;  
+    }
+    fprintf(statisticsFile, "Total number of context switches for all the processes combined: %d\n\n", totalPageFaults);
+
+
+
+    fclose(statisticsFile);
 
     return;
 }

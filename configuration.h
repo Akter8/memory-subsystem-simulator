@@ -1,4 +1,5 @@
 #define OUTPUT_FILE_NAME "outputFile.txt"
+#define STATISTICS_FILE_NAME "outputFile_processStatistics.txt"
 
 
 // Size of address configurations.

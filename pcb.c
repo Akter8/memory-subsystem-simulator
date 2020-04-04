@@ -142,6 +142,9 @@ void initPCB(int pid, char* LinearAddrInputFileName, char* segInputFileName)
         }
     }
 
+    pcbArr[pid].numContextSwitches = 0;
+    pcbArr[pid].numPageFaults = 0;
+
     
     //free(SegmentTableInfo);
 }
