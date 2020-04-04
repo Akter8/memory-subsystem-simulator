@@ -246,12 +246,10 @@ int initFrameTable()
 		frameTable.entries[i].considerInLfu = 0;
 	}
 
-	//Allocate irreplacable frames for PCBs, Segment Tables and Frame Table
-
-
-
-
-	//
+	//Allocate irreplacable frames for Frame Table
+	for(i = NUM_FRAMES-NUM_NON_REPLACABLE_FRAMES; i < NUM_FRAMES-NUM_NON_REPLACABLE_FRAMES + 512; i++){
+		frameTable.entries[i].emptyBit = 1;
+	}
 
 }
 int setLock(int frameNo)

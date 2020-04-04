@@ -181,7 +181,13 @@ driver()
                 char write;
                 int4 segNum = readSegNum(pcbArr[i].SegNumAddrFile, &write);
                 
-                unsigned int readWrite = 0; // All accesses read to avoid errors for now.
+                unsigned int readWrite;
+                if(write == 'w'){
+                    readWrite = 1;
+                }
+                else{
+                    readWrite = 0;
+                }
 
                 // If the file has been completely read.
                 if(inputAddr == -1)
@@ -220,7 +226,6 @@ driver()
                     fprintf(outputFile, "Driver: Did not find required data in L1 TLB. Searched through L2 TLB. Time cost: %d\n", L2_TLB_SEARCH_TIME);
                     fflush(outputFile);
                     frameNum = TLBL2Search(requestedPageNum,&error);
-                    fprintf(outputFile, "Frame#=%d\n", frameNum);
 
                     if (frameNum < 0) // If the data is not present in TLBL2 also.
                     {
