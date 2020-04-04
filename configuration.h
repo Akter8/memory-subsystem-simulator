@@ -25,23 +25,25 @@
 #define ERROR_CANNOT_WRITE_IN_INSTR_CACHE -3
 
 
-//---------------- Update required.
-// Hit/miss times
-#define TLB_SEARCH_TIME 0
-#define L1_CACHE_SEARCH_TIME 0
-#define L2_CACHE_SEARCH_TIME 0
+// Time taken for every action.
+// Time for L1 < time for L2 in the same category.
+// Search time < write time.
+// Update time > search time, update time < write time.
+#define L1_TLB_SEARCH_TIME 1
+#define L2_TLB_SEARCH_TIME 5
 
-#define L1_TLB_SEARCH_TIME 0
-#define L2_TLB_SEARCH_TIME 0
+#define L1_TLB_UPDATE_TIME 3
+#define L2_TLB_UPDATE_TIME 8
 
-#define MM_SEARCH_TIME 0
-#define L1_TLB_UPDATE_TIME 0
-#define L2_TLB_UPDATE_TIME 0
+#define L1_CACHE_SEARCH_TIME 4
+#define L2_CACHE_SEARCH_TIME 6
 
-#define L1_CACHE_WRITE_TIME 0 
-#define L2_CACHE_WRITE_TIME 0 
+#define L1_CACHE_WRITE_TIME 8
+#define L2_CACHE_WRITE_TIME 10 
 
-#define L1_CACHE_UPDATE_TIME 0
-#define L2_CACHE_UPDATE_TIME 0
+#define L1_CACHE_UPDATE_TIME 6
+#define L2_CACHE_UPDATE_TIME 8
 
-#define MAIN_MEMORY_WRITE_TIME 0
+#define MAIN_MEMORY_WRITE_TIME 50
+#define MAIN_MEMORY_SEARCH_TIME 35
+#define PAGE_FAULT_RECOVERY_TIME 1000

@@ -46,7 +46,7 @@ in the frame table
 */
 int updateLfuCount(int frameNo)
 {
-	fprintf(outputFile, "Updating count for frame# %d\n",frameNo);
+	fprintf(outputFile, "Frame Table: Updating count for frame# %d\n",frameNo);
 	if(frameNo>=NUM_FRAMES)
 		return -1;
 	frameTable.entries[frameNo].LfuCount.value++;
@@ -156,7 +156,7 @@ int allocateFrame(int pid,int segno,pageTable *pT,int pageNum,int level)
 
 	if(frameNo!=-1)
 	{	//placement
-		fprintf(outputFile, "Frame allocated:%d(placement)\n",frameNo);
+		fprintf(outputFile, "Frame Table: Frame allocated:%d(placement)\n",frameNo);
 		frameTable.entries[frameNo].pageNum.value=pageNum;
 		frameTable.entries[frameNo].pid=pid;
 		frameTable.entries[frameNo].LfuCount.value=0;
@@ -169,7 +169,7 @@ int allocateFrame(int pid,int segno,pageTable *pT,int pageNum,int level)
 	else
 	{
 		//replacement
-		fprintf(outputFile, "No free frame available in memory. Going for replacement\n");
+		fprintf(outputFile, "Frame Table: No free frame available in memory. Going for replacement\n");
 		frameNo = getLfuFrameNum();
 
 		//swap the page 
@@ -185,7 +185,7 @@ int allocateFrame(int pid,int segno,pageTable *pT,int pageNum,int level)
 		updatePageTablePresentBit(pT2,frameTable.entries[frameNo].pageNum.value,0);
 
 		//allocate the frame
-		fprintf(outputFile, "Frame allocated:%d(replacement)",frameNo);
+		fprintf(outputFile, "Frame Table: Frame allocated:%d(replacement)",frameNo);
 
 		frameTable.entries[frameNo].pageNum.value=pageNum;
 		frameTable.entries[frameNo].pid=pid;
@@ -198,7 +198,7 @@ int allocateFrame(int pid,int segno,pageTable *pT,int pageNum,int level)
 	}
 
 	//update page table
-	fprintf(outputFile, "Updating page table entry of page# %d\n",pageNum);
+	fprintf(outputFile, "Frame Table: Updating page table entry of page# %d\n",pageNum);
 
 	updatePageTablePresentBit(pT,pageNum,1);
 	//Lock the frame until accessed first
@@ -218,7 +218,7 @@ int invalidateFrame(int frameNo)
 {
 	if(frameTable.entries[frameNo].dirtyBit==1)
 	{
-		fprintf(outputFile, "Frame# %d is dirty. Writing it back to disk\n",frameNo);
+		fprintf(outputFile, "Frame Table: Frame# %d is dirty. Writing it back to disk\n",frameNo);
 
 		//write back to disk
 	}

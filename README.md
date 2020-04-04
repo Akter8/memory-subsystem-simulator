@@ -1,4 +1,4 @@
-# DSTN Assignment-1
+	# DSTN Assignment-1
 Group #6, Questions #5.
 
 ### Authors
@@ -21,6 +21,7 @@ Group #6, Questions #5.
 
 #### Tasks
 - [ ] Add comments: Splitting of physical addr into cache numbers.
+- [ ] Print time taken by every process and total time.
 - [ ] Complete the README.
 - [ ] Convert README.md to README.txt
 - [ ] Make folder name 6.tar.gz before submission
