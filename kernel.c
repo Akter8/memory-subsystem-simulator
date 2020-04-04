@@ -58,7 +58,7 @@ FrameTable frameTable;
 
 long long current_time = 0;
 
-int main()
+void driver()
 {
     int n;      //Number of processes  
     FILE* input = fopen("input.txt", "r");
@@ -165,6 +165,7 @@ int main()
                 if(inputAddr==-1)
                 {
                     setState(&pcbArr[i],TERMINATED );
+                    deleteProcess(i);
                     fprintf(outputFile, "Process %d is terminated\n\n", i);
                     --numProcessAlive;
                     break;
@@ -509,6 +510,6 @@ int main()
 
     fclose(outputFile);
 
-    return 0;
+    return;
     
 }

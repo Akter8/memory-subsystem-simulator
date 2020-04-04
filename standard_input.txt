@@ -1,3 +1,0 @@
-1
-Inputs/APSI.txt
-Inputs/Segment_APSI.txt
