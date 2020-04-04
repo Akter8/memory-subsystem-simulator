@@ -67,8 +67,10 @@ Group #6, Questions #5.
 
 
 #### Description of structure of program
-* The program first initialises the various hardware being simulated.
-* Then it creates the necessary inputs for the segmenation table.
+* The program first initialises the various hardware being simulated.(i.e. Cache, TLBs etc)
+* Then it creates the necessary inputs for the segmenation table. (i.e. it extracts the segmentNumber from the input files and stores it in a different file with prefix "Segment_")
+* Next it initializes Frame Table, Global Descriptor Tables etc.
+* Then the program enqueues all processes in READY queue, it also initializes the PCB, which inturn initializes the SegmentTable, for each segment the Page Tables are also initalized and pre-paging is done. 
 * Then it starts reading input from one process file at a time (till there is a context switch due to preemption or due to a page-fault).
 * Each memory access is put across two levels of TLB (while managing the misses in both levels).
 * Once the L1-TLB is updated to have the required page number, we start checking for the data in the cache using the specified methods (look-through, look-aside, write-through and write-back).
