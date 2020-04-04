@@ -76,7 +76,6 @@ int getLfuFrameNum()
 			indexFrame = i;
 		}
 	}
-	//fprintf(outputFile, "minCount=%d|||frameno=%d\n",minCount,indexFrame );
 	return indexFrame;
 }
 
@@ -154,7 +153,6 @@ int allocateFrame(int pid,int segno,pageTable *pT,int pageNum,int level)
 {
 	int frameNo = getReplacableEmptyFrame();
 
-	//fprintf(outputFile, "pid = %d,segno=%d\n",pid,segno );
 
 	if(frameNo!=-1)
 	{	//placement
@@ -180,11 +178,10 @@ int allocateFrame(int pid,int segno,pageTable *pT,int pageNum,int level)
 			//func to swap page out
 		}
 
-		//
-		//fprintf(outputFile, "segno:%d,pn:%d\n",frameTable.entries[frameNo].segNum,frameTable.entries[frameNo].pageNum);
+		//get the reference to the page table of the swapped out page
 		pageTable* pT2 = getPageTableFromPid(frameTable.entries[frameNo].pid,frameTable.entries[frameNo].segNum,frameTable.entries[frameNo].level);
 		
-		//fprintf(outputFile, "pt ref\n");
+		//chane present bit to 0 in the pagetable
 		updatePageTablePresentBit(pT2,frameTable.entries[frameNo].pageNum.value,0);
 
 		//allocate the frame
@@ -197,16 +194,16 @@ int allocateFrame(int pid,int segno,pageTable *pT,int pageNum,int level)
 		frameTable.entries[frameNo].emptyBit=1; 
 		frameTable.entries[frameNo].considerInLfu=1;
 		frameTable.entries[frameNo].level = level + 1;	
-		frameTable.entries[frameNo].segNum = segno;			//Confirm once if this is correct
-	//Here too
+		frameTable.entries[frameNo].segNum = segno;			
 	}
 
 	//update page table
 	fprintf(outputFile, "Frame Table: Updating page table entry of page# %d\n",pageNum);
 
 	updatePageTablePresentBit(pT,pageNum,1);
-	//fprintf(outputFile, "\nthe updted present bit =%d\n",pT->frames[pageNum/256].entries[pageNum%256].present);
+	//Lock the frame until accessed first
 	setLock(frameNo);
+	//update frame number in page Table
 	setFrameNo(pT, pageNum, frameNo);
 	return frameNo;
 }
@@ -221,7 +218,7 @@ int invalidateFrame(int frameNo)
 {
 	if(frameTable.entries[frameNo].dirtyBit==1)
 	{
-		fprintf(outputFile, "Frame Table: Frame# %d is dirty. Writing it back to disk\n",frameNo);
+		//fprintf(outputFile, "Frame Table: Frame# %d is dirty. Writing it back to disk\n",frameNo);
 
 		//write back to disk
 	}
@@ -255,12 +252,18 @@ int initFrameTable()
 	}
 
 }
+/*
+Locks the Frame
+*/
 int setLock(int frameNo)
 {
 
 	frameTable.entries[frameNo].lock=1;
 }
 
+/*
+Function to read from memory and update the lfu count
+*/
 int readFromMemory(int frameNo)
 {
 	if(frameTable.entries[frameNo].lock==1)
@@ -269,7 +272,9 @@ int readFromMemory(int frameNo)
 	updateLfuCount(frameNo);
 
 }
-
+/*
+Function to write to memory, update the lfu count and set dirty bit of the frame
+*/
 int writeToMemory(int frameNo)
 {
 	if(frameTable.entries[frameNo].lock==1)

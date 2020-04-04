@@ -19,14 +19,23 @@ typedef struct
 }
 PCB;
 
-
+//Initializes ADT of PCB and calls method to initialize LDT of the process
 void initPCB(int pid, char* LinearAddrInputFileName, char* segInputFileName);
 
-//int initPCB(PCB* pcbObj,char *LinearAddrInputFileName,char *SegAddrInputFileName);
+//Returns pid of the process
+int getpid(PCB pcbObj);
+
+//returns state of process
 int getState(PCB pcbObj);
+
+//Takes ADT of PCB and state as input and sets the process state 
 int setState(PCB* pcbObj, int state);
+
+//Returns reference to level 3 page table given pid and segment number
 pageTable* getLevel3PageTablePointer(PCB pcbObj,int segNum);
-int26 getLDTBaseAddress(PCB pcbObj);
+
+//Deallocates Process pages and page table 
 int deleteProcess(unsigned int pid);
 
+//
 void findSegmentLimits(int* gdtSeg_limit, int* ldtSeg_limit, FILE* LinearAddrInputFile, FILE* SegNumAddrInputFile);
