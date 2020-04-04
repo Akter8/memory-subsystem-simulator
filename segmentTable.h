@@ -1,5 +1,4 @@
 // Main memory to be split into 2 parts, one fixed and one in which page replacement will happen
-//#include "dataTypes.h"
 
 typedef struct
 {

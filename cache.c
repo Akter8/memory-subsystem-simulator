@@ -6,10 +6,10 @@
  */
 
 #include <stdio.h>
+
 #include "configuration.h"
 #include "cache.h"
 #include "utility.h"
-//extern inline void fileNotNull(FILE *file, char *fileName);
 
 // L1 Cache is split into two-- data and instruction.
 extern CacheL1 l1Cache[2]; 
@@ -124,9 +124,9 @@ int main(int argc, char const *argv[])
 void
 initL1Cache()
 {
-	for (int i = 0; i < NUM_SETS_IN_L1_CACHE; ++i)
+	for (int i = 0; i < NUM_SETS_IN_L1_CACHE; ++i) // Iterating through all the sets in the cache.
 	{
-		for (int j = 0; j < NUM_WAYS_IN_L1_CACHE; ++j)
+		for (int j = 0; j < NUM_WAYS_IN_L1_CACHE; ++j) // Iterating through all the ways in the cache.
 		{
 			l1Cache[0].sets[i].ways[j].validInvalidBit = 0;
 			l1Cache[1].sets[i].ways[j].validInvalidBit = 0;
@@ -164,7 +164,7 @@ printL1Cache(int setIndex, bool dataCache)
 		fprintf(outputFile, "L1-Instr Cache: LRU Square Matrix for set=%d\n", setIndex);
 
 	// Prints the LRU Square matrix for that set.
-	for (int i = 0; i < NUM_WAYS_IN_L1_CACHE; ++i)
+	for (int i = 0; i < NUM_WAYS_IN_L1_CACHE; ++i) // Iterating through all the ways in the cache.
 	{
 		for (int j = 0; j < NUM_WAYS_IN_L1_CACHE; ++j)
 		{
@@ -221,13 +221,13 @@ updateLruL1Cache(int setIndex, int wayIndex, bool dataCache)
 	int index = (dataCache == true) ? 0 : 1;
 
 	// The row values are set to 1.
-	for (int i = 0; i < NUM_WAYS_IN_L1_CACHE; ++i)
+	for (int i = 0; i < NUM_WAYS_IN_L1_CACHE; ++i) // Iterating through all the ways in the cache.
 	{
 		l1Cache[index].sets[setIndex].lruSquareMatrix[wayIndex][i] = 1;
 	}
 
 	// The column values are set to 0.
-	for (int i = 0; i < NUM_WAYS_IN_L1_CACHE; ++i)
+	for (int i = 0; i < NUM_WAYS_IN_L1_CACHE; ++i) // Iterating through all the ways in the cache.
 	{
 		l1Cache[index].sets[setIndex].lruSquareMatrix[i][wayIndex] = 0;
 	}
@@ -318,6 +318,7 @@ updateL1Cache(int setIndex, int tag, bool write, int data, bool dataCache)
 	if (way == -1) // Did not find an invalid entry. Replacement required.
 	{
 		way = getLruIndexL1Cache(setIndex, dataCache);
+		// We do not need to check if the LRU block is empty because this cache follows write-through.
 		if (dataCache)
 			fprintf(outputFile, "L1-Data Cache: Replacement in set=%d, way=%d for tag=%d\n", setIndex, way, tag);
 		else
@@ -363,7 +364,7 @@ writeL1Cache(int setIndex, int tag, int data, bool dataCache)
 
 	int index = (dataCache == true) ? 0 : 1;
 
-	for (int i = 0; i < NUM_WAYS_IN_L1_CACHE; ++i)
+	for (int i = 0; i < NUM_WAYS_IN_L1_CACHE; ++i) // Iterating through all the ways in the cache.
 	{
 		// Checking if the block is valid and if the tags match.
 		if (l1Cache[index].sets[setIndex].ways[i].validInvalidBit && l1Cache[index].sets[setIndex].ways[i].tag == tag)
@@ -412,9 +413,9 @@ writeL1Cache(int setIndex, int tag, int data, bool dataCache)
 void
 initL2Cache()
 {
-	for (int i = 0; i < NUM_SETS_IN_L2_CACHE; ++i)
+	for (int i = 0; i < NUM_SETS_IN_L2_CACHE; ++i) // Iterating through all sets of the cache.
 	{
-		for (int j = 0; j < NUM_WAYS_IN_L2_CACHE; ++j)
+		for (int j = 0; j < NUM_WAYS_IN_L2_CACHE; ++j) // Iterating through all the ways in that set of the cache.
 		{
 			l2Cache.sets[i].ways[j].validInvalidBit = 0;
 		}
@@ -433,7 +434,7 @@ printL2Cache(int setIndex)
 	fprintf(outputFile, "L2-Cache Info\n");
 
 	fprintf(outputFile, "Set number=%d\n", setIndex);
-	for (int j = 0; j < NUM_WAYS_IN_L2_CACHE; ++j)
+	for (int j = 0; j < NUM_WAYS_IN_L2_CACHE; ++j) // Iterating through all the ways in that set of the cache.
 	{
 		fprintf(outputFile, "\tWay number=%d, tag=%d, validInvalidBit=%d, dirtyBit=%d, readWriteBit=%d, lruCount=%d\n", j, l2Cache.sets[setIndex].ways[j].tag, l2Cache.sets[setIndex].ways[j].validInvalidBit, l2Cache.sets[setIndex].ways[j].dirtyBit, l2Cache.sets[setIndex].ways[j].readWriteBit, l2Cache.sets[setIndex].ways[j].lruCount);
 	}
@@ -449,7 +450,7 @@ printL2Cache(int setIndex)
 int
 getLruIndexL2Cache(int setIndex)
 {
-	for (int i = 0; i < NUM_WAYS_IN_L2_CACHE; ++i)
+	for (int i = 0; i < NUM_WAYS_IN_L2_CACHE; ++i) // Iterating through all the ways in that set of the cache.
 	{
 		if (l2Cache.sets[setIndex].ways[i].lruCount == 0)
 		{
@@ -491,7 +492,7 @@ searchL2Cache(int index, int tag)
 {
 	fprintf(outputFile, "\nL2-Cache: Seaching for index=%d and tag=%d\n", index, tag);
 
-	for (int i = 0; i < NUM_WAYS_IN_L2_CACHE; ++i)
+	for (int i = 0; i < NUM_WAYS_IN_L2_CACHE; ++i) // Iterating through all the ways in that set of the cache.
 	{
 		// Checking if the block is valid and if the tags match
 		if (l2Cache.sets[index].ways[i].validInvalidBit && l2Cache.sets[index].ways[i].tag == tag)
@@ -526,7 +527,7 @@ writeL2Cache(int index, int tag, int data)
 {
 	fprintf(outputFile, "\nL2-Cache: Writing data onto index=%d, tag=%d\n", index, tag);
 
-	for (int i = 0; i < NUM_WAYS_IN_L2_CACHE; ++i)
+	for (int i = 0; i < NUM_WAYS_IN_L2_CACHE; ++i) // Iterating through all the ways in that set of the cache.
 	{
 		// Checking if the block is valid or not and if the tags match.
 		if (l2Cache.sets[index].ways[i].validInvalidBit && l2Cache.sets[index].ways[i].tag == tag)
@@ -566,9 +567,9 @@ writeL2Cache(int index, int tag, int data)
 int
 getFirstInvalidWayL2Cache(int setIndex)
 {
-	for (int i = 0; i < NUM_WAYS_IN_L2_CACHE; ++i)
+	for (int i = 0; i < NUM_WAYS_IN_L2_CACHE; ++i) // Iterating through all the ways in that set of the cache.
 	{
-		if (l2Cache.sets[setIndex].ways[i].validInvalidBit == 0)
+		if (l2Cache.sets[setIndex].ways[i].validInvalidBit == 0) // Checking if the valid bit is set to invalid.
 		{
 			return i;
 		}
@@ -593,13 +594,14 @@ updateL2Cache(int index, int tag, bool write, int data)
 	if (way == -1) // Did not find an invalid entry. Replacement required.
 	{
 		way = getLruIndexL2Cache(index);
-       if(l2Cache.sets[index].ways[way].dirtyBit == 1)
-       {
-           int frameNumReplacedBlock = tag << 2 | index >> 4;
-           writeToMemory(frameNumReplacedBlock);
-       }
+		if(l2Cache.sets[index].ways[way].dirtyBit == 1) // Check if dirty bit has been set.
+		{
+			// Writing to memory if it has been set.
+			int frameNumReplacedBlock = tag << 2 | index >> 4;
+			writeToMemory(frameNumReplacedBlock);
+		}
 
-        fprintf(outputFile, "L2-Cache: Replacement in set=%d, way=%d for tag=%d\n", index, way, tag);
+        	fprintf(outputFile, "L2-Cache: Replacement in set=%d, way=%d for tag=%d\n", index, way, tag);
 	}
 	else
 	{

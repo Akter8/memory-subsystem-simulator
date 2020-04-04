@@ -72,7 +72,7 @@ main(int argc, char const *argv[])
 void
 TLBL1Flush()
 {
-	for (int i = 0; i < NUM_ENTRIES_IN_L1_TLB; ++i)
+	for (int i = 0; i < NUM_ENTRIES_IN_L1_TLB; ++i) // Iterating through all the entries in the TLB.
 	{
 		// Setting the validInvalid to 0 makes the entry invalid.
 		l1TLB.entries[i].validInvalidBit = 0;
@@ -110,7 +110,7 @@ TLBL1Search(unsigned int pageNum, unsigned int *error)
 
 	fprintf(outputFile, "\nL1-TLB: Searching for pageNum=%d\n", pageNum);
 
-	for (int i = 0; i < NUM_ENTRIES_IN_L1_TLB; ++i)
+	for (int i = 0; i < NUM_ENTRIES_IN_L1_TLB; ++i) // Iterating through all the entries in the TLB.
 	{
 		// The entry has to be valid and it also has to match the pageNum we are looking for.
 		if (l1TLB.entries[i].validInvalidBit && pageNum == l1TLB.entries[i].pageNum)
@@ -144,7 +144,7 @@ TLBL1Search(unsigned int pageNum, unsigned int *error)
 int
 TLBL1GetLruIndex()
 {
-	for (int i = 0; i < NUM_ENTRIES_IN_L1_TLB; ++i)
+	for (int i = 0; i < NUM_ENTRIES_IN_L1_TLB; ++i) // Iterating through all the entries in the TLB.
 	{
 		// Counter implementation of LRU makes the LRU have a count of 0.
 		if (l1TLB.entries[i].lruCount == 0)
@@ -167,7 +167,7 @@ TLBL1UpdateLru(int index)
 	int currentCount = l1TLB.entries[index].lruCount;
 	int count = 0;
 
-	for (int i = 0; i < NUM_ENTRIES_IN_L1_TLB; ++i)
+	for (int i = 0; i < NUM_ENTRIES_IN_L1_TLB; ++i) // Iterating through all the entries in the TLB.
 	{
 		// Counter implementation of LRU requires all LRU counts greater than the one being accessed now to be decremented.
 	 	if (l1TLB.entries[i].lruCount > currentCount)
@@ -189,7 +189,7 @@ TLBL1UpdateLru(int index)
 int
 TLBL1GetFirstInvalidEntry()
 {
-	for (int i = 0; i < NUM_ENTRIES_IN_L1_TLB; ++i)
+	for (int i = 0; i < NUM_ENTRIES_IN_L1_TLB; ++i) // Iterating through all the entries in the TLB.
 	{
 		if (l1TLB.entries[i].validInvalidBit == 0)
 		{
@@ -255,7 +255,7 @@ TLBL1Update(unsigned int pageNum, unsigned int frameNum)
 void
 TLBL2Flush()
 {
-	for (int i = 0; i < NUM_ENTRIES_IN_L2_TLB; ++i)
+	for (int i = 0; i < NUM_ENTRIES_IN_L2_TLB; ++i) // Iterating through all the entries in the TLB.
 	{
 		l2TLB.entries[i].validInvalidBit = 0;
 	}
@@ -273,7 +273,7 @@ TLBL2Print()
 	fprintf(outputFile, "-------------------------\n");
 	fprintf(outputFile, "L2-TLB Info\n");
 
-	for (int i = 0; i < NUM_ENTRIES_IN_L2_TLB; ++i)
+	for (int i = 0; i < NUM_ENTRIES_IN_L2_TLB; ++i) // Iterating through all the entries in the TLB.
 	{
 		fprintf(outputFile, "Index=%d, validInvalidBit=%d, pageNum=%d, frameNum=%d, lruCount=%d\n", i, l2TLB.entries[i].validInvalidBit, l2TLB.entries[i].pageNum, l2TLB.entries[i].frameNum, l2TLB.entries[i].lruCount);
 	}
@@ -290,7 +290,7 @@ TLBL2Search(unsigned int pageNum, unsigned int *error)
 {
 	fprintf(outputFile, "\nL2-TLB: Searching for pageNum=%d\n", pageNum);
 
-	for (int i = 0; i < NUM_ENTRIES_IN_L2_TLB; ++i)
+	for (int i = 0; i < NUM_ENTRIES_IN_L2_TLB; ++i) // Iterating through all the entries in the TLB.
 	{
 		if (l2TLB.entries[i].validInvalidBit && pageNum == l2TLB.entries[i].pageNum)
 		{
@@ -322,7 +322,7 @@ TLBL2Search(unsigned int pageNum, unsigned int *error)
 int
 TLBL2GetLruIndex()
 {
-	for (int i = 0; i < NUM_ENTRIES_IN_L2_TLB; ++i)
+	for (int i = 0; i < NUM_ENTRIES_IN_L2_TLB; ++i) // Iterating through all the entries in the TLB.
 	{
 		if (l2TLB.entries[i].lruCount == 0)
 		{
@@ -345,7 +345,7 @@ TLBL2UpdateLru(int index)
 	int currentCount = l2TLB.entries[index].lruCount;
 	int count = 0;
 
-	for (int i = 0; i < NUM_ENTRIES_IN_L2_TLB; ++i)
+	for (int i = 0; i < NUM_ENTRIES_IN_L2_TLB; ++i) // Iterating through all the entries in the TLB.
 	{
 		// Decrement LRU values of those ones which have a greater count than the current one. 
 	 	if (l2TLB.entries[i].lruCount > currentCount)
@@ -368,7 +368,7 @@ TLBL2UpdateLru(int index)
 int
 TLBL2GetFirstInvalidEntry()
 {
-	for (int i = 0; i < NUM_ENTRIES_IN_L2_TLB; ++i)
+	for (int i = 0; i < NUM_ENTRIES_IN_L2_TLB; ++i) // Iterating through all the entries in the TLB.
 	{
 		if (l2TLB.entries[i].validInvalidBit == 0)
 		{
