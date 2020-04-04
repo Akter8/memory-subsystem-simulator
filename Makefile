@@ -4,6 +4,7 @@ flags = -c
 executableName = test
 driver = mainDriver
 outputFile = outputFile.txt
+statisticsFile = outputFile_processStatistics.txt
 
 # Makes
 all: $(driver).o kernel.o tlb.o cache.o pcb.o pageTable.o segmentTable.o frameTable.o utilityFunctions.o createSegmentationInput.o
@@ -42,4 +43,4 @@ createSegmentationInput.o: createSegmentationInput.c
 
 # To clean the compilation.
 clean:
-	rm -f *.o $(outputFile) $(executableName) Segment_*.txt
+	rm -f *.o $(outputFile) $(statisticsFile) $(executableName) Segment_*.txt

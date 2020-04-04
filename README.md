@@ -1,4 +1,4 @@
-	# DSTN Assignment-1
+# DSTN Assignment-1
 Group #6, Questions #5.
 
 ### Authors
@@ -16,16 +16,14 @@ Group #6, Questions #5.
 * Main Memory with Memory Management: 64MB Main memory with LFU [with aging] as replacement policy. The memory management scheme used is Segmentation + Paging.
 
 
-#### Doubts
-
-
 #### Tasks
+- [ ] Page table frames not to be loaded into memory.
 - [ ] Add comments: Splitting of physical addr into cache numbers.
-- [ ] Print time taken by every process and total time.
 - [ ] Complete the README.
 - [ ] Convert README.md to README.txt
 - [ ] Make folder name 6.tar.gz before submission
 - [ ] Modularise entire code base so that the driver function has at max 20 lines of code.
+- [ ] Pre-condition and post-condition for every function.
 
 
 #### Description of files
@@ -57,6 +55,7 @@ Group #6, Questions #5.
 
 ##### Output Files
 * Once the program has been run, all the output goes into the output file specified in configuration.h
+* There is also a statistics file which gives an idea about the processes that just ran.
 
 
 #### How to compile
@@ -80,17 +79,12 @@ Group #6, Questions #5.
 * Once all the processes have been successfully completed, the simluation program terminates.
 
 
-#### Things to keep in mind
-1. https://www.kernel.org/doc/html/v4.10/process/coding-style.html,
-2. https://developer.gnome.org/programming-guidelines/stable/c-coding-style.html.en,
-3. Pre-condition,
-4. Post-condition and a
-5. Loop invariant for every loop.
+#### Limitations
+* Since this is a simulation, we have not actually implement parallel searches, etc. We have just assumed them to be parallel and taken the total time to be not the added sum, but happening at the same time.
+* We assume that the input given to us is the linear address data directly using which we create segmentation input data, so in essense segmentation + paging is not really being simulated in the best possible manner.
+* We assume that the number of memory accesses a process will request at once before it gets preempted is constant. That does not usually happen in practical systems as the amount of time for memory accesses will vary and hence so will the number of memory accesses a process can request before preemption.
+* The program also assumes that the page fault is serviced before a process gets back into running state in the cpu (which is not really practical).
 
-
-#### Bugs
-- [ ] PageTableBaseAddress entry in pcb.h is not required
-- [ ] In SegmentTable.h limit is 26 bits. It should be 32 bits. Change to be made and related code, dependent on it, to be fixed.
 
 #### Assumptions
 1. Virtual Memory contains the complete program. Hard disk is big enough to hold all the programs.
@@ -98,3 +92,12 @@ Group #6, Questions #5.
 3. All other pages are loaded on demand [Assume the system supports dynamic loading. Also assume that the system has no dynamic linking support].
 4. Main memory follows Global replacement. Lower limit number of pages and upper limit number of pages per process should be strictly maintained.
 5. Page tables of all the processes reside in main memory and will not be loaded into cache memory levels.
+
+
+#### Bugs
+- [ ] PageTableBaseAddress entry in pcb.h is not required.
+- [ ] In SegmentTable.h limit is 26 bits. It should be 32 bits. Change to be made and related code, dependent on it, to be fixed.
+
+
+#### What could have been added
+* A minimal scheduler to check if a process has finished servicing the page fault before it might get a turn in the CPU.
