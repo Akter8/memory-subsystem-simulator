@@ -127,7 +127,7 @@ TLBL1Search(unsigned int pageNum, unsigned int *error)
 		}
 	}
 
-	fprintf(outputFile, "not found TLB1 ---\n");
+	//fprintf(outputFile, "not found TLB1 ---\n");
 	fprintf(outputFile, "pageNum=%d not found in l1TLB\n", pageNum);
 
 	*error = ERROR_PAGE_NUM_NOT_FOUND;

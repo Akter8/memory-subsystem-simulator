@@ -271,6 +271,7 @@ driver()
                             current_time += time;
                             pcbArr[i].runTime += time;
                             ++current_time;
+                            pcbArr[i].numPageFaults++;
                             break;
                          }
                         
@@ -537,7 +538,9 @@ driver()
 
             } // End of that process' quota of memory accesses.
 
-            // setState(&pcbArr[i], READY);
+            if(getState(pcbArr[i])!=TERMINATED)
+                setState(&pcbArr[i], READY);
+
             pcbArr[i].numContextSwitches++;
 
             TLBL1Flush();
