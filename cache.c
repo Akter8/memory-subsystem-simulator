@@ -6,11 +6,12 @@
  */
 
 #include <stdio.h>
-
+#include "dataTypes.h"
 #include "configuration.h"
 #include "cache.h"
 #include "utility.h"
-
+#include "pageTable.h"
+#include "frameTable.h"
 // L1 Cache is split into two-- data and instruction.
 extern CacheL1 l1Cache[2]; 
 extern CacheL2 l2Cache;

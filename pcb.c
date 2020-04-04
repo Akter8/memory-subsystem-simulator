@@ -92,7 +92,7 @@ void initPCB(int pid, char* LinearAddrInputFileName, char* segInputFileName)
     //get NonReplacable for PCB for the process
     int frameNum = getNonReplaceableFrame();
 
-
+    pcbArr[pid].pid = pid;
     //Initially all processes join the Ready queue
     setState(&pcbArr[pid], READY);
 
@@ -149,7 +149,9 @@ void initPCB(int pid, char* LinearAddrInputFileName, char* segInputFileName)
 
 
 pageTable* getLevel3PageTablePointer(PCB pcbObj, int segNum){
-    return pcbObj.LDTPointer->segmentTableObj->entries[segNum].level3PageTableptr;
+    int4 segN; segN.value = segNum;
+    return searchSegmentTable(pcbObj.pid,segN);
+    //return pcbObj.LDTPointer->segmentTableObj->entries[segNum].level3PageTableptr;
 }
 
 int deleteProcess(unsigned int pid){

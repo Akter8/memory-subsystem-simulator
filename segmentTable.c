@@ -125,7 +125,8 @@ pageTable* searchSegmentTable(int pid, int4 segNum)
         fprintf(outputFile, "The address is in a global segment\n");
         if(GDTptr->segmentTableObj->entries[pid].present==1){
             fprintf(outputFile, "The segment descriptor is present in GDT\n");
-            return pcbArr[pid].LDTPointer->segmentTableObj->entries[segNo].level3PageTableptr;   
+            return GDTptr->segmentTableObj->entries[pid].level3PageTableptr;
+
         }
 
     }

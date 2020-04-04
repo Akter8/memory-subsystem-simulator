@@ -50,6 +50,9 @@ int updateLfuCount(int frameNo)
 	if(frameNo>=NUM_FRAMES)
 		return -1;
 	frameTable.entries[frameNo].LfuCount.value++;
+	if(frameTable.entries[frameNo].lock==1)
+		frameTable.entries[frameNo].lock = 0;
+
 	//fprintf(outputFile, "count = %d\n",frameTable.entries[frameNo].LfuCount.value);
 	return 1;
 }
@@ -67,7 +70,7 @@ int getLfuFrameNum()
 
 	for(i=0;i<NUM_FRAMES;i++)
 	{
-		if(frameTable.entries[i].considerInLfu==1 && frameTable.entries[i].LfuCount.value<minCount)
+		if(frameTable.entries[i].considerInLfu==1 && frameTable.entries[i].LfuCount.value<minCount && frameTable.entries[i].lock==0)
 		{
 			minCount = frameTable.entries[i].LfuCount.value;
 			indexFrame = i;

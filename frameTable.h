@@ -1,7 +1,7 @@
 // #include "dataTypes.h"
 
 #define NUM_FRAMES 65536
-#define NUM_NON_REPLACABLE_FRAMES 513
+#define NUM_NON_REPLACABLE_FRAMES 1024
 
 
 typedef struct
@@ -13,7 +13,7 @@ typedef struct
 	unsigned int dirtyBit: 1;
 	unsigned int emptyBit: 1; // Tells whether a frame has been allocated or not | set if allocated
 	unsigned int considerInLfu: 1;
-	int level : 2;			  // which level of page table would contain an entry corresponding to pageNum
+	int level ;			  // which level of page table would contain an entry corresponding to pageNum
 	unsigned int segNum : 4;
 }
 frameTableEntry;
