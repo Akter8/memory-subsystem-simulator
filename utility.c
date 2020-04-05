@@ -507,6 +507,18 @@ void context_change(int i)
     frameAgeing();
 }
 
+void close_all_files(int n)
+{
+
+    // Closing all the input files and output file.
+    for(int i = 0; i < n; ++i)
+    {
+        fclose(pcbArr[i].SegNumAddrFile);
+        fclose(pcbArr[i].LinearAddrInputFile);
+    }
+
+    fclose(outputFile);
+}
 /*
 unsigned int readAddr(FILE* inputFile)
 {

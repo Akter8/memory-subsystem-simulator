@@ -164,15 +164,8 @@ driver()
 
     fprintf(outputFile, "\n\n\nDriver: SIMULATION COMPLETED. ALL PROCESSES FINISHED EXECUTION.\n\n\n");
 
-    // Closing all the input files and output file.
-    for(int i = 0; i < n; ++i)
-    {
-        fclose(pcbArr[i].SegNumAddrFile);
-        fclose(pcbArr[i].LinearAddrInputFile);
-    }
-
-    fclose(outputFile);
-
+    // closes all open Files
+    close_all_files(n);
 
     // Prints the statistics onto the statistics file.
     FILE *statisticsFile = fopen(STATISTICS_FILE_NAME, "w");
