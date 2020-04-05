@@ -49,7 +49,7 @@ CacheL2 l2Cache;
 
 FrameTable frameTable;
 
-long long current_time = 0;
+long long current_time;
 
 
 /*
@@ -89,35 +89,16 @@ driver()
 
     int firstExecution[30] = {0};
     
-
+    current_time = 0;
     int numProcessAlive = n;
     while(numProcessAlive)
     {
         for(int i = 0; i < n; ++i) // Iterates over the various processses to run them.
         {
-            // Changes the status of the process
-            if(getState(pcbArr[i]) == TERMINATED)
-            {
-                ++current_time;
+            
+            int status = preExecutionWork(i, firstExecution, LinearAddrInputFileName[i], SegAddrInputFileName[i]);
+            if(status == -1)
                 continue;
-            }
-
-            // Checking if this is the first execution of the process to do the prepagin of 2 pages for every process.
-            if(firstExecution[i] == 0)
-            {
-                // Prepages two pages for every process.
-                prepaging(i, LinearAddrInputFileName[i], SegAddrInputFileName[i]);
-                firstExecution[i] = 1;
-            }
-
-            // Since we follow a very basic (FIFO) scheduler.
-            // We do not check for WAITING state as we assume that
-            // IO will be finished before the process gets its chance in the processor again.
-            setState(&pcbArr[i], RUNNING);
-            ++current_time;
-            fprintf(outputFile, "\n\n\nDriver: Process-%d running in the processor.\n", i);
-        
-
 
             for(int j = 0; j < NUM_LINES_BEFORE_CONTEXT_SWITCH; ++j) // Iterates over various memory accesses / inputs of the same process.
             {

@@ -34,3 +34,5 @@ void InitializationOfHardwareAndTables();
 //Enqueus all processes in READY queue, when simulation starts
 //All PCBs initialized
 void EnqueueProcesses(int n, char LinearAddrInputFileName[][100], char SegAddrInputFileName[][100]);
+
+int preExecutionWork(int i, int firstExecution[], char* LinearAddrInputFileName, char* SegAddrInputFileName);

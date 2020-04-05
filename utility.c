@@ -12,6 +12,8 @@
 
 extern FILE* outputFile;
 extern segmentTableInfo* GDTptr;
+extern long long current_time;
+extern PCB pcbArr[30];
 
 
 void fileNotNull(FILE *file, char *fileName)
@@ -128,6 +130,32 @@ void EnqueueProcesses(int n, char LinearAddrInputFileName[][100], char SegAddrIn
     }
     fprintf(outputFile, "Driver: PCBs initialized\n");    
     fflush(outputFile);
+}
+int preExecutionWork(int i, int firstExecution[], char* LinearAddrInputFileName, char* SegAddrInputFileName)
+{
+            // Changes the status of the process
+            if(getState(pcbArr[i]) == TERMINATED)
+            {
+                ++current_time;
+                return -1;
+            }
+
+            // Checking if this is the first execution of the process to do the prepagin of 2 pages for every process.
+            if(firstExecution[i] == 0)
+            {
+                // Prepages two pages for every process.
+                prepaging(i, LinearAddrInputFileName, SegAddrInputFileName);
+                firstExecution[i] = 1;
+            }
+
+            // Since we follow a very basic (FIFO) scheduler.
+            // We do not check for WAITING state as we assume that
+            // IO will be finished before the process gets its chance in the processor again.
+            setState(&pcbArr[i], RUNNING);
+            ++current_time;
+            fprintf(outputFile, "\n\n\nDriver: Process-%d running in the processor.\n", i);
+            return 0;
+    
 }
 /*
 unsigned int readAddr(FILE* inputFile)
