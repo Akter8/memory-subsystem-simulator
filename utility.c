@@ -237,7 +237,6 @@ int findPhysicalAddr(int i, int readWrite, int inputAddr, int* error, int4 segNu
             fprintf(outputFile, "Driver: Searched through PageTable, found the frameNumber for the required memory reference\n");
 
             *time += MAIN_MEMORY_SEARCH_TIME;
-            fprintf(outputFile, "Driver: Did not find required Addr mapping in L2 TLB. Searched through MM PageTable. Time cost: %d\n", MAIN_MEMORY_SEARCH_TIME);
             fflush(outputFile);
 
             // Updating TLB and then searching it.
