@@ -87,3 +87,6 @@ Group #6, Questions #5.
 #### What could have been added
 * A minimal scheduler to check if a process has finished servicing the page fault before it might get a turn in the CPU.
 * For implementing search through the pageTable and pageFault handling, we have used the fact that we have all the frames in a level of pageTable sequentially accessible in our ADT. However it would have been better if we had implemented it the conventional way. (Assuming Frames not sequentially accessible for a level of pageTable)
+
+#### Contribution of Group Members
+All members contributed equally. Each member 25% contribution of work.
