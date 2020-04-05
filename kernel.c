@@ -156,20 +156,10 @@ driver()
 
             } // End of that process' quota of memory accesses.
 
-            // If the process is not terminated yet, then we set it to ready.
-            if(getState(pcbArr[i])!=TERMINATED)
-                setState(&pcbArr[i], READY);
-
-            // Increment the number of context switches for the process.
-            pcbArr[i].numContextSwitches++;
-
-            TLBL1Flush();
-            TLBL2Flush();
-
-            frameAgeing();
+            // Function which executes instruction for context-switch
+            context_change(i); 
         }
         
-    
     } // End of all the processes.
 
     fprintf(outputFile, "\n\n\nDriver: SIMULATION COMPLETED. ALL PROCESSES FINISHED EXECUTION.\n\n\n");
