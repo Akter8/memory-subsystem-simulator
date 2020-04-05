@@ -80,7 +80,7 @@ Group #6, Questions #5.
 
 
 #### Limitations
-* Since this is a simulation, we have not actually implement parallel searches, etc. We have just assumed them to be parallel and taken the total time to be not the added sum, but happening at the same time.
+* Since this is a simulation, we have not actually implemented parallel searches, etc. We have just assumed them to be parallel and taken the total time to be not the added sum, but happening at the same time.
 * We assume that the input given to us is the linear address data directly using which we create segmentation input data, so in essense segmentation + paging is not really being simulated in the best possible manner.
 * We assume that the number of memory accesses a process will request at once before it gets preempted is constant. That does not usually happen in practical systems as the amount of time for memory accesses will vary and hence so will the number of memory accesses a process can request before preemption.
 * The program also assumes that the page fault is serviced before a process gets back into running state in the cpu (which is not really practical).
@@ -95,9 +95,8 @@ Group #6, Questions #5.
 
 
 #### Bugs
-- [ ] PageTableBaseAddress entry in pcb.h is not required.
-- [ ] In SegmentTable.h limit is 26 bits. It should be 32 bits. Change to be made and related code, dependent on it, to be fixed.
 
 
 #### What could have been added
 * A minimal scheduler to check if a process has finished servicing the page fault before it might get a turn in the CPU.
+* For implementing search through the pageTable and pageFault handling, we have used the fact that we have all the frames in a level of pageTable sequentially accessible in our ADT. However it would have been better if we had implemented it the conventional way. (Assuming Frames not sequentially accessible for a level of pageTable)
