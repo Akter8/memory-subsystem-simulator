@@ -3,8 +3,8 @@
 ### Contributors
 * **Akhil Tarikere** _(Github: [Akter8](https://github.com/Akter8) )_
 * **Chiplunkar Chinmay Vidyadhar** _(Github: [chinmay291](https://github.com/chinmay291) )_
-* **Prabhu Divya Umesh** Github: [dup05](https://github.com/dup05) )_
-* **Prakarsh Parashar** Github: [pprakarsh](https://github.com/pprakarsh) )_
+* **Prabhu Divya Umesh** _(Github: [dup05](https://github.com/dup05) )_
+* **Prakarsh Parashar** _(Github: [pprakarsh](https://github.com/pprakarsh) )_
 
 
 #### Premise
