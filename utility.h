@@ -22,7 +22,7 @@ int error(char* str);
 void ObtainFileNameInput(FILE* input, int n, char SegAddrInputFileName[][100], char LinearAddrInputFileName[][100]);
 
 // To create the segment table inputs for the program.
-void createSegmentFiles(char [], int);
+//void createSegmentFiles(char [], int);
 int findReadOrWriteMemoryAccess();
 
 // The function that drives the subsytem and called by the main().
@@ -36,3 +36,6 @@ void InitializationOfHardwareAndTables();
 void EnqueueProcesses(int n, char LinearAddrInputFileName[][100], char SegAddrInputFileName[][100]);
 
 int preExecutionWork(int i, int firstExecution[], char* LinearAddrInputFileName, char* SegAddrInputFileName);
+
+//finds Physical Address from logical address
+//int findPhysicalAddr(int i, int readWrite, int inputAddr, int* error, int4 segNum, long* time)

@@ -100,6 +100,8 @@ driver()
             if(status == -1)
                 continue;
 
+//            printf("Hello!\n");
+
             for(int j = 0; j < NUM_LINES_BEFORE_CONTEXT_SWITCH; ++j) // Iterates over various memory accesses / inputs of the same process.
             {
                 // Time initialized to zero after every context switch.
@@ -128,112 +130,17 @@ driver()
                     --numProcessAlive;
                     break;
                 }
-                //fprintf(outputFile, "%x %d %c\n",inputAddr,segNum.value,write);
 
-                // First we find the correct mapping of Logical Address to Physical Address.
+                //Finds in TLB, if miss, then finds in pageTable
+                int frameNum = findPhysicalAddr(i, readWrite, inputAddr, &error, segNum, &time);
+                if(frameNum == -2)
+                    continue;
+                else if(frameNum == -1)
+                    break;
 
-                // Split the inputAddr to find the requested pageNum.
-                int requestedPageOffset = inputAddr & 1023; // (pow(2, 10) - 1), Since page size is 2**10B.
-                int requestedPageNum = inputAddr >> 10; // Since we need to discard the least significant 10b.
 
-                fprintf(outputFile, "%x  %x\n",requestedPageNum,requestedPageOffset);
                 // Based on the MSB of the segNum, decide which cache to hit (data or instr).
                 bool dataCache = (segNum.value == 0) ? true : false;
-
-
-                // Search this pageNum in both levels of TLB.
-                fprintf(outputFile, "Driver: Memory access for %x requested by process-%d\n", inputAddr, i);
-                fflush(outputFile);
-                int frameNum = TLBL1Search(requestedPageNum,&error);
-
-                time += L1_TLB_SEARCH_TIME;
-                fprintf(outputFile, "Driver: Searched through L1 TLB. Time cost: %d Frame#%d\n", L1_TLB_SEARCH_TIME,frameNum);
-
-                // If the search was unsuccessful in L1 TLB.
-                if (frameNum < 0)
-                {
-                    time += L2_TLB_SEARCH_TIME;
-                    fprintf(outputFile, "Driver: Did not find required data in L1 TLB. Searched through L2 TLB. Time cost: %d\n", L2_TLB_SEARCH_TIME);
-                    fflush(outputFile);
-                    frameNum = TLBL2Search(requestedPageNum,&error);
-
-                    if (frameNum < 0) // If the data is not present in TLBL2 also.
-                    {
-                        // Get the data from MM.
-                        unsigned int* pageFaultPageNumber=calloc(1, sizeof(unsigned int));
-                        unsigned int* level=calloc(1, sizeof(unsigned int));
-                        
-                        pageTable* pagetable;
-                        pageTable** ptrToPageFaultPageTable = malloc(sizeof(pageTable *));
-
-                        pagetable = searchSegmentTable(i, segNum);
-
-                        frameNum = searchPageTable(pagetable, ptrToPageFaultPageTable, inputAddr,readWrite,pageFaultPageNumber,level);
-
-                        // If the frame table retrieval resulted in errors.
-                        if(frameNum == -2)
-                        {
-                            //Invalid Address
-                            fprintf(outputFile, "Driver: InvalidAddress\n");
-                            current_time += time;
-                            pcbArr[i].runTime += time;
-                            ++current_time;
-                            continue;
-                        }
-                        // If the frame table retrieval resulted in errors.
-                        if(frameNum == -1)
-                        {
-
-                            fprintf(outputFile, "Driver: Page fault has occured: level = %d, pageFaultPageNumber = %d\n", *level, *pageFaultPageNumber);
-                            fflush(outputFile);
-            
-                            allocateFrame(i,segNum.value,*ptrToPageFaultPageTable, *pageFaultPageNumber, *level);
-
-                            // To go back in the input files so as to be able to run the same instruction again.
-                            fseek(pcbArr[i].LinearAddrInputFile,-9*sizeof(char),SEEK_CUR);
-                            fseek(pcbArr[i].SegNumAddrFile,-4*sizeof(char),SEEK_CUR);
-
-                            current_time += time;
-                            pcbArr[i].runTime += time;
-                            ++current_time;
-                            pcbArr[i].numPageFaults++;
-                            break;
-                         }
-                        
-                        // Once we get the frame num and page table and there is no error.
-                        fprintf(outputFile, "Driver: Searched through PageTable, found the frameNumber for the required memory reference\n");
-
-                        time += MAIN_MEMORY_SEARCH_TIME;
-                        fprintf(outputFile, "Driver: Did not find required Addr mapping in L2 TLB. Searched through MM PageTable. Time cost: %d\n", MAIN_MEMORY_SEARCH_TIME);
-                        fflush(outputFile);
-
-                        // Updating TLB and then searching it.
-                        // Update mimics the kernel updating the TLB.
-                        // Search mimics the user searching the TLB again after the kernel has updated it.
-                        TLBL2Update(requestedPageNum, frameNum);
-                        time += L2_TLB_UPDATE_TIME;
-                        fprintf(outputFile, "Driver: Updated L2 TLB. Update time: %d\n", L2_TLB_UPDATE_TIME);
-                        fflush(outputFile);
-
-                        frameNum = TLBL2Search(requestedPageNum,&error);
-                        time += L2_TLB_SEARCH_TIME;
-                        fprintf(outputFile, "Driver: Re-searched through L2 TLB. Time cost: %d\n", L2_TLB_SEARCH_TIME);
-
-
-                    }
-                    // Updating TLB and then searching it.
-                    // Update mimics the kernel updating the TLB.
-                    // Search mimics the user searching the TLB again after the kernel has updated it.
-                    TLBL1Update(requestedPageNum, frameNum);
-                    time += L1_TLB_UPDATE_TIME;
-                    fprintf(outputFile, "Driver: Updated L1 TLB. Update time: %d\n", L1_TLB_UPDATE_TIME);
-                    fflush(outputFile);
-
-                    frameNum = TLBL1Search(requestedPageNum,&error);
-                    time += L1_TLB_SEARCH_TIME;
-                    fprintf(outputFile, "Driver: Re-searched through L1 TLB. Time cost: %d\n", L1_TLB_SEARCH_TIME);
-                }   
-
 
                 //Physical Addr (Frame Number) obtained. Now search for data
                 unsigned int physicalAddr = (frameNum << 10) | (inputAddr & 0x3FF);
