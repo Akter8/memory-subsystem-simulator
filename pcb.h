@@ -37,5 +37,5 @@ pageTable* getLevel3PageTablePointer(PCB pcbObj,int segNum);
 //Deallocates Process pages and page table 
 int deleteProcess(unsigned int pid);
 
-//
+//calculates the limit of both the gdt_segment and the ldt_segment of the process, and stores it in variables gdtSeg_limi, ldtSeg_limit respectively
 void findSegmentLimits(int* gdtSeg_limit, int* ldtSeg_limit, FILE* LinearAddrInputFile, FILE* SegNumAddrInputFile);
