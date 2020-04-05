@@ -11,30 +11,12 @@
 #include "segmentTable.h"
 #include "pcb.h"
 #include "tlb.h"
+//#include "utility.h"
 
 // How many memory accesses before a process if forced to context switch.
 #define NUM_LINES_BEFORE_CONTEXT_SWITCH 200
 
 
-/*
- * Reads the linear address data from the input file.
- */
-int
-readAddr(FILE *fp)
-{
-    int addr;
-    if(fscanf(fp,"%x",&addr)!=EOF)
-        return addr;
-    else{
-       // printf("eof\n");
-        return -1;
-    }
-
-}
-
-/*
- * Reads the segment number data from the other input file (That will be created in the driver function).
- */
 int4
 readSegNum(FILE *fp, char *write)
 {
@@ -76,40 +58,26 @@ long long current_time = 0;
 void
 driver()
 {
-    int n;      //Number of processes  
+    int n;  // Number of Processes
+
     FILE* input = fopen("input.txt", "r");
-
     fscanf(input, "%d", &n);
-
-    int error;
 
     //Opening outputFile
     outputFile = fopen(OUTPUT_FILE_NAME, "w");
     fflush(outputFile);
 
+    int error;
+
     // Taking in input for linear address and segment numbers.
     char SegAddrInputFileName[n][100];
     char LinearAddrInputFileName[n][100];
-    for(int i = 0; i < n; ++i)
-    {
-        fscanf(input, "%s", LinearAddrInputFileName[i]); 
-    }
-    fprintf(outputFile, "Driver: Linear adrress input file names received\n");
 
-    // Create the segment number input files for the corresponding linear address files.
-    createSegmentFiles(LinearAddrInputFileName, n);
-
-    // Segment number input files will have the same names, but with a prefix of "Segment_".
-    for (int i = 0; i < n; ++i)
-    {
-        strcpy(SegAddrInputFileName[i], "Segment_");
-        strcat(SegAddrInputFileName[i], LinearAddrInputFileName[i]);
-    }
-    fprintf(outputFile, "Driver: Segment number input file names received\n");
+    //Obtains FileNameInputs from input.txt and also creates separate files for segmentNumbers, corresponding to each reference
+    ObtainFileNameInput(input, n, SegAddrInputFileName, LinearAddrInputFileName); 
 
     fclose(input);
-   
-    
+
     //Flushing the TLBs initially
     TLBL1Flush();
     TLBL2Flush();

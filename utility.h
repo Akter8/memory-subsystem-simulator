@@ -15,6 +15,12 @@ int fileOpenError(char* fileName);
 int readAddr(FILE* inputFile);
 void fileNotNull(FILE *file, char *fileName);
 
+int error(char* str);
+
+//int4 readSegNum(FILE *fp, char *write);
+
+void ObtainFileNameInput(FILE* input, int n, char SegAddrInputFileName[][100], char LinearAddrInputFileName[][100]);
+
 // To create the segment table inputs for the program.
 void createSegmentFiles(char [], int);
 int findReadOrWriteMemoryAccess();
