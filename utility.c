@@ -10,11 +10,13 @@
 #include "segmentTable.h"
 #include "pcb.h"
 #include "math.h"
+#include <string.h>
 
 extern FILE* outputFile;
 extern segmentTableInfo* GDTptr;
 extern long long current_time;
 extern PCB pcbArr[30];
+extern void createSegmentFiles(char inputFileName[][100], int n);
 
 
 void fileNotNull(FILE *file, char *fileName)

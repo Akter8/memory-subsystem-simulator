@@ -1,5 +1,5 @@
 #include <stdio.h>
-//#include <stdbool.h>
+#include <stdbool.h>
 
 // General utility functions to run the program.
 int fileOpenError(char* fileName);
@@ -34,7 +34,7 @@ int findPhysicalAddr(int i, int readWrite, int inputAddr, int* error, int4 segNu
 
 
 // runs all instructions necessary for reading/writing data to Cache and Main Memory. Cache/Main Memory is accessed which might change, entries in Frame Table, Cache etc. If failure to access data due to permission problems, then returns -1
-//int AccessData(int i, int inputAddr, unsigned int physicalAddr, bool dataCache, unsigned int readWrite, int4 segNum, long* time, int frameNum, char write)
+int AccessData(int i, int inputAddr, unsigned int physicalAddr, bool dataCache, unsigned int readWrite, int4 segNum, long* time, int frameNum, char write);
 
 //When a process, completes its execution time or a pageFault happens the code calls this function. It contains the code necessary to put the present process in waiting and start the next process.
 void context_change(int i);

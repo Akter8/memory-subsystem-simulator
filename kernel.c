@@ -11,7 +11,7 @@
 #include "segmentTable.h"
 #include "pcb.h"
 #include "tlb.h"
-//#include "utility.h"
+#include "utility.h"
 
 // How many memory accesses before a process if forced to context switch.
 #define NUM_LINES_BEFORE_CONTEXT_SWITCH 200

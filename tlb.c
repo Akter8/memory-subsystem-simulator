@@ -6,6 +6,7 @@
  */
 
 #include <stdio.h>
+#include "dataTypes.h"
 #include "configuration.h"
 #include "tlb.h"
 #include "utility.h"
