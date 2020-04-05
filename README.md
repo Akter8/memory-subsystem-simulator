@@ -16,16 +16,6 @@ Group #6, Questions #5.
 * Main Memory with Memory Management: 64MB Main memory with LFU [with aging] as replacement policy. The memory management scheme used is Segmentation + Paging.
 
 
-#### Tasks
-- [ ] Page table frames not to be loaded into memory.
-- [x] Add comments: Splitting of physical addr into cache numbers.
-- [ ] Complete the README.
-- [ ] Convert README.md to README.txt
-- [ ] Make folder name 6.tar.gz before submission
-- [ ] Modularise entire code base so that the driver function has at max 20 lines of code.
-- [ ] Pre-condition and post-condition for every function.
-
-
 #### Description of files
 * configuration.h - Contains the configurations of static data required for this program.
 * dataTypes.h - The data types made and used by use.
@@ -42,7 +32,7 @@ Group #6, Questions #5.
 * segmentTable.h - Contains the ADT of the segment table and its entries.
 * segmentTable.c - Contains the implementation of the segment table and its entries.
 * utility.h - Contains the header files for utility functions and macros.
-* utilityFunctions.c - Contains a few function definitions of utility functions.
+* utility.c - Contains a few function definitions of utility functions. Also contains implementation of all functions called in kernel.c
 * mainDriver.c - Contains just a small main function.
 * kernel.c - Contains the driver() function which can be seen as the medium between the simulated h/w and the requested data.
 
@@ -93,10 +83,6 @@ Group #6, Questions #5.
 3. All other pages are loaded on demand [Assume the system supports dynamic loading. Also assume that the system has no dynamic linking support].
 4. Main memory follows Global replacement. Lower limit number of pages and upper limit number of pages per process should be strictly maintained.
 5. Page tables of all the processes reside in main memory and will not be loaded into cache memory levels.
-
-
-#### Bugs
-
 
 #### What could have been added
 * A minimal scheduler to check if a process has finished servicing the page fault before it might get a turn in the CPU.
