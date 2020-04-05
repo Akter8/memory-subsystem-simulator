@@ -1,14 +1,13 @@
-# DSTN Assignment-1
-Group #6, Questions #5.
+# Memory Subsystem Simulator
 
-### Authors
-* Akhil Tarikere, 2017A7PS1916G
-* Chiplunkar Chinmay Vidyadhar, 2017A7PS0097G
-* Prabhu Divya Umesh, 2017A7PS0001G
-* Prakarsh Parashar, 2016B4A70776G
+### Contributors
+* **Akhil Tarikere** _(Github: [Akter8](https://github.com/Akter8) )_
+* **Chiplunkar Chinmay Vidyadhar** _(Github: [chinmay291](https://github.com/chinmay291) )_
+* **Prabhu Divya Umesh** Github: [dup05](https://github.com/dup05) )_
+* **Prakarsh Parashar** Github: [pprakarsh](https://github.com/pprakarsh) )_
 
 
-#### Question
+#### Premise
 * The memory subsystem [with TLBs, L1 Cache, L2 Cache and Main Memory] has following configuration:
 * TLBs: L1 TLB with 12 entries and L2 TLB with 24 entries. Invalidation / Flush takes place at each preemption point.
 * L1 Cache: 8KB, 32B, 4 Way set associative cache. The cache follows Write through and Look aside. It follows LRU Square matrix as replacement policy.
@@ -83,10 +82,3 @@ Group #6, Questions #5.
 3. All other pages are loaded on demand [Assume the system supports dynamic loading. Also assume that the system has no dynamic linking support].
 4. Main memory follows Global replacement. Lower limit number of pages and upper limit number of pages per process should be strictly maintained.
 5. Page tables of all the processes reside in main memory and will not be loaded into cache memory levels.
-
-#### What could have been added
-* A minimal scheduler to check if a process has finished servicing the page fault before it might get a turn in the CPU.
-* For implementing search through the pageTable and pageFault handling, we have used the fact that we have all the frames in a level of pageTable sequentially accessible in our ADT. However it would have been better if we had implemented it the conventional way. (Assuming Frames not sequentially accessible for a level of pageTable)
-
-#### Contribution of Group Members
-All members contributed equally. Each member 25% contribution of work.
