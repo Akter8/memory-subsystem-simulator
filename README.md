@@ -84,6 +84,7 @@ Group #6, Questions #5.
 * We assume that the input given to us is the linear address data directly using which we create segmentation input data, so in essense segmentation + paging is not really being simulated in the best possible manner.
 * We assume that the number of memory accesses a process will request at once before it gets preempted is constant. That does not usually happen in practical systems as the amount of time for memory accesses will vary and hence so will the number of memory accesses a process can request before preemption.
 * The program also assumes that the page fault is serviced before a process gets back into running state in the cpu (which is not really practical).
+* The simulation assumes that there are only two segments at play-- one in GDT and another in LDT.
 
 
 #### Assumptions

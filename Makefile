@@ -7,8 +7,8 @@ outputFile = outputFile.txt
 statisticsFile = outputFile_processStatistics.txt
 
 # Makes
-all: $(driver).o kernel.o tlb.o cache.o pcb.o pageTable.o segmentTable.o frameTable.o utilityFunctions.o createSegmentationInput.o
-	$(CC) $(driver).o kernel.o tlb.o cache.o pcb.o pageTable.o segmentTable.o frameTable.o utilityFunctions.o createSegmentationInput.o -o $(executableName)
+all: $(driver).o kernel.o tlb.o cache.o pcb.o pageTable.o segmentTable.o frameTable.o utility.o createSegmentationInput.o
+	$(CC) $(driver).o kernel.o tlb.o cache.o pcb.o pageTable.o segmentTable.o frameTable.o utility.o createSegmentationInput.o -o $(executableName)
 
 
 $(driver).o: $(driver).c
@@ -35,8 +35,8 @@ segmentTable.o: segmentTable.c
 frameTable.o: frameTable.c
 	$(CC) $(flags) frameTable.c
 
-utilityFunctions.o: utilityFunctions.c
-	$(CC) $(flags) utilityFunctions.c
+utility.o: utility.c
+	$(CC) $(flags) utility.c
 
 createSegmentationInput.o: createSegmentationInput.c
 	$(CC) $(flags) createSegmentationInput.c

@@ -189,6 +189,3 @@ int updateSegmentTablePresentBit(segmentTableEntry* segTableEntry, int index, in
         return 1;
 
 }   //value = 0 or 1
-
-
-

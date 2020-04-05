@@ -4,3 +4,16 @@ CC1.txt
 LI.txt
 M88KSIM.txt
 VORTEX.txt
+
+-------------------------------------------------
+
+How to:
+First line contains number of processes
+All subsequent files to contain names of the file for that process (and should be located in the working directory of the program).
+
+Sample:
+4
+linear_inp1.txt
+linear_inp2.txt
+linear_inp3.txt
+linear_inp4.txt

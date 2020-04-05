@@ -1,6 +1,16 @@
 #include "utility.h"
+
 #include <stdio.h>
 #include <stdlib.h>
+
+void fileNotNull(FILE *file, char *fileName)
+{
+    if (file == NULL)
+    {
+        fprintf(stderr, "ERROR: File %s unable to open.\n", fileName);
+        exit(0);
+    }
+}
 
 int fileOpenError(char* fileName)
 {
@@ -13,6 +23,9 @@ int error(char* str)
     printf("%s\n", str);
 }
 
+
+
+/*
 unsigned int readAddr(FILE* inputFile)
 {
     //Stores the line read from inputFile
@@ -62,3 +75,4 @@ int readSegNum(FILE* SegNumInputFile, char* ReadWrite)
 
     return Addr;
 }
+*/

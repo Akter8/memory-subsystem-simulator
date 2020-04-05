@@ -128,7 +128,8 @@ driver()
     fprintf(outputFile, "Driver: Frame table initialized\n");
 
 
-    //Global descriptor Table initialize
+    //Global descriptor Table initialize.
+    // GDT is only one table.
     GDTptr = initGDTable();
     fprintf(outputFile, "Driver: GDT initialized\n");
 
@@ -138,6 +139,7 @@ driver()
     for(int i = 0; i < n; ++i)
     {
         //Initializes PCB
+        // LDT for every process is initalised.
         initPCB(i, LinearAddrInputFileName[i], SegAddrInputFileName[i]);
     }
     fprintf(outputFile, "Driver: PCBs initialized\n");    

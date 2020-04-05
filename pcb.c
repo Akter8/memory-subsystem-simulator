@@ -40,6 +40,10 @@ int getpid(PCB pcbObj)
     return pcbObj.pid;
 }
 
+
+/*
+ * Goes through the input of the linear address input file of the process to find the maximum value to find the segment limits (GDT and LDT).
+ */
 void findSegmentLimits(int* gdtSeg_limit, int* ldtSeg_limit, FILE* LinearAddrInputFile, FILE* SegNumAddrFile)
 {
     int addr;
@@ -47,14 +51,14 @@ void findSegmentLimits(int* gdtSeg_limit, int* ldtSeg_limit, FILE* LinearAddrInp
     {
         int segNum; char write;
         fscanf(SegNumAddrFile, "%d %c", &segNum, &write);
-        if(segNum == 8)
+        if(segNum == 8) // If it is a part of GDT.
         {
             if(addr > *gdtSeg_limit)
             {
                 *gdtSeg_limit = addr;
             }
         }
-        else if(segNum == 0)
+        else if(segNum == 0) // If it is a part of LDT.
         {
             if(addr > *ldtSeg_limit)
             {
@@ -136,7 +140,9 @@ pageTable* getLevel3PageTablePointer(PCB pcbObj, int segNum){
 }
 
 
-//Deallocates Process pages and page table 
+/*
+ * Deallocates Process pages and page table.
+ */ 
 int deleteProcess(unsigned int pid){
     PCB pcbObj = pcbArr[pid];
 

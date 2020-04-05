@@ -12,7 +12,7 @@
 
 // General utility functions to run the program.
 int fileOpenError(char* fileName);
-unsigned int readAddr(FILE* inputFile);
+int readAddr(FILE* inputFile);
 void fileNotNull(FILE *file, char *fileName);
 
 // To create the segment table inputs for the program.
