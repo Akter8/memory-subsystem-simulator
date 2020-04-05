@@ -17,6 +17,7 @@
 #define NUM_LINES_BEFORE_CONTEXT_SWITCH 200
 
 
+
 int4
 readSegNum(FILE *fp, char *write)
 {

@@ -1,8 +1,8 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include "dataTypes.h"
 #include "utility.h"
 #include "configuration.h"
-#include <stdio.h>
-#include <stdlib.h>
 #include "tlb.h"
 #include "cache.h"
 #include "pageTable.h"
@@ -520,6 +520,7 @@ void close_all_files(int n)
 
     fclose(outputFile);
 }
+
 void printStatistics(int n)
 {
     // Prints the statistics onto the statistics file.

@@ -1,6 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 //#include <stdbool.h>
 
 // General utility functions to run the program.
@@ -34,7 +32,16 @@ int preExecutionWork(int i, int firstExecution[], char* LinearAddrInputFileName,
 //finds Physical Address from logical address, searches in TLB and PageTable to returns the frameNum of the memory reference. If a pageFault occurs, brings the page to memory and returns -1
 int findPhysicalAddr(int i, int readWrite, int inputAddr, int* error, int4 segNum, long* time);
 
-/*
+
 // runs all instructions necessary for reading/writing data to Cache and Main Memory. Cache/Main Memory is accessed which might change, entries in Frame Table, Cache etc. If failure to access data due to permission problems, then returns -1
-int AccessData(int i, int inputAddr, unsigned int physicalAddr, bool dataCache, unsigned int readWrite, int4 segNum, long* time, int frameNum, char write)
-*/
+//int AccessData(int i, int inputAddr, unsigned int physicalAddr, bool dataCache, unsigned int readWrite, int4 segNum, long* time, int frameNum, char write)
+
+//When a process, completes its execution time or a pageFault happens the code calls this function. It contains the code necessary to put the present process in waiting and start the next process.
+void context_change(int i);
+
+
+// Closes all open files, the files containg memory references, and the files containg corresponding segNum of the reference. Also closes the output file
+void close_all_files(int n);
+
+// Prints a summary of the entire Simulation. For each process prints the Time taken, Number of Page Faults and the number of context-switches
+void printStatistics(int n);
