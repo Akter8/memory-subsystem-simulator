@@ -78,29 +78,8 @@ driver()
 
     fclose(input);
 
-    //Flushing the TLBs initially
-    TLBL1Flush();
-    TLBL2Flush();
-    fprintf(outputFile, "Driver: TLBs flushed\n");
-
-
-    //Initializing Cache
-    initL1Cache();
-    fprintf(outputFile, "Driver: L1 cache initialized\n");
-    initL2Cache();
-    fprintf(outputFile, "Driver: L2 cache initialized\n");
-
-
-    //Initialize Frame Table
-    initFrameTable();
-    fprintf(outputFile, "Driver: Frame table initialized\n");
-
-
-    //Global descriptor Table initialize.
-    // GDT is only one table.
-    GDTptr = initGDTable();
-    fprintf(outputFile, "Driver: GDT initialized\n");
-
+    //Initalize all Hardwares-TLB and Cache, Also initialize GDT, FrameTable
+    InitializationOfHardwareAndTables();
 
     //Initializing PCBs of all Processes
     //Initialize segment Table for each Process

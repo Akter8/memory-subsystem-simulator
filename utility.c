@@ -1,8 +1,17 @@
 #include "utility.h"
+#include "configuration.h"
+#include "dataTypes.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "tlb.h"
+#include "cache.h"
+#include "pageTable.h"
+#include "frameTable.h"
+#include "segmentTable.h"
 
 extern FILE* outputFile;
+extern segmentTableInfo* GDTptr;
+
 
 void fileNotNull(FILE *file, char *fileName)
 {
@@ -80,6 +89,31 @@ void ObtainFileNameInput(FILE* input, int n, char SegAddrInputFileName[][100], c
 
 }
 
+void InitializationOfHardwareAndTables()
+{
+    //Flushing the TLBs initially
+    TLBL1Flush();
+    TLBL2Flush();
+    fprintf(outputFile, "Driver: TLBs flushed\n");
+
+
+    //Initializing Cache
+    initL1Cache();
+    fprintf(outputFile, "Driver: L1 cache initialized\n");
+    initL2Cache();
+    fprintf(outputFile, "Driver: L2 cache initialized\n");
+
+
+    //Initialize Frame Table
+    initFrameTable();
+    fprintf(outputFile, "Driver: Frame table initialized\n");
+
+
+    //Global descriptor Table initialize.
+    // GDT is only one table.
+    GDTptr = initGDTable();
+    fprintf(outputFile, "Driver: GDT initialized\n");
+}
 
 /*
 unsigned int readAddr(FILE* inputFile)

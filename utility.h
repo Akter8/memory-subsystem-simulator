@@ -27,3 +27,6 @@ int findReadOrWriteMemoryAccess();
 
 // The function that drives the subsytem and called by the main().
 void driver();
+
+//Initializes TLBs, Cache, Frame Table and GDT
+void InitializationOfHardwareAndTables();
