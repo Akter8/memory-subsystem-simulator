@@ -315,10 +315,14 @@ driver()
 
 
                 // Split the frameNum into index, tag and offset according to both levels of cache's size.
+
+                // Cache split:  |------16bits---Tag---|--5bits--setNum-|--5bits--offset-|
                 unsigned int l1CacheOffset = physicalAddr & 0x1F;
                 unsigned int l1CacheIndex = (physicalAddr & 0x3FF) >> 5;
                 unsigned int l1CacheTag = physicalAddr >> 10;
 
+                
+                // Cache split:  |------14bits--Tag--|--6bits--setNum--|--6bits--offset--|
                 unsigned int l2CacheOffset = physicalAddr & ((unsigned int)pow(2, 6) - 1);
                 unsigned int l2CacheIndex = (physicalAddr & ((unsigned int)pow(2, 12) - 1)) >> 6;
                 unsigned int l2CacheTag = physicalAddr >> 12;

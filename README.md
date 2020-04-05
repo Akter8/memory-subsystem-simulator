@@ -18,7 +18,7 @@ Group #6, Questions #5.
 
 #### Tasks
 - [ ] Page table frames not to be loaded into memory.
-- [ ] Add comments: Splitting of physical addr into cache numbers.
+- [x] Add comments: Splitting of physical addr into cache numbers.
 - [ ] Complete the README.
 - [ ] Convert README.md to README.txt
 - [ ] Make folder name 6.tar.gz before submission
