@@ -1,14 +1,7 @@
 #include <stdio.h>
-
-#define INPUT_FILE1_NAME "Inputs/APSI.txt"
-#define INPUT_FILE2_NAME "Inputs/CC1.txt"
-#define INPUT_FILE3_NAME "Inputs/LI.txt"
-#define INPUT_FILE4_NAME "Inputs/M88KSIM.txt"
-#define INPUT_FILE5_NAME "Inputs/VORTEX.txt"
-
-#define debug printf("Hello, hi\n")
-#define debug_str(x) printf("--> %s", x)
-#define debug_int(x) printf("--> %d", x)
+#include <stdlib.h>
+#include <string.h>
+//#include <stdbool.h>
 
 // General utility functions to run the program.
 int fileOpenError(char* fileName);
@@ -31,11 +24,17 @@ void driver();
 //Initializes TLBs, Cache, Frame Table and GDT
 void InitializationOfHardwareAndTables();
 
-//Enqueus all processes in READY queue, when simulation starts
-//All PCBs initialized
+// Enqueus all processes in READY queue, when simulation starts
+// All PCBs initialized
 void EnqueueProcesses(int n, char LinearAddrInputFileName[][100], char SegAddrInputFileName[][100]);
 
+// Instructions to be run just before a process begins executing, pre-paging is done, process state is changed
 int preExecutionWork(int i, int firstExecution[], char* LinearAddrInputFileName, char* SegAddrInputFileName);
 
-//finds Physical Address from logical address
-//int findPhysicalAddr(int i, int readWrite, int inputAddr, int* error, int4 segNum, long* time)
+//finds Physical Address from logical address, searches in TLB and PageTable to returns the frameNum of the memory reference. If a pageFault occurs, brings the page to memory and returns -1
+int findPhysicalAddr(int i, int readWrite, int inputAddr, int* error, int4 segNum, long* time);
+
+/*
+// runs all instructions necessary for reading/writing data to Cache and Main Memory. Cache/Main Memory is accessed which might change, entries in Frame Table, Cache etc. If failure to access data due to permission problems, then returns -1
+int AccessData(int i, int inputAddr, unsigned int physicalAddr, bool dataCache, unsigned int readWrite, int4 segNum, long* time, int frameNum, char write)
+*/

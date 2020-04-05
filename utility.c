@@ -1,6 +1,6 @@
+#include "dataTypes.h"
 #include "utility.h"
 #include "configuration.h"
-#include "dataTypes.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "tlb.h"
@@ -491,6 +491,7 @@ int AccessData(int i, int inputAddr, unsigned int physicalAddr, bool dataCache, 
             fflush(outputFile);
         }
     } // End of that memory access.
+return 0;
 }
 
 void context_change(int i)
