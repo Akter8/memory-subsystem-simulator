@@ -71,6 +71,7 @@ int4 readSegNum(FILE *fp, char *write)
     }
 }
 */
+
 // Obtains FileNameInputs from input.txt and also creates separate files for segmentNumbers, corresponding to each reference
 void ObtainFileNameInput(FILE* input, int n, char SegAddrInputFileName[][100], char LinearAddrInputFileName[][100])
 {
@@ -169,7 +170,7 @@ int findPhysicalAddr(int i, int readWrite, int inputAddr, int* error, int4 segNu
     int requestedPageOffset = inputAddr & 1023; // (pow(2, 10) - 1), Since page size is 2**10B.
     int requestedPageNum = inputAddr >> 10; // Since we need to discard the least significant 10b.
 
-    fprintf(outputFile, "%x  %x\n",requestedPageNum,requestedPageOffset);
+    fprintf(outputFile, "Driver: Requested PageNumber-%x  PageOffset-%x\n",requestedPageNum,requestedPageOffset);
 
 
     // Search this pageNum in both levels of TLB.
