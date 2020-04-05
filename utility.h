@@ -30,3 +30,7 @@ void driver();
 
 //Initializes TLBs, Cache, Frame Table and GDT
 void InitializationOfHardwareAndTables();
+
+//Enqueus all processes in READY queue, when simulation starts
+//All PCBs initialized
+void EnqueueProcesses(int n, char LinearAddrInputFileName[][100], char SegAddrInputFileName[][100]);

@@ -78,19 +78,14 @@ driver()
 
     fclose(input);
 
+    
     //Initalize all Hardwares-TLB and Cache, Also initialize GDT, FrameTable
     InitializationOfHardwareAndTables();
 
-    //Initializing PCBs of all Processes
-    //Initialize segment Table for each Process
-    for(int i = 0; i < n; ++i)
-    {
-        //Initializes PCB
-        // LDT for every process is initalised.
-        initPCB(i, LinearAddrInputFileName[i], SegAddrInputFileName[i]);
-    }
-    fprintf(outputFile, "Driver: PCBs initialized\n");    
-    fflush(outputFile);
+    
+    // Enqueues all processes in READY queue and initializes the corresponding PCB's
+    EnqueueProcesses(n, LinearAddrInputFileName, SegAddrInputFileName);
+
 
     int firstExecution[30] = {0};
     

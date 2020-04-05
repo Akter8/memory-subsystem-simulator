@@ -8,6 +8,7 @@
 #include "pageTable.h"
 #include "frameTable.h"
 #include "segmentTable.h"
+#include "pcb.h"
 
 extern FILE* outputFile;
 extern segmentTableInfo* GDTptr;
@@ -115,6 +116,19 @@ void InitializationOfHardwareAndTables()
     fprintf(outputFile, "Driver: GDT initialized\n");
 }
 
+void EnqueueProcesses(int n, char LinearAddrInputFileName[][100], char SegAddrInputFileName[][100])
+{
+    //Initializing PCBs of all Processes
+    //Initialize segment Table for each Process
+    for(int i = 0; i < n; ++i)
+    {
+        //Initializes PCB
+        // LDT for every process is initalised.
+        initPCB(i, LinearAddrInputFileName[i], SegAddrInputFileName[i]);
+    }
+    fprintf(outputFile, "Driver: PCBs initialized\n");    
+    fflush(outputFile);
+}
 /*
 unsigned int readAddr(FILE* inputFile)
 {
